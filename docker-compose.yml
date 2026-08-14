@@ -1,0 +1,63 @@
+version: "3.9"
+
+# ARGOS — Kefalonia Digital Twin · dev stack (T08)
+# Up:   docker compose up -d   (or: podman-compose up -d)
+# Down: docker compose down
+# Reset: docker compose down -v   (wipes data volumes)
+
+services:
+  postgis:
+    image: postgis/postgis:16-3.4
+    container_name: argos-postgis
+    environment:
+      POSTGRES_USER: argos
+      POSTGRES_PASSWORD: argos_dev_password
+      POSTGRES_DB: argos
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U argos"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: argos-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: argos
+      MINIO_ROOT_PASSWORD: argos_dev_password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: argos-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: argos@argos-geo.org
+      PGADMIN_DEFAULT_PASSWORD: argos_dev_password
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgis
+
+  api:
+    build: ./api
+    container_name: argos-api
+    environment:
+      DATABASE_URL: postgresql://argos:argos_dev_password@postgis:5432/argos
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgis:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  miniodata:
