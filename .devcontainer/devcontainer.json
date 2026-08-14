@@ -1,0 +1,14 @@
+{
+  "name": "ARGOS Dev",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [8000, 5432, 9000, 9001, 5050],
+  "postCreateCommand": "pip install -r api/requirements.txt",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  }
+}
