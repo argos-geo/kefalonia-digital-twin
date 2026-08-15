@@ -32,11 +32,43 @@ Stored in PostGIS (`argos.wildfire_risk`, `argos.wildfire_risk_class`) and MinIO
 - Ainos forest spine + dense maquis → high; Argostoli urban core + bare coast → low
 - Fire-history halos visible around the 56 historical detections
 
+## Validation — v1.0 vs EFFIS burnt-area perimeters (16 Aug 2026, T15.1)
+
+Harness: EFFIS WFS archive (typename `ms:modis.ba.poly`), **24 perimeters** intersecting the
+study envelope, 2017-08 → 2026-08, **2,737 ha** total. Method: zonal statistics of the v1.0
+risk raster inside each perimeter vs the island-wide land baseline (sea masked to nodata;
+pixel-count areas reproduce EFFIS AREA_HA within ~2%).
+
+| Metric | Island baseline | Burned areas |
+|---|---|---|
+| Mean risk (0–100) | 58.1 | **62.5** (area-weighted) |
+| Pixels in class ≥3 (high + very high) | 46.0% | **64.0%** |
+| Pixels in class 4 (very high) | 2.0% | **7.1%** (3.5× enrichment) |
+| Fires scoring above island mean | — | **17 of 24** |
+
+**Verdict: directionally validated, not calibrated.** Burned areas concentrate in high-risk
+pixels at 1.4–3.5× the island rate, against a strict baseline (the island itself is highly
+flammable). But discrimination is imperfect: 7 fires scored below island mean and 26.8% of
+burned area sat in merely-moderate pixels.
+
+Caveats, honestly stated:
+- **Small N**: 24 perimeters, one island, archive floor 2017 for this bbox; pre-2018 fires
+  <~30 ha are invisible (MODIS 250 m source). This is a screening validation, not a
+  statistical proof.
+- **Conservative bias for recent scars** (7 fires, 2025+): their burns appear as low-NDVI
+  ground in the July 2026 fuel layer, dragging their scores DOWN (worst case: 278276,
+  344 ha, 86% sclerophyllous per EFFIS, scores 39.8). The model is graded on its own wound.
+- **Agricultural burns undervalued** (e.g. 13807, 2017, 100% agri, scores 43.7) — the
+  cured-grass blind spot of limitation 7.
+- EFFIS dates are detection/last-update dates, not ignition/extinction dates.
+- Local-knowledge review (16 Aug 2026): roster green-lit, no missing or false fires flagged.
+
 ## Limitations (read before using)
 1. **Static baseline** — no live fuel moisture, no wind, no weather. This is *where* fire is
    likely to be severe, not *when*.
-2. **Weights are expert judgment**, not calibrated against observed Kefalonia fire perimeters
-   (v2: calibrate against EFFIS burnt-area perimeters).
+2. **Weights are expert judgment** — now *directionally validated* against 24 EFFIS
+   perimeters (see Validation), but not yet refit against them; v1.1 keeps or adjusts them
+   based on the re-validation table.
 3. **NDVI is a single-month snapshot** (July 2026). Fuel curing varies seasonally.
 4. **MODIS fire detections are ~1 km resolution** and 2015–2025 only; small/agricultural
    fires are undercounted; detection ≠ burned area.
@@ -51,10 +83,11 @@ Stored in PostGIS (`argos.wildfire_risk`, `argos.wildfire_risk_class`) and MinIO
    (Raised by local-knowledge review, 15 Aug 2026 — the sanity check working as designed.)
 
 ## Roadmap
-- v1.1: EFFIS burnt-area perimeters as validation + fire-history factor;
+- v1.1 (**in progress**, T15.1 — EFFIS validation DONE 16 Aug 2026, see above):
   **altitude/fuel-moisture modifier** (elevation lapse-rate cooling + multi-temporal
-  NDVI curing trend as proxies for live fuel moisture) to fix limitation 7;
-  re-examine NDVI→fuel mapping for cured grasslands
+  NDVI curing trend: May vs July Sentinel-2 as live-fuel-moisture proxies) to fix
+  limitation 7; re-examine NDVI→fuel mapping for cured grasslands; then re-validate
+  against the same EFFIS table — improvement required, published either way
 - v1.2: live Fuel Moisture / FWI from ECMWF open data → daily dynamic risk
 - v2.0: suppression access + utility-infrastructure ignition points + community-reported fuel breaks (ARGOS COMMONS)
 
