@@ -1,0 +1,62 @@
+# ARGOS WATCH — Wildfire Risk Index v1: Methodology
+*Kefalonia Digital Twin · August 2026 · v1.0 (expert-weighted, static baseline)*
+
+## Purpose
+A static, island-wide baseline of wildfire ignition & spread susceptibility for Kefalonia
+(and incidentally Ithaca), at 20 m resolution. Designed to be read and challenged by
+foresters, civil protection, and researchers. **This is a screening layer, not an
+operational forecast** — see Limitations.
+
+## Inputs (all layers already in the twin)
+
+| Factor | Weight | Source layer | Source data | Rationale |
+|---|---|---|---|---|
+| Slope | 25% | `argos.slope` (recomputed on EPSG:32634, 30 m) | Copernicus DEM GLO-30 | Fire spreads faster uphill; rate of spread roughly doubles per 10–20° |
+| Fuel (vegetation) | 25% | `argos.ndvi` (July 2026) | Sentinel-2 L2A via Earth Search STAC, 4 scenes @ 0% cloud, mean composite | Dense vegetation = fuel load. Scored linearly from NDVI 0.15→0.7 |
+| Road proximity | 20% | `argos.roads` | OpenStreetMap (Geofabrik, Aug 2026) | Most ignitions are human-caused, near the road network. Full weight at road, decaying to 0 at 2 km |
+| Aspect | 15% | `argos.aspect` (EPSG:32634) | Copernicus DEM GLO-30 | South-facing slopes are drier/hotter. Cosine curve: south = 1, north = 0, flat = 0 |
+| Fire history | 15% | 56 MODIS detections, 2015–2025, confidence ≥ 50, island bbox | NASA FIRMS country archive (Greece CSVs) | Past fire activity indicates recurrence-prone zones. Full weight at detection, decaying to 0 at 3 km |
+
+## Computation
+`risk = 100 × (0.25·slope/40 + 0.25·fuel + 0.20·road + 0.15·aspect + 0.15·history)`
+(each factor normalized to [0,1] first; sea/outside-coverage pixels = nodata −9999)
+
+Classification: **1 very low (<20) · 2 low (20–40) · 3 moderate (40–60) · 4 high (60–80) · 5 very high (>80)**
+
+Reproduce: `scripts/05_wildfire_risk.py` (requires the T10–T14 layers loaded). Outputs:
+`kefalonia_wildfire_risk.tif` (continuous 0–100), `kefalonia_wildfire_risk_class.tif` (1–5).
+Stored in PostGIS (`argos.wildfire_risk`, `argos.wildfire_risk_class`) and MinIO (`argos-data/risk/`).
+
+## Sanity checks performed
+- Class distribution sane: majority moderate, meaningful high/very-high tail
+- Ainos forest spine + dense maquis → high; Argostoli urban core + bare coast → low
+- Fire-history halos visible around the 56 historical detections
+
+## Limitations (read before using)
+1. **Static baseline** — no live fuel moisture, no wind, no weather. This is *where* fire is
+   likely to be severe, not *when*.
+2. **Weights are expert judgment**, not calibrated against observed Kefalonia fire perimeters
+   (v2: calibrate against EFFIS burnt-area perimeters).
+3. **NDVI is a single-month snapshot** (July 2026). Fuel curing varies seasonally.
+4. **MODIS fire detections are ~1 km resolution** and 2015–2025 only; small/agricultural
+   fires are undercounted; detection ≠ burned area.
+5. **No suppression-access modelling** (firefighting access, water points) — planned v2
+   with the curated trails layer (T12) and electricity-network ignition sources (FAQ Q20).
+6. 20 m grid smooths fine terrain detail.
+7. **No fuel-moisture or altitude effect.** NDVI-as-fuel measures vegetation *density*,
+   not *flammability*. Dense high-altitude fir (Mt Ainos) scores maximum fuel although
+   its live fuel moisture, cooler temperatures, and distance from ignition sources make
+   it harder to ignite than cured lowland grass/maquis — which the model correspondingly
+   undervalues. v1 reads as *severity if burned* more than *likelihood of burning*.
+   (Raised by local-knowledge review, 15 Aug 2026 — the sanity check working as designed.)
+
+## Roadmap
+- v1.1: EFFIS burnt-area perimeters as validation + fire-history factor;
+  **altitude/fuel-moisture modifier** (elevation lapse-rate cooling + multi-temporal
+  NDVI curing trend as proxies for live fuel moisture) to fix limitation 7;
+  re-examine NDVI→fuel mapping for cured grasslands
+- v1.2: live Fuel Moisture / FWI from ECMWF open data → daily dynamic risk
+- v2.0: suppression access + utility-infrastructure ignition points + community-reported fuel breaks (ARGOS COMMONS)
+
+*License: CC BY 4.0 for the layer, MIT for the code. Built in the open — if you're a
+forester or fire scientist and see a flaw, open an issue. That's the point.*
