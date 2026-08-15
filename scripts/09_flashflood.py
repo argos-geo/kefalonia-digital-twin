@@ -20,6 +20,7 @@ from rasterio.features import rasterize
 from pysheds.grid import Grid
 import geopandas as gpd
 from sqlalchemy import create_engine
+if not hasattr(np, 'in1d'): np.in1d = np.isin  # pysheds 0.5 calls np.in1d, removed in numpy 2.x
 
 BBOX      = (20.30, 37.95, 20.90, 38.55)   # island bbox (all our layers)
 HYDRO_BUF = 0.05                            # ~5 km buffer for the hydrology grid
@@ -62,8 +63,8 @@ f     = grid.resolve_flats(grid.fill_depressions(dem_r))
 fdir  = grid.flowdir(f, routing='d8')
 acc   = np.asarray(grid.accumulation(fdir, routing='d8')) * DST_RES**2   # m2 upslope
 am = acc[land]
-print('upslope km2 over land: p50 %.2f p90 %.2f p99 %.2f (expect ~0.03 / ~0.30 / ~2.0)'
-      % tuple(np.percentile(am, [50, 90, 99])))
+print('upslope km2 over land: p50 %.3f p90 %.3f p99 %.2f (expect ~0.004 / ~0.03 / ~1.8)')
+      % tuple(np.percentile(am, [50, 90, 99])/1e6)))
 
 # ---------- 4. Upstream burn-scar fraction (weighted accumulation) ----------
 risk_cls = rasterio.open('data/kefalonia_wildfire_risk_class.tif')  # 20m UTM from T15
