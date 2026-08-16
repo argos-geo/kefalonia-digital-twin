@@ -1,5 +1,5 @@
-# ARGOS WATCH — Wildfire Risk Index v1: Methodology
-*Kefalonia Digital Twin · August 2026 · v1.0 (expert-weighted, static baseline)*
+# ARGOS WATCH — Wildfire Risk Index v1.1: Methodology
+*Kefalonia Digital Twin · August 2026 · v1.1 (expert-weighted static baseline + seasonal curing/altitude modifiers; still screening, not forecast)*
 
 ## Purpose
 A static, island-wide baseline of wildfire ignition & spread susceptibility for Kefalonia
@@ -63,13 +63,31 @@ Caveats, honestly stated:
 - EFFIS dates are detection/last-update dates, not ignition/extinction dates.
 - Local-knowledge review (16 Aug 2026): roster green-lit, no missing or false fires flagged.
 
+
+## v1.1 update (16 Aug 2026) — seasonal curing + altitude/live-fuel-moisture damping
+
+Fuel is no longer July NDVI density alone. v1.1a adds a gated curing term from May vs July
+Sentinel-2 (Earth Search local COGs with STAC `scale=0.0001, offset=-0.1` applied; 2026-05-14
+QC-excluded): where spring was green (May NDVI ≥0.35) and July browned (July < May),
+`curing = clip(1 - NDVI_jul/NDVI_may, 0, 1)` and `cured_fuel = 0.15 + 0.75·curing`;
+fuel becomes `max(July-density, cured_fuel)`. v1.1b then damps only dense live high fuel
+(July NDVI ≥0.60 and fuel ≥0.85) with elevation: 800 m → factor 1.00, linear to 1600 m → 0.55,
+as a static lapse-rate/live-fuel-moisture proxy. Cured lowland fuel is not damped.
+
+Same-harness validation vs EFFIS (24 perimeters): v1 reproduced burned **62.5** vs island
+**58.1**, 17/24 above island, ≥3 **64.0% vs 46.0%**, class 4 **7.1% vs 2.0%**. v1.1b:
+burned **63.6** vs island **59.1**, **19/24** above island, ≥3 **66.9% vs 47.2%**, class 4
+**7.1% vs 1.9% ≈ 3.7×**. This is a real but modest discrimination gain; the known fuel blind
+spots improved without crossing island mean (278276 39.8→42.0; 13807 43.7→44.9), and the model
+remains **directionally validated, not calibrated**.
+
 ## Limitations (read before using)
 1. **Static baseline** — no live fuel moisture, no wind, no weather. This is *where* fire is
    likely to be severe, not *when*.
 2. **Weights are expert judgment** — now *directionally validated* against 24 EFFIS
    perimeters (see Validation), but not yet refit against them; v1.1 keeps or adjusts them
    based on the re-validation table.
-3. **NDVI is a single-month snapshot** (July 2026). Fuel curing varies seasonally.
+3. **Fuel seasonality is only partially modelled.** v1.1 adds May→July curing and an altitude/live-moisture damper, but it is still a static 2026 snapshot, not live fuel moisture.
 4. **MODIS fire detections are ~1 km resolution** and 2015–2025 only; small/agricultural
    fires are undercounted; detection ≠ burned area.
 5. **No suppression-access modelling** (firefighting access, water points) — planned v2
@@ -83,11 +101,11 @@ Caveats, honestly stated:
    (Raised by local-knowledge review, 15 Aug 2026 — the sanity check working as designed.)
 
 ## Roadmap
-- v1.1 (**in progress**, T15.1 — EFFIS validation DONE 16 Aug 2026, see above):
-  **altitude/fuel-moisture modifier** (elevation lapse-rate cooling + multi-temporal
-  NDVI curing trend: May vs July Sentinel-2 as live-fuel-moisture proxies) to fix
-  limitation 7; re-examine NDVI→fuel mapping for cured grasslands; then re-validate
-  against the same EFFIS table — improvement required, published either way
+- v1.1 (**DONE 16 Aug 2026**, T15.1 — validation above):
+  cured-grass + altitude/live-moisture modifiers landed; re-validation improved
+  discrimination modestly and is published honestly. Next credibility rungs: benchmark
+  against EFFIS FWI/Copernicus EMS where comparable, technical validation report,
+  preprint, then fire-season case study.
 - v1.2: live Fuel Moisture / FWI from ECMWF open data → daily dynamic risk
 - v2.0: suppression access + utility-infrastructure ignition points + community-reported fuel breaks (ARGOS COMMONS)
 
