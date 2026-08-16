@@ -31,6 +31,11 @@
   .foot { font-size:9px; color:#5A6A80; margin-top:12px; line-height:1.5; }
   .foot a { color:#8A7A3A; text-decoration:none; }
   .foot a:hover { color:#C9A227; }
+  .brand { text-align:center; margin-bottom:6px; }
+  .brand img { width:76px; height:76px; }
+  .subbrand { display:flex; justify-content:center; gap:18px; margin:12px 0 2px; }
+  .subbrand img { width:26px; height:26px; opacity:0.9; }
+  .subbrand img:hover { opacity:1; }
   #clock {
     position:absolute; bottom:12px; right:14px; z-index:10;
     font-family:Inter,sans-serif; font-size:11px; color:#5A6A80;
@@ -51,9 +56,10 @@
 <body>
 <div id="map"></div>
 <div id="ui">
+  <div class="brand"><img src="./assets/emblem_fanari.png" alt="ARGOS emblem"></div>
   <h1>ARGOS</h1>
   <div class="motto">Watching over the places we call home.</div>
-  <div class="sub">Kefalonia Digital Twin · v0.1 vector preview</div>
+  <div class="sub">Kefalonia Digital Twin · v0.0.1 vector preview</div>
   <div class="sect">Layers</div>
   <label class="row"><input type="checkbox" id="tgl-roads" checked> Roads</label>
   <label class="row"><input type="checkbox" id="tgl-trails" checked> Trails</label>
@@ -68,6 +74,11 @@
   <div class="leg"><span class="swd" style="background:#C9A227"></span>beach</div>
   <div class="leg"><span class="swd" style="background:#7FA89B"></span>POI</div>
   <div class="leg"><span class="sw" style="background:rgba(244,238,224,0.4)"></span>buildings (zoom 12+)</div>
+  <div class="subbrand">
+    <img src="./assets/icon_geo.png" alt="ARGOS GEO" title="ARGOS GEO">
+    <img src="./assets/icon_watch.png" alt="ARGOS WATCH" title="ARGOS WATCH">
+    <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
+  </div>
   <div class="foot">
     Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).<br>
     Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) ·
