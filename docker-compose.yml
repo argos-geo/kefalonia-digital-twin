@@ -51,7 +51,7 @@ services:
     build: ./api
     container_name: argos-api
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: ${DATABASE_URL_READ}
     ports:
       - "8000:8000"
     depends_on:
