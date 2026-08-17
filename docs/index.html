@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARGOS — Kefalonia Digital Twin</title>
+<title>ARGOS : : Kefalonia Digital Twin</title>
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
@@ -17,8 +17,8 @@
     backdrop-filter:blur(4px); z-index:10;
   }
   #ui h1 {
-    margin:0; font-family:'Space Grotesk',sans-serif; font-size:22px;
-    letter-spacing:0.3em; color:#F4EEE0; font-weight:700;
+    margin:0; font-family:'Space Grotesk',sans-serif; font-size:15px;
+    letter-spacing:0.12em; color:#F4EEE0; font-weight:700; line-height:1.4;
   }
   .motto { font-size:11px; color:#8A9AB0; margin:4px 0 2px; }
   .sub { font-size:10px; color:#7FA89B; margin-bottom:10px; }
@@ -33,7 +33,7 @@
   .foot a:hover { color:#C9A227; }
   .brand { text-align:center; margin-bottom:6px; }
   .brand img { width:76px; height:76px; }
-  .subbrand { display:flex; justify-content:center; gap:18px; margin:12px 0 2px; }
+  .subbrand { display:flex; justify-content:flex-start; gap:18px; margin:8px 0 2px; }
   .subbrand img { width:26px; height:26px; opacity:0.9; }
   .subbrand img:hover { opacity:1; }
   #clock {
@@ -57,9 +57,14 @@
 <div id="map"></div>
 <div id="ui">
   <div class="brand"><img src="./assets/emblem_fanari.png" alt="ARGOS emblem"></div>
-  <h1>ARGOS</h1>
+  <h1>ARGOS : :<br>Kefalonia Digital Twin</h1>
+  <div class="subbrand">
+    <img src="./assets/icon_geo.png" alt="ARGOS GEO" title="ARGOS GEO">
+    <img src="./assets/icon_watch.png" alt="ARGOS WATCH" title="ARGOS WATCH">
+    <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
+  </div>
   <div class="motto">Watching over the places we call home.</div>
-  <div class="sub">Kefalonia Digital Twin · v0.0.1 vector preview</div>
+  <div class="sub">v0.0.1 vector preview</div>
   <div class="sect">Layers</div>
   <label class="row"><input type="checkbox" id="tgl-roads" checked> Roads</label>
   <label class="row"><input type="checkbox" id="tgl-trails" checked> Trails</label>
@@ -74,11 +79,6 @@
   <div class="leg"><span class="swd" style="background:#C9A227"></span>beach</div>
   <div class="leg"><span class="swd" style="background:#7FA89B"></span>POI</div>
   <div class="leg"><span class="sw" style="background:rgba(244,238,224,0.4)"></span>buildings (zoom 12+)</div>
-  <div class="subbrand">
-    <img src="./assets/icon_geo.png" alt="ARGOS GEO" title="ARGOS GEO">
-    <img src="./assets/icon_watch.png" alt="ARGOS WATCH" title="ARGOS WATCH">
-    <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
-  </div>
   <div class="foot">
     Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).<br>
     Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) ·
