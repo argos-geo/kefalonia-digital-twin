@@ -1,6 +1,15 @@
 """ARGOS API — T18/T19: health, layer discovery, read-only spatial endpoints."""
 import os, json
 import psycopg
+from psycopg_pool import ConnectionPool
+from psycopg.rows import dict_row
+
+POOL = None
+def get_pool():
+    global POOL
+    if POOL is None:
+        POOL = ConnectionPool(DB, min_size=1, max_size=4, kwargs={"row_factory": dict_row})
+    return POOL
 from psycopg.rows import dict_row
 from fastapi import FastAPI, HTTPException, Query
 
@@ -32,9 +41,9 @@ def geojson_feature(props, gj):
 @app.get("/health")
 def health():
     try:
-        with psycopg.connect(DB) as conn:
+        with get_pool().connection() as conn:
             row = conn.execute("SELECT PostGIS_Version();").fetchone()
-        return {"status":"ok", "postgis": row[0], "motto":"Watching over the places we call home."}
+        return {"status":"ok", "postgis": row["postgis_version"], "motto":"Watching over the places we call home."}
     except Exception as e:
         return {"status":"db_unreachable", "detail": str(e)}
 
@@ -56,7 +65,7 @@ def layers():
     LEFT JOIN raster_columns r ON r.r_table_schema=t.table_schema AND r.r_table_name=t.table_name
     WHERE t.table_schema='argos' AND t.table_type='BASE TABLE'
     ORDER BY t.table_name;"""
-    with psycopg.connect(DB, row_factory=dict_row) as conn:
+    with get_pool().connection() as conn:
         rows = conn.execute(sql).fetchall()
     return {"count": len(rows), "layers": rows}
 
@@ -64,7 +73,7 @@ def layers():
 def buffer(lat: float = Query(...), lon: float = Query(...), m: float = Query(10000)):
     check_point(lat, lon, m)
     sql = """SELECT ST_AsGeoJSON(ST_Buffer(ST_SetSRID(ST_MakePoint(%(lon)s,%(lat)s),4326)::geography,%(m)s)::geometry) AS gj"""
-    with psycopg.connect(DB) as conn:
+    with get_pool().connection() as conn:
         gj = conn.execute(sql, {"lat":lat,"lon":lon,"m":m}).fetchone()[0]
     return geojson_feature({"lat":lat,"lon":lon,"m":m,"note":"API accepts lat,lon; DB stores lon,lat"}, gj)
 
@@ -80,7 +89,7 @@ def intersect(layer: str, lat: float, lon: float, m: float = 10000, limit: int =
           WHERE ST_Intersects(geom, b.g)
           ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%(lon)s,%(lat)s),4326)
           LIMIT %(limit)s) t;"""
-    with psycopg.connect(DB) as conn:
+    with get_pool().connection() as conn:
         rows = conn.execute(sql, {"lat":lat,"lon":lon,"m":m,"limit":limit}).fetchall()
     return {"type":"FeatureCollection", "layer": layer, "returned": len(rows),
             "features":[geojson_feature(p, gj) for p, gj in rows]}
@@ -92,9 +101,16 @@ def aggregate(layer: str, lat: float, lon: float, m: float = 10000):
     table = RASTER[layer]
     sql = f"""
     WITH b AS (SELECT ST_Buffer(ST_SetSRID(ST_MakePoint(%(lon)s,%(lat)s),4326)::geography,%(m)s)::geometry AS g)
-    SELECT (ST_SummaryStats(ST_Union(ST_Clip(rast, b.g)), true)).*
-    FROM argos.{table} CROSS JOIN b WHERE ST_Intersects(rast, b.g);"""
-    with psycopg.connect(DB, row_factory=dict_row) as conn:
+    , s AS (SELECT (ST_SummaryStats(ST_Clip(rast, b.g), true)).*
+          FROM argos.{table} CROSS JOIN b WHERE ST_Intersects(rast, b.g))
+    SELECT sum(count)::bigint AS count, sum(sum) AS sum,
+           sum(sum)/nullif(sum(count),0) AS mean,
+           sqrt(greatest(0,
+             sum(count*(stddev*stddev + mean*mean))/nullif(sum(count),0)
+             - power(sum(count*mean)/nullif(sum(count),0), 2))) AS stddev,
+           min(min) AS min, max(max) AS max
+    FROM s;"""
+    with get_pool().connection() as conn:
         row = conn.execute(sql, {"lat":lat,"lon":lon,"m":m}).fetchone()
     if not row or row.get("count") is None:
         return {"layer": layer, "count": 0}
