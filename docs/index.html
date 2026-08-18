@@ -91,6 +91,7 @@
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
 <script>
 var TILES = 'pmtiles://' + new URL('./tiles/kefalonia_vectors.pmtiles', window.location.href).href;
+var HILL = 'pmtiles://' + new URL('./tiles/kefalonia_hillshade.pmtiles', window.location.href).href;
 var protocol = new pmtiles.Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
 
@@ -115,6 +116,10 @@ map.on('load', function () {
     paint: { 'fill-color': '#0F1D33' } });
   map.addLayer({ id: 'land-line', type: 'line', source: 'land',
     paint: { 'line-color': '#8A7A3A', 'line-width': 1.1, 'line-opacity': 0.9 } });
+
+  map.addSource('hill', { type: 'raster', url: HILL, tileSize: 256 });
+  map.addLayer({ id: 'hillshade', type: 'raster', source: 'hill',
+    paint: { 'raster-opacity': 0.55 } });
 
   map.addSource('vectors', { type: 'vector', url: TILES });
 
