@@ -36,6 +36,11 @@
   .subbrand { display:flex; justify-content:flex-start; gap:18px; margin:8px 0 2px; }
   .subbrand img { width:26px; height:26px; opacity:0.9; }
   .subbrand img:hover { opacity:1; }
+  .langrow { display:flex; gap:6px; margin:2px 0 4px; }
+  .langbtn { flex:0 0 auto; padding:2px 10px; border-radius:100px; border:1px solid #8A7A3A;
+    background:transparent; color:#8A9AB0; font-family:'Space Grotesk',sans-serif;
+    font-size:10px; letter-spacing:0.14em; cursor:pointer; }
+  .langbtn.on { border-color:#C9A227; color:#C9A227; background:rgba(201,162,39,0.08); }
   #clock {
     position:absolute; bottom:12px; right:14px; z-index:10;
     font-family:Inter,sans-serif; font-size:11px; color:#5A6A80;
@@ -65,6 +70,10 @@
   </div>
   <div class="motto">Watching over the places we call home.</div>
   <div class="sub">v0.0.1 vector preview</div>
+  <div class="langrow">
+    <button class="langbtn on" id="lang-en">EN</button>
+    <button class="langbtn" id="lang-el">ΕΛ</button>
+  </div>
   <div class="sect">Layers</div>
   <label class="row"><input type="checkbox" id="tgl-roads" checked> Roads</label>
   <label class="row"><input type="checkbox" id="tgl-trails" checked> Trails</label>
@@ -119,7 +128,7 @@ map.on('load', function () {
 
   map.addSource('hill', { type: 'raster', url: HILL, tileSize: 256 });
   map.addLayer({ id: 'hillshade', type: 'raster', source: 'hill',
-    paint: { 'raster-opacity': 0.55 } });
+    paint: { 'raster-opacity': 0.75, 'raster-contrast': 0.3, 'raster-brightness-max': 1 } });
 
   map.addSource('vectors', { type: 'vector', url: TILES });
 
@@ -170,9 +179,35 @@ map.on('load', function () {
       'circle-stroke-color': '#0A1628', 'circle-stroke-width': 1 }});
   map.addLayer({ id: 'pois-label', type: 'symbol', source: 'vectors', 'source-layer': 'pois',
     minzoom: 13,
-    layout: { 'text-field': ['get', 'name'], 'text-size': 10,
+    layout: { 'text-field': ['coalesce', ['get', 'name_en'], ['get', 'name']], 'text-size': 10,
       'text-font': ['Noto Sans Regular'], 'text-anchor': 'top', 'text-offset': [0, 0.8] },
     paint: { 'text-color': '#8A9AB0', 'text-halo-color': '#0A1628', 'text-halo-width': 1 }});
+
+  map.addLayer({ id: 'places-label', type: 'symbol', source: 'vectors', 'source-layer': 'places',
+    minzoom: 9,
+    layout: {
+      'text-field': ['coalesce', ['get', 'name_en'], ['get', 'name']],
+      'text-font': ['Noto Sans Regular'],
+      'text-size': ['match', ['get', 'place'], 'town', 13, 'village', 11, 9],
+      'symbol-sort-key': ['match', ['get', 'place'], 'town', 0, 'village', 1, 2],
+      'text-anchor': 'center',
+      'text-optional': true
+    },
+    paint: { 'text-color': '#F4EEE0', 'text-opacity': 0.9,
+      'text-halo-color': '#0A1628', 'text-halo-width': 1.2 }});
+
+  // language toggle
+  var LABEL_LAYERS = ['places-label', 'pois-label'];
+  function setLang(lang) {
+    var prop = lang === 'el' ? 'name_el' : 'name_en';
+    LABEL_LAYERS.forEach(function (lid) {
+      map.setLayoutProperty(lid, 'text-field', ['coalesce', ['get', prop], ['get', 'name']]);
+    });
+    document.getElementById('lang-en').classList.toggle('on', lang === 'en');
+    document.getElementById('lang-el').classList.toggle('on', lang === 'el');
+  }
+  document.getElementById('lang-en').addEventListener('click', function () { setLang('en'); });
+  document.getElementById('lang-el').addEventListener('click', function () { setLang('el'); });
 
   var PRETTY = {
     name: 'Name', road_class: 'Road class', osm_highway: 'OSM highway',
