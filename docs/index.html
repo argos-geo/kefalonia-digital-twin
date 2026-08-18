@@ -72,11 +72,11 @@
   <label class="row"><input type="checkbox" id="tgl-beaches" checked> Beaches</label>
   <label class="row"><input type="checkbox" id="tgl-pois" checked> POIs</label>
   <div class="sect">Legend</div>
-  <div class="leg"><span class="sw" style="background:#C9A227"></span>primary / secondary</div>
-  <div class="leg"><span class="sw" style="background:#F4EEE0"></span>tertiary</div>
+  <div class="leg"><span class="sw" style="background:#F4EEE0"></span>primary / secondary</div>
+  <div class="leg"><span class="sw" style="background:#C9BFA8"></span>tertiary</div>
   <div class="leg"><span class="sw" style="background:#8A9AB0"></span>local / service</div>
   <div class="leg"><span class="sw" style="border-top:2px dashed #7FA89B; height:0"></span>track / path · trail</div>
-  <div class="leg"><span class="swd" style="background:#C9A227"></span>beach</div>
+  <div class="leg"><span class="swd" style="background:#E6D9B8"></span>beach</div>
   <div class="leg"><span class="swd" style="background:#7FA89B"></span>POI</div>
   <div class="leg"><span class="sw" style="background:rgba(244,238,224,0.4)"></span>buildings (zoom 12+)</div>
   <div class="foot">
@@ -106,14 +106,15 @@ var map = new maplibregl.Map({
   zoom: 10, minZoom: 8, maxZoom: 16
 });
 map.addControl(new maplibregl.NavigationControl(), 'top-right');
-map.fitBounds([[20.30, 37.95], [20.90, 38.55]], { padding: 30, duration: 0 });
+map.fitBounds([[20.30, 37.95], [20.90, 38.55]],
+  { padding: { left: 300, top: 30, right: 30, bottom: 30 }, duration: 0 });
 
 map.on('load', function () {
   map.addSource('land', { type: 'geojson', data: './kefalonia_land.geojson' });
   map.addLayer({ id: 'land-fill', type: 'fill', source: 'land',
     paint: { 'fill-color': '#0F1D33' } });
   map.addLayer({ id: 'land-line', type: 'line', source: 'land',
-    paint: { 'line-color': '#C9A227', 'line-width': 1.2, 'line-opacity': 0.85 } });
+    paint: { 'line-color': '#8A7A3A', 'line-width': 1.1, 'line-opacity': 0.9 } });
 
   map.addSource('vectors', { type: 'vector', url: TILES });
 
@@ -122,8 +123,8 @@ map.on('load', function () {
     layout: { 'line-cap': 'round', 'line-join': 'round' },
     paint: {
       'line-color': ['match', ['get', 'road_class'],
-        'primary', '#C9A227', 'secondary', '#C9A227', 'tertiary', '#F4EEE0', '#8A9AB0'],
-      'line-width': ['interpolate', ['linear'], ['zoom'], 9, 1.1, 14, 4],
+        'primary', '#F4EEE0', 'secondary', '#F4EEE0', 'tertiary', '#C9BFA8', '#8A9AB0'],
+      'line-width': ['interpolate', ['linear'], ['zoom'], 9, 1.2, 14, 4.2],
       'line-opacity': 0.95
     }});
   map.addLayer({ id: 'roads-local', type: 'line', source: 'vectors', 'source-layer': 'roads',
@@ -145,15 +146,15 @@ map.on('load', function () {
 
   map.addLayer({ id: 'buildings-fill', type: 'fill', source: 'vectors', 'source-layer': 'buildings',
     minzoom: 12,
-    paint: { 'fill-color': '#F4EEE0', 'fill-opacity': 0.28,
-      'fill-outline-color': 'rgba(244,238,224,0.5)' }});
+    paint: { 'fill-color': '#F4EEE0', 'fill-opacity': 0.22,
+      'fill-outline-color': 'rgba(244,238,224,0.4)' }});
 
   map.addLayer({ id: 'beaches-fill', type: 'fill', source: 'vectors', 'source-layer': 'beaches',
     filter: ['==', ['geometry-type'], 'Polygon'],
-    paint: { 'fill-color': '#C9A227', 'fill-opacity': 0.35 } });
+    paint: { 'fill-color': '#E6D9B8', 'fill-opacity': 0.4 } });
   map.addLayer({ id: 'beaches-circle', type: 'circle', source: 'vectors', 'source-layer': 'beaches',
     filter: ['==', ['geometry-type'], 'Point'],
-    paint: { 'circle-color': '#C9A227',
+    paint: { 'circle-color': '#E6D9B8',
       'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2.5, 14, 5],
       'circle-stroke-color': '#0A1628', 'circle-stroke-width': 1 }});
 
