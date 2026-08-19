@@ -122,7 +122,7 @@ Copernicus EMS (terms acknowledged). Attribution is architecture, not decoration
 χαρτογραφημένο, ερωτήσιμο και παρατηρήσιμο. Χτίζεται δημόσια από έναν άνθρωπο, με
 ελεύθερα δεδομένα και δωρεάν υποδομή.
 
-**[🗺️ Άνοιξε τον ζωντανό χάρτη](https://argos-geo.github.io/kefalonia-digital-twin/)** -
+**[🗺️LIVE map](https://argos-geo.github.io/kefalonia-digital-twin/)** -
 δρόμοι, κτίρια, παραλίες, μονοπάτια, κίνδυνος πυρκαγιάς και χρόνος πρόσβασης κάθε
 κτιρίου στην πυροσβεστική και στα λιμάνια. Κάνε κλικ οπουδήποτε· απαντάει.
 
