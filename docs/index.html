@@ -68,34 +68,34 @@
     <img src="./assets/icon_watch.png" alt="ARGOS WATCH" title="ARGOS WATCH">
     <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
   </div>
-  <div class="motto">Watching over the places we call home.</div>
-  <div class="sub">v0.0.1 vector preview</div>
+  <div class="motto" id="m-motto">Watching over the places we call home.</div>
+  <div class="sub" id="m-sub">v0.0.1 vector preview</div>
   <div class="langrow">
     <button class="langbtn on" id="lang-en">EN</button>
     <button class="langbtn" id="lang-el">ΕΛ</button>
   </div>
-  <div class="sect">Layers</div>
-  <label class="row"><input type="checkbox" id="tgl-roads" checked> Roads</label>
-  <label class="row"><input type="checkbox" id="tgl-trails" checked> Trails</label>
-  <label class="row"><input type="checkbox" id="tgl-buildings" checked> Buildings</label>
-  <label class="row"><input type="checkbox" id="tgl-beaches" checked> Beaches</label>
-  <label class="row"><input type="checkbox" id="tgl-pois" checked> POIs</label>
-  <div class="sect">Legend</div>
-  <div class="leg"><span class="sw" style="background:#F4EEE0"></span>primary / secondary</div>
-  <div class="leg"><span class="sw" style="background:#C9BFA8"></span>tertiary</div>
-  <div class="leg"><span class="sw" style="background:#8A9AB0"></span>local / service</div>
-  <div class="leg"><span class="sw" style="border-top:2px dashed #7FA89B; height:0"></span>track / path · trail</div>
-  <div class="leg"><span class="swd" style="background:#E6D9B8"></span>beach</div>
-  <div class="leg"><span class="swd" style="background:#7FA89B"></span>POI</div>
-  <div class="leg"><span class="sw" style="background:rgba(244,238,224,0.4)"></span>buildings (zoom 12+)</div>
+  <div class="sect" id="m-sect-layers">Layers</div>
+  <label class="row"><input type="checkbox" id="tgl-roads" checked> <span id="m-row-roads">Roads</span></label>
+  <label class="row"><input type="checkbox" id="tgl-trails" checked> <span id="m-row-trails">Trails</span></label>
+  <label class="row"><input type="checkbox" id="tgl-buildings" checked> <span id="m-row-buildings">Buildings</span></label>
+  <label class="row"><input type="checkbox" id="tgl-beaches" checked> <span id="m-row-beaches">Beaches</span></label>
+  <label class="row"><input type="checkbox" id="tgl-pois" checked> <span id="m-row-pois">POIs</span></label>
+  <div class="sect" id="m-sect-legend">Legend</div>
+  <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
+  <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
+  <div class="leg"><span class="sw" style="background:#8A9AB0"></span><span id="m-leg-3">local / service</span></div>
+  <div class="leg"><span class="sw" style="border-top:2px dashed #7FA89B; height:0"></span><span id="m-leg-4">track / path &middot; trail</span></div>
+  <div class="leg"><span class="swd" style="background:#E6D9B8"></span><span id="m-leg-5">beach</span></div>
+  <div class="leg"><span class="swd" style="background:#7FA89B"></span><span id="m-leg-6">POI</span></div>
+  <div class="leg"><span class="sw" style="background:rgba(244,238,224,0.4)"></span><span id="m-leg-7">buildings (zoom 12+)</span></div>
   <div class="foot">
-    Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).<br>
-    Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) ·
+    <span id="m-foot-note">Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).</span><br>
+    <span id="m-foot-data">Data &copy;</span> <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) ·
     <a href="https://argos-geo.org">argos-geo.org</a> ·
     <a href="https://github.com/argos-geo/kefalonia-digital-twin">GitHub</a>
   </div>
 </div>
-<div id="clock">Pota_Irtes local time — <span id="pt">--:--</span></div>
+<div id="clock"><span id="m-clock">Pota_Irtes local time</span> — <span id="pt">--:--</span></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
 <script>
@@ -196,50 +196,184 @@ map.on('load', function () {
     paint: { 'text-color': '#F4EEE0', 'text-opacity': 0.9,
       'text-halo-color': '#0A1628', 'text-halo-width': 1.2 }});
 
-  // language toggle
+  // ---- full bilingual machinery (T43) ----
+  var CUR_LANG = 'en';
+  function nameProp() { return CUR_LANG === 'el' ? 'name_el' : 'name_en'; }
+
+  var MI18N = {
+    en: {
+      'm-motto': 'Watching over the places we call home.',
+      'm-sub': 'v0.0.1 vector preview',
+      'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
+      'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
+      'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs',
+      'm-leg-1': 'primary / secondary', 'm-leg-2': 'tertiary', 'm-leg-3': 'local / service',
+      'm-leg-4': 'track / path &middot; trail', 'm-leg-5': 'beach', 'm-leg-6': 'POI',
+      'm-leg-7': 'buildings (zoom 12+)',
+      'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
+      'm-foot-data': 'Data &copy;',
+      'm-clock': 'Pota_Irtes local time'
+    },
+    el: {
+      'm-motto': 'Προστατεύοντας τους τόπους μας.',
+      'm-sub': 'Vector χάρτης v0.0.1',
+      'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
+      'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
+      'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος',
+      'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
+      'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
+      'm-leg-7': 'Κτίρια (zoom 12+)',
+      'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
+      'm-foot-data': 'Δεδομένα &copy;',
+      'm-clock': 'Pota_Irtes — τοπική ώρα'
+    }
+  };
+
+  var PRETTY_L = {
+    en: {
+      name: 'Name', road_class: 'Road class', osm_highway: 'OSM highway',
+      length_m: 'Length', maxspeed: 'Max speed', surface: 'Surface',
+      poi_type: 'Type', category: 'Category', access_score: 'Access score',
+      road_dist_m: 'Road distance', fire_min: 'Fire response', port_min: 'Nearest port',
+      area_m2: 'Area', levels: 'Levels', street: 'Street', sac_scale: 'SAC scale',
+      route_type: 'Route type', curated: 'Curated'
+    },
+    el: {
+      name: 'Όνομα', road_class: 'Κατηγορία δρόμου', osm_highway: 'Τύπος OSM',
+      length_m: 'Μήκος', maxspeed: 'Όριο ταχύτητας', surface: 'Επιφάνεια',
+      poi_type: 'Τύπος', category: 'Κατηγορία', access_score: 'Προσβασιμότητα',
+      road_dist_m: 'Απόσταση από δρόμο', fire_min: 'Χρόνος πυρόσβεσης', port_min: 'Κοντινότερο λιμάνι',
+      area_m2: 'Εμβαδόν', levels: 'Όροφοι', street: 'Οδός', sac_scale: 'Κλίμακα SAC',
+      route_type: 'Τύπος διαδρομής', curated: 'Επιμελημένο'
+    }
+  };
+
+  var LAYER_T = {
+    roads:     { en: 'road',     el: 'Δρόμος' },
+    trails:    { en: 'trail',    el: 'Μονοπάτι' },
+    pois:      { en: 'POI',      el: 'Σημείο ενδιαφέροντος' },
+    buildings: { en: 'building', el: 'Κτίριο' },
+    beaches:   { en: 'beach',    el: 'Παραλία' }
+  };
+
+  // Greek translations for OSM enum values (draft - Panagis corrects). Fallback: raw value.
+  var VALS = {
+    road_class: { primary:'Κεντρικός', secondary:'Δευτερεύων', tertiary:'Τριτοβάθμιος', 'local':'Τοπικός',
+      service:'Εξυπηρέτησης', track:'Χωματόδρομος', path:'Μονοπάτι', other:'Άλλος' },
+    osm_highway: { construction:'Υπό κατασκευή', footway:'Πεζοδρόμιο', living_street:'Οδός ήπιας κυκλοφορίας',
+      path:'Μονοπάτι', pedestrian:'Πεζόδρομος', primary:'Κεντρικός', primary_link:'Σύνδεσμος κεντρικού',
+      residential:'Οδός κατοικιών', secondary:'Δευτερεύων', service:'Εξυπηρέτησης', steps:'Σκαλοπάτια',
+      tertiary:'Τριτοβάθμιος', tertiary_link:'Σύνδεσμος τριτοβάθμιου', track:'Χωματόδρομος', unclassified:'Μη ταξινομημένος' },
+    surface: { asphalt:'Άσφαλτος', cement:'Τσιμέντο', cobblestone:'Καλντερίμι', compacted:'Συμπιεσμένο χώμα',
+      concrete:'Σκυρόδεμα', 'concrete:plates':'Πλάκες σκυροδέματος', dirt:'Χώμα', fine_gravel:'Ψιλό χαλίκι',
+      grass:'Γρασίδι', gravel:'Χαλίκι', ground:'Φυσικό έδαφος', metal:'Μέταλλο', paved:'Ασφαλτοστρωμένο',
+      paving_stones:'Πλακόστρωτο', pebblestone:'Βοτσαλωτό', 'plastic panels':'Πλαστικά πανέλ', rock:'Βράχος',
+      sand:'Άμμος', sett:'Λίθινο', stone:'Πέτρα', unhewn_cobblestone:'Ακατέργαστο καλντερίμι',
+      unpaved:'Μη ασφαλτοστρωμένο', wood:'Ξύλο' },
+    category: { education:'Εκπαίδευση', food_drink:'Φαγητό & ποτό', health:'Υγεία', heritage:'Πολιτιστική κληρονομιά',
+      leisure:'Αναψυχή', other:'Άλλο', services:'Υπηρεσίες', shop:'Κατάστημα', tourism:'Τουρισμός' },
+    building_type: { annexe:'Παράρτημα', apartments:'Πολυκατοικία', barn:'Αγροτική αποθήκη', bungalow:'Μπάνγκαλοου',
+      bunker:'Καταφύγιο', chapel:'Ξωκλήσι', church:'Εκκλησία', civic:'Δημόσιο κτίριο', collapsed:'Κατεστραμμένο',
+      commercial:'Εμπορικό', construction:'Υπό κατασκευή', detached:'Μεζονέτα', garage:'Γκαράζ',
+      government:'Κυβερνητικό', grandstand:'Εξέδρα', greenhouse:'Θερμοκήπιο', hospital:'Νοσοκομείο',
+      hotel:'Ξενοδοχείο', house:'Κατοικία', hut:'Καλύβα', kindergarten:'Νηπιαγωγείο', monastery:'Μοναστήρι',
+      no:'—', pavilion:'Περίπτερο', 'public':'Δημόσιο', residential:'Κατοικίες', retail:'Λιανεμπόριο',
+      roof:'Στέγαστρο', ruins:'Ερείπια', school:'Σχολείο', shed:'Υπόστεγο', stadium:'Στάδιο',
+      toilets:'Τουαλέτες', townhall:'Δημαρχείο', transportation:'Μεταφορών', university:'Πανεπιστήμιο',
+      warehouse:'Αποθήκη', yes:'Κτίριο', 'yes;church':'Εκκλησία' },
+    route_type: { foot:'Περπάτημα', hiking:'Πεζοπορία' },
+    sac_scale: { hiking:'Απλή πεζοπορία', mountain_hiking:'Ορεινή πεζοπορία' },
+    place: { town:'Πόλη', village:'Χωριό', hamlet:'Οικισμός', locality:'Τοποθεσία', square:'Πλατεία', neighbourhood:'Γειτονιά' },
+    source_form: { point:'Σημείο', polygon:'Πολύγωνο' },
+    poi_type: { alcohol:'Κάβα', animal_shelter:'Καταφύγιο ζώων', apartment:'Διαμέρισμα', aquarium:'Ενυδρείο',
+      archaeological_site:'Αρχαιολογικός χώρος', arts_centre:'Κέντρο τεχνών', artwork:'Έργο τέχνης', atm:'ΑΤΜ',
+      attraction:'Αξιοθέατο', bakery:'Φούρνος', bank:'Τράπεζα', bar:'Μπαρ', beauty:'Καλλυντικά', bench:'Παγκάκι',
+      bicycle_rental:'Ενοικίαση ποδηλάτων', boat_rental:'Ενοικίαση σκαφών', books:'Βιβλιοπωλείο',
+      bus_station:'Σταθμός λεωφορείων', butcher:'Κρεοπωλείο', cafe:'Καφέ', camp_site:'Κάμπινγκ', car:'Αυτοκίνητα',
+      car_rental:'Ενοικίαση αυτοκινήτων', car_repair:'Συνεργείο αυτοκινήτων', car_wash:'Πλυντήριο αυτοκινήτων',
+      castle:'Κάστρο', chalet:'Σαλέ', charging_station:'Σταθμός φόρτισης', chemist:'Φαρμακείο', clinic:'Κλινική',
+      clock:'Ρολόι', clothes:'Ρούχα', coast_guard:'Λιμενικό', computer:'Υπολογιστές', confectionery:'Ζαχαροπλαστείο',
+      convenience:'Μίνι μάρκετ', cosmetics:'Καλλυντικά', dairy:'Γαλακτοπωλείο', deli:'Ντελικατέσεν',
+      dentist:'Οδοντίατρος', dive_centre:'Κέντρο καταδύσεων', doctors:'Ιατρείο', doityourself:'Είδη DIY',
+      dressing_room:'Αποδυτήρια', drinking_water:'Πόσιμο νερό', electrical:'Ηλεκτρολογικά', electronics:'Ηλεκτρονικά',
+      events_venue:'Χώρος εκδηλώσεων', farm:'Αγρόκτημα', fashion_accessories:'Αξεσουάρ μόδας',
+      fast_food:'Γρήγορο φαγητό', ferry_terminal:'Σταθμός φεριμπότ', fire_station:'Πυροσβεστική',
+      firepit:'Χώρος φωτιάς', fitness_centre:'Γυμναστήριο', fitness_station:'Σταθμός γυμναστικής',
+      florist:'Ανθοπωλείο', fountain:'Σιντριβάνι', fuel:'Βενζινάδικο', gate:'Πύλη', gift:'Είδη δώρων',
+      greengrocer:'Μανάβικο', guest_house:'Ξενώνας', hairdresser:'Κομμωτήριο', harbourmaster:'Λιμεναρχείο',
+      hardware:'Σιδηρικά & εργαλεία', hospital:'Νοσοκομείο', hostel:'Χόστελ', hotel:'Ξενοδοχείο',
+      houseware:'Είδη σπιτιού', ice_cream:'Παγωτά', information:'Πληροφορίες', internet_cafe:'Ιντερνετ καφέ',
+      jewelry:'Κοσμηματοπωλείο', kindergarten:'Νηπιαγωγείο', kiosk:'Περίπτερο', laundry:'Καθαριστήριο',
+      library:'Βιβλιοθήκη', lighting:'Φωτιστικά', marina:'Μαρίνα', marketplace:'Αγορά', memorial:'Μνημείο',
+      monastery:'Μοναστήρι', monument:'Μνημείο', motel:'Μοτέλ', motorcycle_rental:'Ενοικίαση μοτοσικλετών',
+      museum:'Μουσείο', music_school:'Ωδείο', optician:'Οπτικός', outdoor_seating:'Υπαίθρια καθίσματα',
+      park:'Πάρκο', parking:'Πάρκινγκ', parking_entrance:'Είσοδος πάρκινγκ', pastry:'Ζαχαροπλαστείο',
+      pet:'Κατοικίδια', pharmacy:'Φαρμακείο', picnic_site:'Χώρος πικνίκ', picnic_table:'Τραπέζι πικνίκ',
+      pitch:'Γήπεδο', place_of_worship:'Τόπος λατρείας', playground:'Παιδική χαρά', police:'Αστυνομία',
+      post_box:'Γραμματοκιβώτιο', post_office:'Ταχυδρομείο', pub:'Παμπ', reception:'Ρεσεψιόν',
+      recycling:'Ανακύκλωση', restaurant:'Εστιατόριο', ruins:'Ερείπια', school:'Σχολείο', seafood:'Θαλασσινά',
+      shelter:'Καταφύγιο', shoes:'Υποδήματα', shower:'Ντους', slipway:'Ράμπα σκαφών', stadium:'Στάδιο',
+      supermarket:'Σούπερ μάρκετ', taxi:'Ταξί', telecommunication:'Τηλεπικοινωνίες', telephone:'Τηλέφωνο',
+      theatre:'Θέατρο', theme_park:'Θεματικό πάρκο', ticket:'Εισιτήρια', toilets:'Τουαλέτες',
+      townhall:'Δημαρχείο', trade:'Εμπόριο', travel_agency:'Ταξιδιωτικό γραφείο', variety_store:'Μικροπωλείο',
+      veterinary:'Κτηνίατρος', viewpoint:'Σημείο θέας', villa:'Βίλα', waste_basket:'Κάδος απορριμμάτων',
+      waste_disposal:'Απόρριψη αποβλήτων', wayside_shrine:'Εικόνισμα', wine:'Οινοπωλείο', yes:'Σημείο ενδιαφέροντος' }
+  };
+
   var LABEL_LAYERS = ['places-label', 'pois-label'];
   function setLang(lang) {
+    CUR_LANG = lang;
     var prop = lang === 'el' ? 'name_el' : 'name_en';
     LABEL_LAYERS.forEach(function (lid) {
       map.setLayoutProperty(lid, 'text-field', ['coalesce', ['get', prop], ['get', 'name']]);
     });
+    var dict = MI18N[lang];
+    Object.keys(dict).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = dict[id];
+    });
     document.getElementById('lang-en').classList.toggle('on', lang === 'en');
     document.getElementById('lang-el').classList.toggle('on', lang === 'el');
+    document.documentElement.lang = lang;
+    try { localStorage.setItem('argos-lang', lang); } catch (e) {}
   }
   document.getElementById('lang-en').addEventListener('click', function () { setLang('en'); });
   document.getElementById('lang-el').addEventListener('click', function () { setLang('el'); });
 
-  var PRETTY = {
-    name: 'Name', road_class: 'Road class', osm_highway: 'OSM highway',
-    length_m: 'Length', maxspeed: 'Max speed', surface: 'Surface',
-    poi_type: 'Type', category: 'Category', access_score: 'Access score',
-    road_dist_m: 'Road distance', fire_min: 'Fire response', port_min: 'Nearest port',
-    area_m2: 'Area', levels: 'Levels', street: 'Street', sac_scale: 'SAC scale',
-    route_type: 'Route type', curated: 'Curated'
-  };
   function fmt(key, val) {
     if (val === null || val === undefined || val === '') return null;
-    if (key === 'length_m' || key === 'road_dist_m') return Math.round(val) + ' m';
-    if (key === 'area_m2') return Math.round(val) + ' m²';
-    if (key === 'fire_min') return Math.round(val * 10) / 10 + ' min';
-    if (key === 'port_min') return Math.round(val * 10) / 10 + ' min';
+    var el = CUR_LANG === 'el';
+    if (key === 'length_m' || key === 'road_dist_m') return Math.round(val) + (el ? ' μ.' : ' m');
+    if (key === 'area_m2') return Math.round(val) + (el ? ' τ.μ.' : ' m²');
+    if (key === 'fire_min' || key === 'port_min') return Math.round(val * 10) / 10 + (el ? ' λεπτά' : ' min');
     if (key === 'access_score') return Math.round(val) + ' / 100';
-    return String(val);
+    if (key === 'maxspeed') return val + (el ? ' χλμ/ώρα' : ' km/h');
+    var s = String(val);
+    if (el) {
+      if (VALS[key] && VALS[key][s]) return VALS[key][s];
+      if (s === 'yes') return 'ναι';
+      if (s === 'no') return 'όχι';
+    }
+    return s;
+  }
+  function popupHTML(props, lid) {
+    var dict = PRETTY_L[CUR_LANG];
+    var rows = '';
+    Object.keys(dict).forEach(function (k) {
+      var v = k === 'name' ? fmt('name', props[nameProp()] || props.name) : fmt(k, props[k]);
+      if (v) rows += '<tr><td class="k">' + dict[k] + '</td><td>' + v + '</td></tr>';
+    });
+    var lname = lid.split('-')[0];
+    var title = props[nameProp()] || props.name || (LAYER_T[lname] ? LAYER_T[lname][CUR_LANG] : lname);
+    return '<div class="ptitle">' + title + '</div><table class="ptable">' + rows + '</table>';
   }
   var CLICKABLE = ['pois-circle', 'beaches-circle', 'beaches-fill',
                    'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track'];
   CLICKABLE.forEach(function (lid) {
     map.on('click', lid, function (e) {
-      var f = e.features[0];
-      var rows = '';
-      Object.keys(PRETTY).forEach(function (k) {
-        var v = fmt(k, f.properties[k]);
-        if (v) rows += '<tr><td class="k">' + PRETTY[k] + '</td><td>' + v + '</td></tr>';
-      });
-      var title = f.properties.name || (lid.split('-')[0]);
       new maplibregl.Popup({ closeButton: true })
         .setLngLat(e.lngLat)
-        .setHTML('<div class="ptitle">' + title + '</div><table class="ptable">' + rows + '</table>')
+        .setHTML(popupHTML(e.features[0].properties, lid))
         .addTo(map);
     });
     map.on('mouseenter', lid, function () { map.getCanvas().style.cursor = 'pointer'; });
@@ -261,6 +395,11 @@ map.on('load', function () {
       });
     });
   });
+
+  // language: remember choice (shared 'argos-lang' key with the landing page)
+  var savedLang = 'en';
+  try { savedLang = localStorage.getItem('argos-lang') || 'en'; } catch (e) {}
+  if (savedLang !== 'en') setLang(savedLang);
 });
 
 function tickClock() {
