@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARGOS : : Kefalonia Digital Twin</title>
 <link rel="icon" href="data:,">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Space Grotesk';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/SpaceGrotesk-Argos.woff2') format('woff2');font-weight:300 700;font-display:swap;}
+@font-face{font-family:'Inter';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/Inter-Argos.woff2') format('woff2');font-weight:100 700;font-display:swap;}
+</style>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
   html, body { margin:0; padding:0; height:100%; background:#0A1628; }
@@ -17,7 +20,7 @@
     backdrop-filter:blur(4px); z-index:10;
   }
   #ui h1 {
-    margin:0; font-family:'Space Grotesk',sans-serif; font-size:15px;
+    margin:0; font-family:'Space Grotesk','Inter',sans-serif; font-size:15px;
     letter-spacing:0.12em; color:#F4EEE0; font-weight:700; line-height:1.4;
   }
   .motto { font-size:11px; color:#8A9AB0; margin:4px 0 2px; }
@@ -38,7 +41,7 @@
   .subbrand img:hover { opacity:1; }
   .langrow { display:flex; gap:6px; margin:2px 0 4px; }
   .langbtn { flex:0 0 auto; padding:2px 10px; border-radius:100px; border:1px solid #8A7A3A;
-    background:transparent; color:#8A9AB0; font-family:'Space Grotesk',sans-serif;
+    background:transparent; color:#8A9AB0; font-family:'Space Grotesk','Inter',sans-serif;
     font-size:10px; letter-spacing:0.14em; cursor:pointer; }
   .langbtn.on { border-color:#C9A227; color:#C9A227; background:rgba(201,162,39,0.08); }
   #clock {
@@ -53,7 +56,7 @@
   }
   .maplibregl-popup-tip { border-top-color:#8A7A3A !important; }
   .maplibregl-popup-close-button { color:#8A9AB0; }
-  .ptitle { font-family:'Space Grotesk',sans-serif; color:#C9A227; font-size:12px; margin-bottom:6px; letter-spacing:0.08em; }
+  .ptitle { font-family:'Space Grotesk','Inter',sans-serif; color:#C9A227; font-size:12px; margin-bottom:6px; letter-spacing:0.08em; }
   .ptable td { padding:1px 6px 1px 0; vertical-align:top; }
   .ptable td.k { color:#8A9AB0; }
   #ask {
@@ -77,7 +80,7 @@
   #ask-note { font-size:9px; color:#5A6A80; margin-top:6px; line-height:1.4; }
   #ask-clear {
     margin-top:8px; padding:3px 10px; border-radius:100px; border:1px solid #8A7A3A;
-    background:transparent; color:#8A9AB0; font-family:'Space Grotesk',sans-serif;
+    background:transparent; color:#8A9AB0; font-family:'Space Grotesk','Inter',sans-serif;
     font-size:10px; letter-spacing:0.12em; cursor:pointer;
   }
   #ask-clear:hover { border-color:#C9A227; color:#C9A227; }
@@ -167,6 +170,19 @@ map.on('load', function () {
   map.addSource('hill', { type: 'raster', url: HILL, tileSize: 256 });
   map.addLayer({ id: 'hillshade', type: 'raster', source: 'hill',
     paint: { 'raster-opacity': 0.75, 'raster-contrast': 0.3, 'raster-brightness-max': 1 } });
+
+  map.addSource('bathy', { type: 'geojson', data: './bathymetry_contours.geojson' });
+  map.addLayer({ id: 'bathy-line', type: 'line', source: 'bathy',
+    paint: { 'line-color': '#4A7CA6',
+      'line-width': ['interpolate', ['linear'], ['zoom'], 9, 0.35, 14, 1.0],
+      'line-opacity': ['match', ['get', 'depth_m'], 25, 0.16, 50, 0.2, 100, 0.26, 200, 0.32, 400, 0.36, 0.4] } });
+  map.addLayer({ id: 'bathy-label', type: 'symbol', source: 'bathy', minzoom: 11,
+    filter: ['>=', ['get', 'depth_m'], 200],
+    layout: { 'symbol-placement': 'line',
+      'text-field': ['concat', ['to-string', ['get', 'depth_m']], ' m'],
+      'text-font': ['Noto Sans Regular'], 'text-size': 9, 'text-optional': true },
+    paint: { 'text-color': '#5E8DB5', 'text-opacity': 0.85,
+      'text-halo-color': '#0A1628', 'text-halo-width': 1 } });
 
   map.addSource('vectors', { type: 'vector', url: TILES });
 
@@ -500,7 +516,8 @@ map.on('load', function () {
     [['roads-main', 'line-opacity'], ['roads-local', 'line-opacity'], ['roads-track', 'line-opacity'],
      ['trails', 'line-opacity'], ['buildings-fill', 'fill-opacity'], ['beaches-fill', 'fill-opacity'],
      ['beaches-circle', 'circle-opacity'], ['pois-circle', 'circle-opacity'],
-     ['pois-label', 'text-opacity'], ['places-label', 'text-opacity'], ['hillshade', 'raster-opacity']
+     ['pois-label', 'text-opacity'], ['places-label', 'text-opacity'], ['hillshade', 'raster-opacity'],
+     ['bathy-line', 'line-opacity'], ['bathy-label', 'text-opacity']
     ].forEach(function (lp) {
       var cur = map.getPaintProperty(lp[0], lp[1]);
       if (cur === undefined || cur === null) cur = 1;
