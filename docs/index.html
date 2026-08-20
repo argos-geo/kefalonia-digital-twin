@@ -56,6 +56,31 @@
   .ptitle { font-family:'Space Grotesk',sans-serif; color:#C9A227; font-size:12px; margin-bottom:6px; letter-spacing:0.08em; }
   .ptable td { padding:1px 6px 1px 0; vertical-align:top; }
   .ptable td.k { color:#8A9AB0; }
+  #ask {
+    position:absolute; left:16px; bottom:16px; width:296px;
+    background:rgba(15,29,51,0.93); border:1px solid #8A7A3A; border-radius:10px;
+    padding:12px 14px; color:#E8E4DC; font-family:Inter,sans-serif;
+    backdrop-filter:blur(4px); z-index:10;
+  }
+  #ask .sect { margin:0 0 8px; }
+  .chip {
+    display:block; width:100%; text-align:left; margin:4px 0; padding:6px 9px;
+    background:rgba(201,162,39,0.06); border:1px solid #8A7A3A; border-radius:8px;
+    color:#E8E4DC; font-family:Inter,sans-serif; font-size:11px; line-height:1.35; cursor:pointer;
+  }
+  .chip:hover { border-color:#C9A227; background:rgba(201,162,39,0.14); }
+  .chip.on { border-color:#C9A227; background:rgba(201,162,39,0.18); color:#F4EEE0; }
+  #ask-card { margin-top:8px; border-top:1px solid #8A7A3A; padding-top:8px; }
+  #ask-ans { font-size:12px; line-height:1.5; color:#F4EEE0; }
+  #ask-ans b { color:#C9A227; }
+  #ask-caveat { font-size:10px; color:#D4762C; margin-top:6px; line-height:1.4; }
+  #ask-note { font-size:9px; color:#5A6A80; margin-top:6px; line-height:1.4; }
+  #ask-clear {
+    margin-top:8px; padding:3px 10px; border-radius:100px; border:1px solid #8A7A3A;
+    background:transparent; color:#8A9AB0; font-family:'Space Grotesk',sans-serif;
+    font-size:10px; letter-spacing:0.12em; cursor:pointer;
+  }
+  #ask-clear:hover { border-color:#C9A227; color:#C9A227; }
 </style>
 </head>
 <body>
@@ -93,6 +118,19 @@
     <span id="m-foot-data">Data &copy;</span> <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) ·
     <a href="https://argos-geo.org">argos-geo.org</a> ·
     <a href="https://github.com/argos-geo/kefalonia-digital-twin">GitHub</a>
+  </div>
+</div>
+<div id="ask">
+  <div class="sect" id="m-sect-ask">Ask the twin &middot; v0.1.0 demo</div>
+  <button class="chip" id="m-q1" data-q="q1">Which buildings are more than 15 min from fire response?</button>
+  <button class="chip" id="m-q2" data-q="q2">How many accommodations sit within 1 km of each named beach?</button>
+  <button class="chip" id="m-q3" data-q="q3">Which named beaches lack a paved road within 500 m?</button>
+  <button class="chip" id="m-q4" data-q="q4">Fiskardo &rarr; nearest port: how long, and which route?</button>
+  <div id="ask-card" style="display:none">
+    <div id="ask-ans"></div>
+    <div id="ask-caveat" style="display:none"></div>
+    <div id="ask-note">Pre-wired questions, real PostGIS + pgRouting underneath. It pretends to be smart &mdash; honestly.</div>
+    <button id="ask-clear">&#10005; Clear</button>
   </div>
 </div>
 <div id="clock"><span id="m-clock">Pota_Irtes local time</span> — <span id="pt">--:--</span></div>
@@ -212,7 +250,14 @@ map.on('load', function () {
       'm-leg-7': 'buildings (zoom 12+)',
       'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
       'm-foot-data': 'Data &copy;',
-      'm-clock': 'Pota_Irtes local time'
+      'm-clock': 'Pota_Irtes local time',
+      'm-sect-ask': 'Ask the twin &middot; v0.1.0 demo',
+      'm-q1': 'Which buildings are more than 15 min from fire response?',
+      'm-q2': 'How many accommodations sit within 1 km of each named beach?',
+      'm-q3': 'Which named beaches lack a paved road within 500 m?',
+      'm-q4': 'Fiskardo &rarr; nearest port: how long, and which route?',
+      'm-ask-note': 'Pre-wired questions, real PostGIS + pgRouting underneath. It pretends to be smart &mdash; honestly.',
+      'm-ask-clear': '&#10005; Clear'
     },
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
@@ -225,7 +270,14 @@ map.on('load', function () {
       'm-leg-7': 'Κτίρια (zoom 12+)',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
       'm-foot-data': 'Δεδομένα &copy;',
-      'm-clock': 'Pota_Irtes — τοπική ώρα'
+      'm-clock': 'Pota_Irtes — τοπική ώρα',
+      'm-sect-ask': 'Ρώτα τον δίδυμο &middot; demo v0.1.0',
+      'm-q1': 'Ποια κτίρια απέχουν πάνω από 15 λεπτά από πυροσβεστική κάλυψη;',
+      'm-q2': 'Πόσες καταλύσεις βρίσκονται εντός 1 χλμ από κάθε επώνυμη παραλία;',
+      'm-q3': 'Ποιες επώνυμες παραλίες δεν έχουν ασφαλτοστρωμένο δρόμο σε 500 μ.;',
+      'm-q4': 'Φισκάρδο &rarr; κοντινότερο λιμάνι: πόση ώρα και από πού;',
+      'm-ask-note': 'Προ-συνδεδεμένες ερωτήσεις, πραγματικά PostGIS + pgRouting από κάτω. Υποκρίνεται το έξυπνο — τίμια.',
+      'm-ask-clear': '&#10005; Καθαρισμός'
     }
   };
 
@@ -336,6 +388,7 @@ map.on('load', function () {
     document.getElementById('lang-el').classList.toggle('on', lang === 'el');
     document.documentElement.lang = lang;
     try { localStorage.setItem('argos-lang', lang); } catch (e) {}
+    if (typeof demoState !== 'undefined' && demoState.q) renderAnswer();
   }
   document.getElementById('lang-en').addEventListener('click', function () { setLang('en'); });
   document.getElementById('lang-el').addEventListener('click', function () { setLang('el'); });
@@ -395,6 +448,220 @@ map.on('load', function () {
       });
     });
   });
+
+  // ---- T27 demo: Ask the twin / Ρώτα τον δίδυμο ----
+  var DEMO_BASE = './assets/demo/';
+  var demoState = { q: null, stats: null, feats: null };
+  var demoDimmed = [];
+
+  function nfmt(x) { return Number(x).toLocaleString(CUR_LANG === 'el' ? 'el-GR' : 'en-US'); }
+  var ANS = {
+    q1: {
+      en: function (d) { return '<b>' + nfmt(d.beyond_15) + ' of ' + nfmt(d.with_data) + '</b> buildings (<b>' + nfmt(d.pct) + '%</b>) sit beyond the 15-minute fire-response envelope. Gold &rarr; red = minutes away.'; },
+      el: function (d) { return '<b>' + nfmt(d.beyond_15) + ' από ' + nfmt(d.with_data) + '</b> κτίρια (<b>' + nfmt(d.pct) + '%</b>) απέχουν πάνω από 15 λεπτά από πυροσβεστική κάλυψη. Χρυσό &rarr; κόκκινο = λεπτά απόστασης.'; }
+    },
+    q2: {
+      en: function (d) { return '<b>' + d.top + '</b> tops the pressure index: <b>' + d.topN + '</b> accommodations within 1 km. ' + d.n + ' named beaches ranked.'; },
+      el: function (d) { return '<b>' + d.top + '</b>: πρώτη σε πίεση με <b>' + d.topN + '</b> καταλύματα εντός 1 χλμ. Κατατάχθηκαν ' + d.n + ' επώνυμες παραλίες.'; }
+    },
+    q3: {
+      en: function (d) { return '<b>' + d.n + '</b> named beaches lack paved access within 500 m — led by <b>' + d.top + '</b> at ' + d.topD + ' m from the nearest paved road.'; },
+      el: function (d) { return '<b>' + d.n + '</b> επώνυμες παραλίες δεν έχουν ασφαλτοστρωμένο δρόμο σε 500 μ. — πρώτη η <b>' + d.top + '</b> με ' + d.topD + ' μ. από τον κοντινότερο ασφαλτοστρωμένο.'; }
+    },
+    q4: {
+      en: function (d) { return 'Fiskardo &rarr; <b>' + d.port + '</b>: <b>' + d.dist_km + ' km</b>, about <b>' + d.est_min + ' min</b> at modelled speeds. The route is drawn in gold.'; },
+      el: function (d) { return 'Φισκάρδο &rarr; <b>' + d.port + '</b>: <b>' + d.dist_km + ' χλμ</b>, περίπου <b>' + d.est_min + ' λεπτά</b> με τα μοντελοποιημένα όρια. Η διαδρομή σε χρυσό.'; }
+    }
+  };
+  var CAVEAT = {
+    q4: {
+      en: 'Note: the model routes via Assos — it does not trust the Fiskardo–Agia Efimia coastal road yet (open QA item).',
+      el: 'Σημ.: το μοντέλο περνά μέσω Άσσου — δεν εμπιστεύεται ακόμα τον παραλιακό δρόμο Φισκάρδο–Αγία Ευφημία (ανοιχτό θέμα QA).'
+    }
+  };
+
+  function demoClear() {
+    ['demo-q1-fill', 'demo-q2-fill', 'demo-q2-pts', 'demo-q2-label', 'demo-q3-fill', 'demo-q3-line',
+     'demo-q3-pts', 'demo-q3-label', 'demo-q4-line', 'demo-q4-pts', 'demo-q4-lbl'].forEach(function (lid) {
+      if (map.getLayer(lid)) map.removeLayer(lid);
+    });
+    ['demo-q1', 'demo-q2', 'demo-q2p', 'demo-q3', 'demo-q3p', 'demo-q4-line', 'demo-q4-pts'].forEach(function (sid) {
+      if (map.getSource(sid)) map.removeSource(sid);
+    });
+    demoDimmed.forEach(function (r) { map.setPaintProperty(r.l, r.p, r.v); });
+    demoDimmed = [];
+    demoState = { q: null, stats: null, feats: null };
+    document.getElementById('ask-card').style.display = 'none';
+    var chips = document.querySelectorAll('.chip');
+    for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  }
+
+  function dimBase() {
+    [['roads-main', 'line-opacity'], ['roads-local', 'line-opacity'], ['roads-track', 'line-opacity'],
+     ['trails', 'line-opacity'], ['buildings-fill', 'fill-opacity'], ['beaches-fill', 'fill-opacity'],
+     ['beaches-circle', 'circle-opacity'], ['pois-circle', 'circle-opacity'],
+     ['pois-label', 'text-opacity'], ['places-label', 'text-opacity'], ['hillshade', 'raster-opacity']
+    ].forEach(function (lp) {
+      var cur = map.getPaintProperty(lp[0], lp[1]);
+      if (cur === undefined || cur === null) cur = 1;
+      demoDimmed.push({ l: lp[0], p: lp[1], v: cur });
+      map.setPaintProperty(lp[0], lp[1], lp[1] === 'raster-opacity' ? cur * 0.5 : cur * 0.25);
+    });
+  }
+
+  function computeAnswer(q, stats, gj) {
+    var i, top;
+    if (q === 'q1' || q === 'q4') return stats;
+    if (q === 'q2') {
+      top = null;
+      for (i = 0; i < gj.features.length; i++) {
+        var f = gj.features[i];
+        if (!top || f.properties.acc_1km > top.properties.acc_1km) top = f;
+      }
+      return { top: top.properties.beach, topN: top.properties.acc_1km, n: gj.features.length };
+    }
+    if (q === 'q3') {
+      top = null;
+      for (i = 0; i < gj.features.length; i++) {
+        var b = gj.features[i];
+        var d = (b.properties.paved_dist_m === null || b.properties.paved_dist_m === undefined) ? Infinity : b.properties.paved_dist_m;
+        if (!top || d > top.d) top = { d: d, name: b.properties.beach };
+      }
+      return { n: gj.features.length, top: top.name, topD: top.d === Infinity ? '>2000' : Math.round(top.d) };
+    }
+  }
+
+  function renderAnswer() {
+    if (!demoState.q) return;
+    var d = computeAnswer(demoState.q, demoState.stats, demoState.feats);
+    document.getElementById('ask-ans').innerHTML = ANS[demoState.q][CUR_LANG](d);
+    var cav = CAVEAT[demoState.q];
+    var cel = document.getElementById('ask-caveat');
+    cel.textContent = cav ? cav[CUR_LANG] : '';
+    cel.style.display = cav ? 'block' : 'none';
+  }
+
+  function centroidPoints(gj) {
+    var feats = [];
+    gj.features.forEach(function (f) {
+      var bb = [180, 90, -180, -90];
+      (function walk(c) {
+        if (typeof c[0] === 'number') {
+          if (c[0] < bb[0]) bb[0] = c[0]; if (c[1] < bb[1]) bb[1] = c[1];
+          if (c[0] > bb[2]) bb[2] = c[0]; if (c[1] > bb[3]) bb[3] = c[1];
+        } else { c.forEach(walk); }
+      })(f.geometry.coordinates);
+      feats.push({ type: 'Feature', geometry: { type: 'Point', coordinates: [(bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2] }, properties: f.properties });
+    });
+    return { type: 'FeatureCollection', features: feats };
+  }
+
+  function addDemoLayers(q, gj, gj2) {
+    if (q === 'q1') {
+      map.addSource('demo-q1', { type: 'geojson', data: gj });
+      map.addLayer({ id: 'demo-q1-fill', type: 'fill', source: 'demo-q1',
+        paint: { 'fill-color': ['interpolate', ['linear'], ['get', 'fire_min'],
+                   15, '#C9A227', 45, '#D4762C', 90, '#B03A2E'],
+                 'fill-opacity': 0.6, 'fill-outline-color': 'rgba(0,0,0,0)' }});
+    } else if (q === 'q2') {
+      map.addSource('demo-q2', { type: 'geojson', data: gj });
+      map.addSource('demo-q2p', { type: 'geojson', data: centroidPoints(gj) });
+      map.addLayer({ id: 'demo-q2-fill', type: 'fill', source: 'demo-q2',
+        paint: { 'fill-color': ['interpolate', ['linear'], ['get', 'acc_1km'],
+                   0, '#5A6A80', 15, '#C9A227', 50, '#D4762C'],
+                 'fill-opacity': 0.3, 'fill-outline-color': 'rgba(201,162,39,0.5)' }});
+      map.addLayer({ id: 'demo-q2-pts', type: 'circle', source: 'demo-q2p',
+        paint: { 'circle-color': ['interpolate', ['linear'], ['get', 'acc_1km'],
+                   0, '#8A9AB0', 15, '#C9A227', 50, '#D4762C'],
+          'circle-opacity': 0.9,
+          'circle-radius': ['interpolate', ['linear'], ['get', 'acc_1km'], 0, 3.5, 50, 16],
+          'circle-stroke-color': '#0A1628', 'circle-stroke-width': 1 }});
+      map.addLayer({ id: 'demo-q2-label', type: 'symbol', source: 'demo-q2p',
+        layout: { 'text-field': ['to-string', ['get', 'acc_1km']], 'text-size': 11,
+          'text-font': ['Noto Sans Regular'], 'text-optional': true },
+        paint: { 'text-color': '#F4EEE0', 'text-halo-color': '#0A1628', 'text-halo-width': 1.2 }});
+    } else if (q === 'q3') {
+      map.addSource('demo-q3', { type: 'geojson', data: gj });
+      map.addLayer({ id: 'demo-q3-fill', type: 'fill', source: 'demo-q3',
+        paint: { 'fill-color': '#C9A227', 'fill-opacity': 0.55 }});
+      map.addLayer({ id: 'demo-q3-line', type: 'line', source: 'demo-q3',
+        paint: { 'line-color': '#C9A227', 'line-width': 2.2 }});
+      map.addSource('demo-q3p', { type: 'geojson', data: centroidPoints(gj) });
+      map.addLayer({ id: 'demo-q3-pts', type: 'circle', source: 'demo-q3p',
+        paint: { 'circle-color': '#C9A227', 'circle-radius': 7, 'circle-opacity': 0.95,
+          'circle-stroke-color': '#0A1628', 'circle-stroke-width': 2 }});
+      map.addLayer({ id: 'demo-q3-label', type: 'symbol', source: 'demo-q3',
+        layout: { 'text-field': ['get', 'beach'], 'text-size': 11, 'text-font': ['Noto Sans Regular'],
+          'text-optional': true, 'text-offset': [0, 1], 'text-anchor': 'top' },
+        paint: { 'text-color': '#C9A227', 'text-halo-color': '#0A1628', 'text-halo-width': 1.2 }});
+    } else if (q === 'q4') {
+      map.addSource('demo-q4-line', { type: 'geojson', data: gj });
+      map.addSource('demo-q4-pts', { type: 'geojson', data: gj2 });
+      map.addLayer({ id: 'demo-q4-line', type: 'line', source: 'demo-q4-line',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#C9A227', 'line-width': 4, 'line-opacity': 0.95 }});
+      map.addLayer({ id: 'demo-q4-pts', type: 'circle', source: 'demo-q4-pts',
+        paint: { 'circle-color': ['match', ['get', 'role'], 'origin', '#F4EEE0', '#C9A227'],
+          'circle-radius': 7, 'circle-stroke-color': '#0A1628', 'circle-stroke-width': 2 }});
+      map.addLayer({ id: 'demo-q4-lbl', type: 'symbol', source: 'demo-q4-pts',
+        layout: { 'text-field': ['get', 'name'], 'text-size': 11, 'text-font': ['Noto Sans Regular'],
+          'text-optional': true, 'text-offset': [0, 1.1], 'text-anchor': 'top' },
+        paint: { 'text-color': '#F4EEE0', 'text-halo-color': '#0A1628', 'text-halo-width': 1.2 }});
+      var bb = [180, 90, -180, -90];
+      gj.features.forEach(function (f) {
+        var cs = f.geometry.type === 'LineString' ? [f.geometry.coordinates] : f.geometry.coordinates;
+        cs.forEach(function (line) {
+          line.forEach(function (c) {
+            if (c[0] < bb[0]) bb[0] = c[0]; if (c[1] < bb[1]) bb[1] = c[1];
+            if (c[0] > bb[2]) bb[2] = c[0]; if (c[1] > bb[3]) bb[3] = c[1];
+          });
+        });
+      });
+      if (bb[0] < 180) map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]],
+        { padding: { left: 330, top: 70, right: 70, bottom: 240 }, duration: 900 });
+    }
+  }
+
+  var DEMO_FILES = {
+    q1: ['q1_stats.json', 'q1.geojson'],
+    q2: ['q2.geojson'],
+    q3: ['q3.geojson'],
+    q4: ['q4_stats.json', 'q4.geojson', 'q4_points.geojson']
+  };
+  function demoAsk(q) {
+    demoClear();
+    var chips = document.querySelectorAll('.chip');
+    for (var i = 0; i < chips.length; i++) chips[i].classList.toggle('on', chips[i].getAttribute('data-q') === q);
+    document.getElementById('ask-card').style.display = 'block';
+    document.getElementById('ask-ans').textContent = '…';
+    document.getElementById('ask-caveat').style.display = 'none';
+    var fetches = DEMO_FILES[q].map(function (fn) {
+      return fetch(DEMO_BASE + fn).then(function (r) { if (!r.ok) throw new Error(fn); return r.json(); });
+    });
+    setTimeout(function () {
+      Promise.all(fetches).then(function (arr) {
+        var stats = null, gj = null, gj2 = null;
+        if (q === 'q1') { stats = arr[0]; gj = arr[1]; }
+        else if (q === 'q4') { stats = arr[0]; gj = arr[1]; gj2 = arr[2]; }
+        else { gj = arr[0]; }
+        demoState = { q: q, stats: stats, feats: gj };
+        dimBase();
+        addDemoLayers(q, gj, gj2);
+        renderAnswer();
+      }).catch(function () {
+        document.getElementById('ask-ans').textContent =
+          CUR_LANG === 'el' ? 'Τα δεδομένα demo δεν είναι διαθέσιμα.' : 'Demo data unavailable.';
+      });
+    }, 450);
+  }
+
+  document.querySelectorAll('.chip').forEach(function (c) {
+    c.addEventListener('click', function () {
+      var q = c.getAttribute('data-q');
+      if (demoState.q === q) demoClear(); else demoAsk(q);
+    });
+  });
+  document.getElementById('ask-clear').addEventListener('click', demoClear);
 
   // language: remember choice (shared 'argos-lang' key with the landing page)
   var savedLang = 'en';
