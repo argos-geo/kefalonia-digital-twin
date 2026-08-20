@@ -1,5 +1,1 @@
-                                          jsonb_build_object                                          
-------------------------------------------------------------------------------------------------------
- {"port": "Agia Effimia Marina", "edges": 116, "dist_km": 29.0, "est_min": 44, "port_type": "marina"}
-(1 row)
-
+{"port": "Agia Effimia Marina", "edges": 116, "dist_km": 29.0, "est_min": 44, "port_type": "marina"}

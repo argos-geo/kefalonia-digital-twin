@@ -1,3 +1,5 @@
+\pset tuples_only on
+\pset format unaligned
 \o /tmp/q4_stats.json
 WITH o AS (
   SELECT ST_Transform(p.way,4326) AS g, p.name AS nm FROM public.planet_osm_point p
