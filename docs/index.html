@@ -73,7 +73,7 @@
   .ptable td { padding:1px 6px 1px 0; vertical-align:top; }
   .ptable td.k { color:#8A9AB0; }
   #ask {
-    position:static; width:auto; flex:0 0 auto; max-height:46%; overflow-y:auto;
+    position:relative; width:auto; flex:0 0 auto; max-height:46%; overflow-y:auto;
     background:rgba(15,29,51,0.93); border:1px solid #8A7A3A; border-radius:10px;
     padding:12px 14px; color:#E8E4DC; font-family:Inter,sans-serif;
     backdrop-filter:blur(4px);
@@ -117,22 +117,42 @@
   #ui::-webkit-scrollbar-thumb, #ask::-webkit-scrollbar-thumb { background:#8A7A3A; border-radius:3px; }
   #ui::-webkit-scrollbar-track, #ask::-webkit-scrollbar-track { background:transparent; }
   #ui, #ask { scrollbar-width:thin; scrollbar-color:#8A7A3A transparent; }
-  /* ---- mobile compaction (T52) ---- */
-  @media (max-width: 768px) {
-    #leftcol { top:8px; left:8px; right:8px; bottom:8px; width:auto; }
-    #ui { max-height:44vh; padding:10px 12px; }
-    #ui h1 { font-size:13px; }
-    .brand img { width:52px; height:52px; }
-    .subbrand img { width:22px; height:22px; }
-    .tagline { font-size:12px; }
-    #ask { max-height:40vh; padding:10px 12px; }
-    .chip { padding:12px 10px; min-height:44px; }
-    .langbtn { padding:6px 14px; }
-    .basemap-ctrl button { padding:10px 12px; font-size:11px; }
-    #m-ask-clear { padding:8px 14px; }
-    #clock { display:none; }
-    .maplibregl-ctrl-bottom-right { bottom:8px; }
+  /* ---- mobile drawers (T52 rev2): map first, panels on demand ---- */
+  #btn-layers, #btn-askpill, #m-ask-close { display:none; }
+  body.mobile #leftcol { position:static; display:block; width:auto; }
+  body.mobile #ui { position:fixed; top:8px; left:8px; right:8px; width:auto; max-height:62vh; z-index:30; display:none; padding:10px 12px; }
+  body.mobile.u-open #ui { display:block; }
+  body.mobile #ask { position:fixed; left:8px; right:8px; bottom:8px; width:auto; max-height:56vh; z-index:30; display:none; padding:10px 12px; }
+  body.mobile.a-open #ask { display:block; }
+  body.mobile #ui h1 { font-size:13px; }
+  body.mobile .brand img { width:52px; height:52px; }
+  body.mobile .subbrand img { width:22px; height:22px; }
+  body.mobile .tagline { font-size:12px; }
+  body.mobile .chip { padding:12px 10px; min-height:44px; }
+  body.mobile .langbtn { padding:6px 14px; }
+  body.mobile .basemap-ctrl button { padding:10px 12px; font-size:11px; }
+  body.mobile #m-ask-clear { padding:8px 14px; }
+  body.mobile #clock { display:none; }
+  body.mobile .maplibregl-ctrl-bottom-right { bottom:64px; }
+  #btn-layers {
+    position:fixed; top:8px; left:8px; z-index:25; width:44px; height:44px;
+    border-radius:10px; border:1px solid #8A7A3A; background:rgba(15,29,51,0.93);
+    color:#C9A227; font-size:18px; cursor:pointer; align-items:center; justify-content:center;
   }
+  body.mobile #btn-layers { display:flex; }
+  #btn-askpill {
+    position:fixed; bottom:12px; left:50%; transform:translateX(-50%); z-index:25;
+    padding:12px 20px; min-height:44px; border-radius:100px; border:1px solid #C9A227;
+    background:rgba(15,29,51,0.95); color:#C9A227; font-family:'Space Grotesk','Inter',sans-serif;
+    font-size:12px; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer;
+  }
+  body.mobile #btn-askpill { display:block; }
+  body.mobile.a-open #btn-askpill { display:none; }
+  #m-ask-close {
+    position:absolute; top:8px; right:8px; width:36px; height:36px; border-radius:8px;
+    border:1px solid #8A7A3A; background:transparent; color:#8A9AB0; font-size:14px; cursor:pointer;
+  }
+  body.mobile #m-ask-close { display:block; }
 </style>
 </head>
 <body>
@@ -174,6 +194,7 @@
   </div>
 </div>
 <div id="ask">
+  <button id="m-ask-close" aria-label="Close">&#10005;</button>
   <div class="sect" id="m-sect-ask">Ask the twin &middot; v0.1.0 demo</div>
   <button class="chip" id="m-q1" data-q="q1">Which buildings are more than 15 min from fire response?</button>
   <button class="chip" id="m-q2" data-q="q2">How many accommodations sit within 1 km of each named beach?</button>
@@ -187,6 +208,8 @@
   </div>
 </div>
 </div>
+<button id="btn-layers" aria-label="Layers">&#9776;</button>
+<button id="btn-askpill"><span id="m-btn-ask">Ask the twin</span></button>
 <div id="clock"><span id="m-clock">Pota_Irtes local time</span> — <span id="pt">--:--</span></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
@@ -412,7 +435,8 @@ map.on('load', function () {
       'm-q4': 'Fiskardo &rarr; nearest port: how long, and which route?',
       'm-ask-note': 'Pre-wired questions, real PostGIS + pgRouting underneath. It pretends to be smart, honestly.',
       'm-ask-clear': '&#10005; Clear',
-      'bm-argos': 'ARGOS', 'bm-sat': 'Satellite', 'bm-osm': 'Streets'
+      'bm-argos': 'ARGOS', 'bm-sat': 'Satellite', 'bm-osm': 'Streets',
+      'm-btn-ask': 'Ask the twin'
     },
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
@@ -433,7 +457,8 @@ map.on('load', function () {
       'm-q4': 'Φισκάρδο &rarr; κοντινότερο λιμάνι: πόση ώρα και από πού;',
       'm-ask-note': 'Προ-συνδεδεμένες ερωτήσεις, πραγματικά PostGIS + pgRouting από κάτω. Υποκρίνεται το έξυπνο — τίμια.',
       'm-ask-clear': '&#10005; Καθαρισμός',
-      'bm-argos': 'ARGOS', 'bm-sat': 'Δορυφορικός', 'bm-osm': 'Δρόμοι'
+      'bm-argos': 'ARGOS', 'bm-sat': 'Δορυφορικός', 'bm-osm': 'Δρόμοι',
+      'm-btn-ask': 'Ρώτα τον δίδυμο'
     }
   };
 
@@ -822,6 +847,27 @@ map.on('load', function () {
     });
   });
   document.getElementById('m-ask-clear').addEventListener('click', demoClear);
+
+  // ---- mobile drawers: map first, panels on demand ----
+  var mqMob = window.matchMedia('(max-width: 768px)');
+  function mobSync() {
+    if (mqMob.matches) document.body.classList.add('mobile');
+    else document.body.classList.remove('mobile', 'u-open', 'a-open');
+  }
+  if (mqMob.addEventListener) mqMob.addEventListener('change', mobSync);
+  mobSync();
+  document.getElementById('btn-layers').addEventListener('click', function () {
+    var b = document.body, opening = !b.classList.contains('u-open');
+    b.classList.toggle('u-open');
+    if (opening) b.classList.remove('a-open');
+  });
+  document.getElementById('btn-askpill').addEventListener('click', function () {
+    document.body.classList.add('a-open');
+    document.body.classList.remove('u-open');
+  });
+  document.getElementById('m-ask-close').addEventListener('click', function () {
+    document.body.classList.remove('a-open');
+  });
 
   // language: remember choice (shared 'argos-lang' key with the landing page)
   var savedLang = 'en';
