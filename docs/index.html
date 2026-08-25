@@ -4,6 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARGOS : : Kefalonia Digital Twin</title>
+<meta name="description" content="Interactive digital twin map of Kefalonia. 12,217 roads, 22,013 buildings, 197 beaches, wildfire risk layers, flood screening, and evacuation routing. Open source and free.">
+<link rel="canonical" href="https://argos-geo.org/map">
+<meta property="og:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta property="og:description" content="Interactive digital twin map of Kefalonia. 12,217 roads, 22,013 buildings, 197 beaches, wildfire risk layers, flood screening, and evacuation routing. Open source and free.">
+<meta property="og:url" content="https://argos-geo.org/map">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="ARGOS">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta name="twitter:description" content="Interactive digital twin map of Kefalonia. 12,217 roads, 22,013 buildings, 197 beaches, wildfire risk layers, flood screening, and evacuation routing. Open source and free.">
+<meta name="twitter:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
 <link rel="icon" type="image/png" href="./assets/ARGOS_Emblem_v3_Icon.png">
 <style>
 @font-face{font-family:'Space Grotesk';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/SpaceGrotesk-Argos.woff2') format('woff2');font-weight:300 700;font-display:swap;}
@@ -210,7 +225,7 @@
 </div>
 <button id="btn-layers" aria-label="Layers">&#9776;</button>
 <button id="btn-askpill"><span id="m-btn-ask">Ask the twin</span></button>
-<div id="clock"><span id="m-clock">Pota_Irtes local time</span> — <span id="pt">--:--</span></div>
+<div id="clock"><span id="m-clock">Pota_Irtes local time</span> · <span id="pt">--:--</span></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
 <script>
@@ -449,13 +464,13 @@ map.on('load', function () {
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
-      'm-clock': 'Pota_Irtes — τοπική ώρα',
+      'm-clock': 'Pota_Irtes · τοπική ώρα',
       'm-sect-ask': 'Ρώτα τον δίδυμο &middot; demo v0.1.0',
       'm-q1': 'Ποια κτίρια απέχουν πάνω από 15 λεπτά από πυροσβεστική κάλυψη;',
       'm-q2': 'Πόσες καταλύσεις βρίσκονται εντός 1 χλμ από κάθε επώνυμη παραλία;',
       'm-q3': 'Ποιες επώνυμες παραλίες δεν έχουν ασφαλτοστρωμένο δρόμο σε 500 μ.;',
       'm-q4': 'Φισκάρδο &rarr; κοντινότερο λιμάνι: πόση ώρα και από πού;',
-      'm-ask-note': 'Προ-συνδεδεμένες ερωτήσεις, πραγματικά PostGIS + pgRouting από κάτω. Υποκρίνεται το έξυπνο — τίμια.',
+      'm-ask-note': 'Προ-συνδεδεμένες ερωτήσεις, πραγματικά PostGIS + pgRouting από κάτω. Υποκρίνεται το έξυπνο, τίμια.',
       'm-ask-clear': '&#10005; Καθαρισμός',
       'bm-argos': 'ARGOS', 'bm-sat': 'Δορυφορικός', 'bm-osm': 'Δρόμοι',
       'm-btn-ask': 'Ρώτα τον δίδυμο'
@@ -510,7 +525,7 @@ map.on('load', function () {
       commercial:'Εμπορικό', construction:'Υπό κατασκευή', detached:'Μεζονέτα', garage:'Γκαράζ',
       government:'Κυβερνητικό', grandstand:'Εξέδρα', greenhouse:'Θερμοκήπιο', hospital:'Νοσοκομείο',
       hotel:'Ξενοδοχείο', house:'Κατοικία', hut:'Καλύβα', kindergarten:'Νηπιαγωγείο', monastery:'Μοναστήρι',
-      no:'—', pavilion:'Περίπτερο', 'public':'Δημόσιο', residential:'Κατοικίες', retail:'Λιανεμπόριο',
+      no:'–', pavilion:'Περίπτερο', 'public':'Δημόσιο', residential:'Κατοικίες', retail:'Λιανεμπόριο',
       roof:'Στέγαστρο', ruins:'Ερείπια', school:'Σχολείο', shed:'Υπόστεγο', stadium:'Στάδιο',
       toilets:'Τουαλέτες', townhall:'Δημαρχείο', transportation:'Μεταφορών', university:'Πανεπιστήμιο',
       warehouse:'Αποθήκη', yes:'Κτίριο', 'yes;church':'Εκκλησία' },
@@ -646,8 +661,8 @@ map.on('load', function () {
       el: function (d) { return '<b>' + d.top + '</b>: πρώτη σε πίεση με <b>' + d.topN + '</b> καταλύματα εντός 1 χλμ. Κατατάχθηκαν ' + d.n + ' επώνυμες παραλίες.'; }
     },
     q3: {
-      en: function (d) { return '<b>' + d.n + '</b> named beaches lack paved access within 500 m — led by <b>' + d.top + '</b> at ' + d.topD + ' m from the nearest paved road.'; },
-      el: function (d) { return '<b>' + d.n + '</b> επώνυμες παραλίες δεν έχουν ασφαλτοστρωμένο δρόμο σε 500 μ. — πρώτη η <b>' + d.top + '</b> με ' + d.topD + ' μ. από τον κοντινότερο ασφαλτοστρωμένο.'; }
+      en: function (d) { return '<b>' + d.n + '</b> named beaches lack paved access within 500 m, led by <b>' + d.top + '</b> at ' + d.topD + ' m from the nearest paved road.'; },
+      el: function (d) { return '<b>' + d.n + '</b> επώνυμες παραλίες δεν έχουν ασφαλτοστρωμένο δρόμο σε 500 μ., πρώτη η <b>' + d.top + '</b> με ' + d.topD + ' μ. από τον κοντινότερο ασφαλτοστρωμένο.'; }
     },
     q4: {
       en: function (d) { return 'Fiskardo &rarr; <b>' + d.port + '</b>: <b>' + d.dist_km + ' km</b>, about <b>' + d.est_min + ' min</b> at modelled speeds. The route is drawn in gold.'; },
@@ -656,8 +671,8 @@ map.on('load', function () {
   };
   var CAVEAT = {
     q4: {
-      en: 'Note: the model routes via Assos — it does not trust the Fiskardo–Agia Efimia coastal road yet (open QA item).',
-      el: 'Σημ.: το μοντέλο περνά μέσω Άσσου — δεν εμπιστεύεται ακόμα τον παραλιακό δρόμο Φισκάρδο–Αγία Ευφημία (ανοιχτό θέμα QA).'
+      en: 'Note: the model routes via Assos; it does not trust the Fiskardo–Agia Efimia coastal road yet (open QA item).',
+      el: 'Σημ.: το μοντέλο περνά μέσω Άσσου· δεν εμπιστεύεται ακόμα τον παραλιακό δρόμο Φισκάρδο–Αγία Ευφημία (ανοιχτό θέμα QA).'
     }
   };
 
