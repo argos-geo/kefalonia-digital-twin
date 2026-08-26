@@ -653,8 +653,8 @@ map.on('load', function () {
   function nfmt(x) { return Number(x).toLocaleString(CUR_LANG === 'el' ? 'el-GR' : 'en-US'); }
   var ANS = {
     q1: {
-      en: function (d) { return '<b>' + nfmt(d.beyond_15) + ' of ' + nfmt(d.with_data) + '</b> buildings (<b>' + nfmt(d.pct) + '%</b>) sit beyond the 15-minute fire-response envelope. Gold &rarr; red = minutes away.'; },
-      el: function (d) { return '<b>' + nfmt(d.beyond_15) + ' από ' + nfmt(d.with_data) + '</b> κτίρια (<b>' + nfmt(d.pct) + '%</b>) απέχουν πάνω από 15 λεπτά από πυροσβεστική κάλυψη. Χρυσό &rarr; κόκκινο = λεπτά απόστασης.'; }
+      en: function (d) { return '<b>' + nfmt(d.beyond_15) + ' of ' + nfmt(d.with_data) + '</b> buildings (<b>' + nfmt(d.pct) + '%</b>) sit beyond the 15-minute fire-response envelope. Bright red = outside the envelope.'; },
+      el: function (d) { return '<b>' + nfmt(d.beyond_15) + ' από ' + nfmt(d.with_data) + '</b> κτίρια (<b>' + nfmt(d.pct) + '%</b>) απέχουν πάνω από 15 λεπτά από πυροσβεστική κάλυψη. Έντονο κόκκινο = εκτός του φακέλου κάλυψης.'; }
     },
     q2: {
       en: function (d) { return '<b>' + d.top + '</b> tops the pressure index: <b>' + d.topN + '</b> accommodations within 1 km. ' + d.n + ' named beaches ranked.'; },
@@ -758,9 +758,8 @@ map.on('load', function () {
     if (q === 'q1') {
       map.addSource('demo-q1', { type: 'geojson', data: gj });
       map.addLayer({ id: 'demo-q1-fill', type: 'fill', source: 'demo-q1',
-        paint: { 'fill-color': ['interpolate', ['linear'], ['get', 'fire_min'],
-                   15, '#C9A227', 45, '#D4762C', 90, '#B03A2E'],
-                 'fill-opacity': 0.6, 'fill-outline-color': 'rgba(0,0,0,0)' }});
+        paint: { 'fill-color': '#FF3333', 'fill-opacity': 1.0,
+                 'fill-outline-color': '#FF0000' }});
     } else if (q === 'q2') {
       map.addSource('demo-q2', { type: 'geojson', data: gj });
       map.addSource('demo-q2p', { type: 'geojson', data: centroidPoints(gj) });
