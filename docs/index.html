@@ -183,7 +183,7 @@
     <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
   </div>
   <div class="motto" id="m-motto">Watching over the places we call home.</div>
-  <div class="sub" id="m-sub">v0.0.1 vector preview</div>
+  <div class="sub" id="m-sub">v0.0.2 vector preview</div>
   <div class="langrow">
     <button class="langbtn on" id="lang-en">EN</button>
     <button class="langbtn" id="lang-el">ΕΛ</button>
@@ -194,6 +194,7 @@
   <label class="row"><input type="checkbox" id="tgl-buildings" checked> <span id="m-row-buildings">Buildings</span></label>
   <label class="row"><input type="checkbox" id="tgl-beaches" checked> <span id="m-row-beaches">Beaches</span></label>
   <label class="row"><input type="checkbox" id="tgl-pois" checked> <span id="m-row-pois">POIs</span></label>
+  <label class="row"><input type="checkbox" id="tgl-muni"> <span id="m-row-muni">Municipalities</span></label>
   <div class="sect" id="m-sect-legend">Legend</div>
   <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
   <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
@@ -362,6 +363,25 @@ map.on('load', function () {
   map.addSource('vectors', { type: 'vector', url: TILES,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors (ODbL)' });
 
+  map.addLayer({ id: 'muni-fill', type: 'fill', source: 'vectors', 'source-layer': 'municipalities',
+    layout: { visibility: 'none' },
+    paint: { 'fill-color': '#0A1628',
+      'fill-opacity': ['interpolate', ['linear'], ['zoom'], 8, 0.02, 11, 0.08] } });
+  map.addLayer({ id: 'muni-line', type: 'line', source: 'vectors', 'source-layer': 'municipalities',
+    layout: { visibility: 'none' },
+    paint: { 'line-color': '#C9A227', 'line-width': 1.5,
+      'line-opacity': ['interpolate', ['linear'], ['zoom'], 8, 0.45, 11, 1.0] } });
+  map.addLayer({ id: 'muni-label', type: 'symbol', source: 'vectors', 'source-layer': 'municipality_labels',
+    minzoom: 8,
+    layout: { visibility: 'none',
+      'text-field': ['coalesce', ['get', 'name_en'], ['get', 'name']],
+      'text-font': ['Noto Sans Regular'],
+      'text-size': ['interpolate', ['linear'], ['zoom'], 8, 11, 12, 14],
+      'text-optional': true },
+    paint: { 'text-color': '#C9A227',
+      'text-opacity': ['interpolate', ['linear'], ['zoom'], 8, 0.55, 11, 1.0],
+      'text-halo-color': '#0A1628', 'text-halo-width': 1.4 } });
+
   map.addLayer({ id: 'roads-main', type: 'line', source: 'vectors', 'source-layer': 'roads',
     filter: ['in', ['get', 'road_class'], ['literal', ['primary', 'secondary', 'tertiary']]],
     layout: { 'line-cap': 'round', 'line-join': 'round' },
@@ -434,10 +454,10 @@ map.on('load', function () {
     en: {
       'm-motto': 'Watching over the places we call home.',
       'm-tag': 'The map that argues back',
-      'm-sub': 'v0.0.1 vector preview',
+      'm-sub': 'v0.0.2 vector preview',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
-      'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs',
+      'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
       'm-leg-1': 'primary / secondary', 'm-leg-2': 'tertiary', 'm-leg-3': 'local / service',
       'm-leg-4': 'track / path &middot; trail', 'm-leg-5': 'beach', 'm-leg-6': 'POI',
       'm-leg-7': 'buildings (zoom 12+)',
@@ -456,10 +476,10 @@ map.on('load', function () {
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
       'm-tag': 'Ο χάρτης που απαντάει',
-      'm-sub': 'Vector χάρτης v0.0.1',
+      'm-sub': 'Vector χάρτης v0.0.2',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
-      'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος',
+      'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
       'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
@@ -568,7 +588,7 @@ map.on('load', function () {
       waste_disposal:'Απόρριψη αποβλήτων', wayside_shrine:'Εικόνισμα', wine:'Οινοπωλείο', yes:'Σημείο ενδιαφέροντος' }
   };
 
-  var LABEL_LAYERS = ['places-label', 'pois-label'];
+  var LABEL_LAYERS = ['places-label', 'pois-label', 'muni-label'];
   function setLang(lang) {
     CUR_LANG = lang;
     var prop = lang === 'el' ? 'name_el' : 'name_en';
@@ -634,7 +654,8 @@ map.on('load', function () {
     'tgl-trails': ['trails'],
     'tgl-buildings': ['buildings-fill'],
     'tgl-beaches': ['beaches-fill', 'beaches-circle'],
-    'tgl-pois': ['pois-circle', 'pois-label']
+    'tgl-pois': ['pois-circle', 'pois-label'],
+    'tgl-muni': ['muni-fill', 'muni-line', 'muni-label']
   };
   Object.keys(TOGGLES).forEach(function (boxId) {
     document.getElementById(boxId).addEventListener('change', function (ev) {
