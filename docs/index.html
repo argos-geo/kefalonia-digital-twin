@@ -244,9 +244,9 @@
   <div class="leg"><span class="sw" style="background:#C9A227"></span><span id="m-leg-r1">wildfire: moderate</span></div>
   <div class="leg"><span class="sw" style="background:#D4762C"></span><span id="m-leg-r2">wildfire: high</span></div>
   <div class="leg"><span class="sw" style="background:#B03A2E"></span><span id="m-leg-r3">wildfire: very high</span></div>
-  <div class="leg"><span class="sw" style="background:#4A7CA6"></span><span id="m-leg-f1">flood: moderate</span></div>
-  <div class="leg"><span class="sw" style="background:#3D9BD1"></span><span id="m-leg-f2">flood: high</span></div>
-  <div class="leg"><span class="sw" style="background:#7FD8F7"></span><span id="m-leg-f3">flood: very high</span></div>
+  <div class="leg"><span class="sw" style="background:#E67E22"></span><span id="m-leg-f1">flood: moderate</span></div>
+  <div class="leg"><span class="sw" style="background:#E74C3C"></span><span id="m-leg-f2">flood: high</span></div>
+  <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-f3">flood: very high</span></div>
   <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-firecov">beyond 15-min fire response</span></div>
   <div class="foot">
     <span id="m-foot-note">Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).</span><br>
@@ -298,7 +298,7 @@ map.addControl(new maplibregl.NavigationControl(), 'top-right');
 // ---- basemap switcher: ARGOS dark / satellite / OSM streets ----
 var BASEMODE = 'argos';
 var fireCovOn = false;  // batch 2: while true, applyPalette must not repaint buildings
-var ARGOS_BASE = ['land-fill', 'land-line', 'hillshade'];  // bathy pulled 16 Sep: depth values inverted in source geojson, regen pending
+var ARGOS_BASE = ['land-fill', 'land-line', 'hillshade', 'bathy-line', 'bathy-label'];  // bathy back 16 Sep: T105 regen verified
 
 // reality-check palette: kicked in only on Streets (OSM Carto is pale, cream vectors vanish)
 var ARGOS_PAL = {
@@ -397,13 +397,12 @@ map.on('load', function () {
 
   map.addSource('bathy', { type: 'geojson', data: './bathymetry_contours.geojson' });
   map.addLayer({ id: 'bathy-line', type: 'line', source: 'bathy',
-    layout: { visibility: 'none' },  // hidden: inverted depths, regen pending
     paint: { 'line-color': '#4A7CA6',
       'line-width': ['interpolate', ['linear'], ['zoom'], 9, 0.35, 14, 1.0],
       'line-opacity': ['match', ['get', 'depth_m'], 25, 0.16, 50, 0.2, 100, 0.26, 200, 0.32, 400, 0.36, 0.4] } });
   map.addLayer({ id: 'bathy-label', type: 'symbol', source: 'bathy', minzoom: 11,
     filter: ['>=', ['get', 'depth_m'], 200],
-    layout: { visibility: 'none', 'symbol-placement': 'line',  // hidden: inverted depths, regen pending
+    layout: { 'symbol-placement': 'line',
       'text-field': ['concat', ['to-string', ['get', 'depth_m']], ' m'],
       'text-font': ['Noto Sans Regular'], 'text-size': 9, 'text-optional': true },
     paint: { 'text-color': '#5E8DB5', 'text-opacity': 0.85,
@@ -423,9 +422,9 @@ map.on('load', function () {
   map.addLayer({ id: 'flood-fill', type: 'fill', source: 'risk', 'source-layer': 'flood_risk',
     minzoom: 10,
     layout: { visibility: 'none' },
-    paint: { 'fill-color': ['match', ['get', 'risk'], 'moderate', '#4A7CA6', 'high', '#3D9BD1', '#7FD8F7'],
+    paint: { 'fill-color': ['match', ['get', 'risk'], 'moderate', '#E67E22', 'high', '#E74C3C', '#FF3333'],
       'fill-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.35, 13, 0.5],
-      'fill-outline-color': 'rgba(168,228,255,0.25)' }});
+      'fill-outline-color': '#4A7CA6' }});   // steel-blue outline: water echo + corridor separation on warm fill
 
   map.addLayer({ id: 'muni-fill', type: 'fill', source: 'vectors', 'source-layer': 'municipalities',
     layout: { visibility: 'none' },
