@@ -178,6 +178,21 @@
   .ob-title { font-family:'Space Grotesk','Inter',sans-serif; font-size:18px; font-weight:700;
     letter-spacing:.08em; color:#F4EEE0; margin-bottom:10px; }
   .ob-sub { font-size:14px; line-height:1.55; color:#8A9AB0; }
+  /* batch 2: risk layer rows - (i) validation/provenance notes */
+  .rowwrap { display:flex; align-items:center; }
+  .rowwrap .row { flex:1; }
+  .pinfo { width:16px; height:16px; border-radius:50%; border:1px solid #8A7A3A; background:transparent;
+    color:#8A9AB0; font-size:10px; line-height:14px; cursor:pointer; padding:0; flex:none;
+    font-style:italic; font-family:Georgia,serif; }
+  .pinfo:hover, .pinfo.on { color:#C9A227; border-color:#C9A227; }
+  .vnote { display:none; margin:0 0 8px 24px; padding:8px 10px; border-left:2px solid #8A7A3A;
+    background:rgba(138,122,58,0.08); border-radius:0 6px 6px 0;
+    font-size:10.5px; line-height:1.55; color:#B8C2D4; }
+  .vnote.open { display:block; }
+  .vnote b { color:#F4EEE0; font-weight:600; }
+  .vnote a { color:#C9A227; text-decoration:none; }
+  .vnote a:hover { text-decoration:underline; }
+  .vnote .vsrc { display:block; margin-top:5px; color:#8A9AB0; font-size:9.5px; line-height:1.45; }
 </style>
 </head>
 <body>
@@ -211,6 +226,13 @@
   <label class="row"><input type="checkbox" id="tgl-beaches" checked> <span id="m-row-beaches">Beaches</span></label>
   <label class="row"><input type="checkbox" id="tgl-pois" checked> <span id="m-row-pois">POIs</span></label>
   <label class="row"><input type="checkbox" id="tgl-muni"> <span id="m-row-muni">Municipalities</span></label>
+  <div class="sect" id="m-sect-risk">Risk</div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-wildfire"> <span id="m-row-wildfire">Wildfire risk</span></label><button class="pinfo" type="button" data-v="v-wildfire" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-wildfire"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-flood"> <span id="m-row-flood">Flood risk</span></label><button class="pinfo" type="button" data-v="v-flood" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-flood"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-firecov"> <span id="m-row-firecov">Fire coverage</span></label><button class="pinfo" type="button" data-v="v-firecov" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-firecov"></div>
   <div class="sect" id="m-sect-legend">Legend</div>
   <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
   <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
@@ -219,6 +241,13 @@
   <div class="leg"><span class="swd" style="background:#E6D9B8"></span><span id="m-leg-5">beach</span></div>
   <div class="leg"><span class="swd" style="background:#7FA89B"></span><span id="m-leg-6">POI</span></div>
   <div class="leg"><span class="sw" style="background:rgba(244,238,224,0.4)"></span><span id="m-leg-7">buildings (zoom 12+)</span></div>
+  <div class="leg"><span class="sw" style="background:#C9A227"></span><span id="m-leg-r1">wildfire: moderate</span></div>
+  <div class="leg"><span class="sw" style="background:#D4762C"></span><span id="m-leg-r2">wildfire: high</span></div>
+  <div class="leg"><span class="sw" style="background:#B03A2E"></span><span id="m-leg-r3">wildfire: very high</span></div>
+  <div class="leg"><span class="sw" style="background:#4A7CA6"></span><span id="m-leg-f1">flood: moderate</span></div>
+  <div class="leg"><span class="sw" style="background:#3D9BD1"></span><span id="m-leg-f2">flood: high</span></div>
+  <div class="leg"><span class="sw" style="background:#7FD8F7"></span><span id="m-leg-f3">flood: very high</span></div>
+  <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-firecov">beyond 15-min fire response</span></div>
   <div class="foot">
     <span id="m-foot-note">Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).</span><br>
     <a href="https://argos-geo.org">argos-geo.org</a> ·
@@ -248,6 +277,7 @@
 <script>
 var TILES = 'pmtiles://' + new URL('./tiles/kefalonia_vectors.pmtiles', window.location.href).href;
 var HILL = 'pmtiles://' + new URL('./tiles/kefalonia_hillshade.pmtiles', window.location.href).href;
+var RISK_TILES = 'pmtiles://' + new URL('./tiles/kefalonia_risk.pmtiles', window.location.href).href;
 var protocol = new pmtiles.Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
 
@@ -267,7 +297,8 @@ map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
 // ---- basemap switcher: ARGOS dark / satellite / OSM streets ----
 var BASEMODE = 'argos';
-var ARGOS_BASE = ['land-fill', 'land-line', 'hillshade', 'bathy-line', 'bathy-label'];
+var fireCovOn = false;  // batch 2: while true, applyPalette must not repaint buildings
+var ARGOS_BASE = ['land-fill', 'land-line', 'hillshade'];  // bathy pulled 16 Sep: depth values inverted in source geojson, regen pending
 
 // reality-check palette: kicked in only on Streets (OSM Carto is pale, cream vectors vanish)
 var ARGOS_PAL = {
@@ -298,6 +329,7 @@ function applyPalette(mode) {
   var pal = mode === 'osm' ? LIGHT_PAL : ARGOS_PAL;
   Object.keys(pal).forEach(function (lid) {
     if (!map.getLayer(lid)) return;
+    if (lid === 'buildings-fill' && fireCovOn) return;  // fire coverage owns the buildings paint
     Object.keys(pal[lid]).forEach(function (prop) {
       map.setPaintProperty(lid, prop, pal[lid][prop]);
     });
@@ -365,12 +397,13 @@ map.on('load', function () {
 
   map.addSource('bathy', { type: 'geojson', data: './bathymetry_contours.geojson' });
   map.addLayer({ id: 'bathy-line', type: 'line', source: 'bathy',
+    layout: { visibility: 'none' },  // hidden: inverted depths, regen pending
     paint: { 'line-color': '#4A7CA6',
       'line-width': ['interpolate', ['linear'], ['zoom'], 9, 0.35, 14, 1.0],
       'line-opacity': ['match', ['get', 'depth_m'], 25, 0.16, 50, 0.2, 100, 0.26, 200, 0.32, 400, 0.36, 0.4] } });
   map.addLayer({ id: 'bathy-label', type: 'symbol', source: 'bathy', minzoom: 11,
     filter: ['>=', ['get', 'depth_m'], 200],
-    layout: { 'symbol-placement': 'line',
+    layout: { visibility: 'none', 'symbol-placement': 'line',  // hidden: inverted depths, regen pending
       'text-field': ['concat', ['to-string', ['get', 'depth_m']], ' m'],
       'text-font': ['Noto Sans Regular'], 'text-size': 9, 'text-optional': true },
     paint: { 'text-color': '#5E8DB5', 'text-opacity': 0.85,
@@ -378,6 +411,21 @@ map.on('load', function () {
 
   map.addSource('vectors', { type: 'vector', url: TILES,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors (ODbL)' });
+
+  map.addSource('risk', { type: 'vector', url: RISK_TILES,
+    attribution: 'ARGOS WATCH risk models (open data)' });
+
+  map.addLayer({ id: 'wildfire-fill', type: 'fill', source: 'risk', 'source-layer': 'wildfire_risk',
+    minzoom: 10,
+    layout: { visibility: 'none' },
+    paint: { 'fill-color': ['match', ['get', 'risk'], 'moderate', '#C9A227', 'high', '#D4762C', '#B03A2E'],
+      'fill-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.35, 13, 0.5] }});
+  map.addLayer({ id: 'flood-fill', type: 'fill', source: 'risk', 'source-layer': 'flood_risk',
+    minzoom: 10,
+    layout: { visibility: 'none' },
+    paint: { 'fill-color': ['match', ['get', 'risk'], 'moderate', '#4A7CA6', 'high', '#3D9BD1', '#7FD8F7'],
+      'fill-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.35, 13, 0.5],
+      'fill-outline-color': 'rgba(168,228,255,0.25)' }});
 
   map.addLayer({ id: 'muni-fill', type: 'fill', source: 'vectors', 'source-layer': 'municipalities',
     layout: { visibility: 'none' },
@@ -474,9 +522,14 @@ map.on('load', function () {
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
+      'm-sect-risk': 'Risk',
+      'm-row-wildfire': 'Wildfire risk', 'm-row-flood': 'Flood risk', 'm-row-firecov': 'Fire coverage',
       'm-leg-1': 'primary / secondary', 'm-leg-2': 'tertiary', 'm-leg-3': 'local / service',
       'm-leg-4': 'track / path &middot; trail', 'm-leg-5': 'beach', 'm-leg-6': 'POI',
       'm-leg-7': 'buildings (zoom 12+)',
+      'm-leg-r1': 'wildfire: moderate', 'm-leg-r2': 'wildfire: high', 'm-leg-r3': 'wildfire: very high',
+      'm-leg-f1': 'flood: moderate', 'm-leg-f2': 'flood: high', 'm-leg-f3': 'flood: very high',
+      'm-leg-firecov': 'beyond 15-min fire response',
       'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
       'm-clock': 'Pota_Irtes local time',
       'm-sect-ask': 'Ask the twin &middot; v0.1.0 demo',
@@ -496,9 +549,14 @@ map.on('load', function () {
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
+      'm-sect-risk': 'Κίνδυνοι',
+      'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Κάλυψη πυρκαγιών',
       'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
+      'm-leg-r1': 'πυρκαγιά: μέτριος', 'm-leg-r2': 'πυρκαγιά: υψηλός', 'm-leg-r3': 'πυρκαγιά: πολύ υψηλός',
+      'm-leg-f1': 'πλημμύρα: μέτριος', 'm-leg-f2': 'πλημμύρα: υψηλός', 'm-leg-f3': 'πλημμύρα: πολύ υψηλός',
+      'm-leg-firecov': 'πάνω από 15 λεπτά από πυρόσβεση',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
       'm-clock': 'Pota_Irtes · τοπική ώρα',
       'm-sect-ask': 'Ρώτα τον δίδυμο &middot; demo v0.1.0',
@@ -616,6 +674,7 @@ map.on('load', function () {
       var el = document.getElementById(id);
       if (el) el.innerHTML = dict[id];
     });
+    renderVnotes(lang);
     document.getElementById('lang-en').classList.toggle('on', lang === 'en');
     document.getElementById('lang-el').classList.toggle('on', lang === 'el');
     document.documentElement.lang = lang;
@@ -671,7 +730,9 @@ map.on('load', function () {
     'tgl-buildings': ['buildings-fill'],
     'tgl-beaches': ['beaches-fill', 'beaches-circle'],
     'tgl-pois': ['pois-circle', 'pois-label'],
-    'tgl-muni': ['muni-fill', 'muni-line', 'muni-label']
+    'tgl-muni': ['muni-fill', 'muni-line', 'muni-label'],
+    'tgl-wildfire': ['wildfire-fill'],
+    'tgl-flood': ['flood-fill']
   };
   Object.keys(TOGGLES).forEach(function (boxId) {
     document.getElementById(boxId).addEventListener('change', function (ev) {
@@ -681,6 +742,67 @@ map.on('load', function () {
       });
     });
   });
+
+  // ---- batch 2: fire coverage repaint (buildings colored by fire response) ----
+  var FIRECOV_PAINT = {
+    'fill-color': ['case',
+      ['all', ['has', 'fire_min'], ['!=', ['get', 'fire_min'], null], ['>', ['get', 'fire_min'], 15]],
+      '#FF3333', '#5A6A85'],
+    'fill-opacity': 0.85,
+    'fill-outline-color': 'rgba(10,22,40,0.5)'
+  };
+  function setFireCov(on) {
+    fireCovOn = on;
+    if (!map.getLayer('buildings-fill')) return;
+    var pal = (BASEMODE === 'osm') ? LIGHT_PAL : ARGOS_PAL;
+    var paint = on ? FIRECOV_PAINT : pal['buildings-fill'];
+    Object.keys(paint).forEach(function (prop) {
+      map.setPaintProperty('buildings-fill', prop, paint[prop]);
+    });
+    map.setLayerZoomRange('buildings-fill', on ? 10 : 12, 22);
+    if (on) {
+      var b = document.getElementById('tgl-buildings');
+      if (b && !b.checked) {
+        b.checked = true;
+        map.setLayoutProperty('buildings-fill', 'visibility', 'visible');
+      }
+    }
+  }
+  document.getElementById('tgl-firecov').addEventListener('change', function (ev) {
+    setFireCov(ev.target.checked);
+  });
+
+  // ---- batch 2: (i) validation + provenance notes, bilingual ----
+  var VNOTES = {
+    'v-wildfire': {
+      en: '<b>How do we know</b><br>ARGOS wildfire model v1.1: slope, fuel (Sentinel-2), roads, aspect and past fires (MODIS 2015-2025), weighted into a 0-100 score at 20 m. Colours: 40-60 moderate, 60-80 high, 80+ very high. Checked against 24 real fire perimeters (EFFIS): 64% of burned area sits in classes 3 and up, vs 46% island-wide. Screening layer, not a forecast.<span class="vsrc">Model run: 16 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πυρκαγιάς ARGOS v1.1: κλίση, καύσιμη ύλη (Sentinel-2), δρόμοι, προσανατολισμός και παλαιές πυρκαγιές (MODIS 2015-2025), σε σκορ 0-100 στα 20 μ. Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος σε 24 πραγματικές καμένες περιοχές (EFFIS): το 64% της καμένης έκτασης πέφτει στις κλάσεις 3 και άνω, έναντι 46% στο σύνολο του νησιού. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 16 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+    },
+    'v-flood': {
+      en: '<b>How do we know</b><br>ARGOS flash-flood model v1: where upslope water converges, how flat the receiving ground is, and how burn-prone the upstream catchment is (Copernicus 30 m terrain). Colours: 40-60 moderate, 60-80 high, 80+ very high. Checked against the Feb 2025 storm: every location named in flood reporting (Trapezaki, Poros, Peratata, Vlahata) sits in the mapped high classes. Screening layer, not a forecast.<span class="vsrc">Model run: 15 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πλημμύρας ARGOS v1: πού συγκλίνει το νερό από ψηλότερα, πόσο επίπεδο είναι το έδαφος που το δέχεται και πόσο εύφλεκτη είναι η λεκάνη απορροής (τοπογραφία Copernicus 30 μ.). Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος με την κακοκαιρία του Φεβ 2025: κάθε τοποθεσία που ανέφεραν τα ρεπορτάζ (Τραπεζάκι, Πόρος, Περατάτα, Βλαχάτα) βρίσκεται στις υψηλές κλάσεις του χάρτη. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+    },
+    'v-firecov': {
+      en: '<b>How do we know</b><br>Travel time from each building to the nearest fire station over the modelled road network (ARGOS accessibility model T16). Red: beyond the 15-minute response envelope. Grey: inside it. Same numbers as the building popups and Ask-the-twin Q1.<span class="vsrc">Model run: 15 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Χρόνος διαδρομής από κάθε κτίριο στον πλησιέστερο πυροσβεστικό σταθμό μέσω του οδικού δικτύου (μοντέλο προσβασιμότητας ARGOS T16). Κόκκινο: πέρα από το όριο των 15 λεπτών. Γκρι: εντός του ορίου. Ίδια νούμερα με τα αναδυόμενα των κτιρίων και την ερώτηση 1.<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+    }
+  };
+  function renderVnotes(lang) {
+    Object.keys(VNOTES).forEach(function (id) {
+      var n = document.getElementById(id);
+      if (n) n.innerHTML = VNOTES[id][lang] || VNOTES[id].en;
+    });
+  }
+  document.querySelectorAll('.pinfo').forEach(function (b) {
+    b.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      var n = document.getElementById(b.getAttribute('data-v'));
+      if (!n) return;
+      b.classList.toggle('on', n.classList.toggle('open'));
+    });
+  });
+  renderVnotes(CUR_LANG);
 
   // ---- T27 demo: Ask the twin / Ρώτα τον δίδυμο ----
   var DEMO_BASE = './assets/demo/';
