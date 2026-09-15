@@ -168,10 +168,26 @@
     border:1px solid #8A7A3A; background:transparent; color:#8A9AB0; font-size:14px; cursor:pointer;
   }
   body.mobile #m-ask-close { display:block; }
+  /* onboarding overlay: first visit only (argos_onboarded), dismiss click or 5s */
+  #onboard { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+    background:rgba(10,22,40,0.55); cursor:pointer; animation:obfade .4s ease; }
+  #onboard.hide { opacity:0; pointer-events:none; transition:opacity .3s ease; }
+  @keyframes obfade { from { opacity:0 } to { opacity:1 } }
+  .ob-card { background:#0F1D33; border:1px solid #C9A227; border-radius:14px; padding:28px 32px;
+    max-width:min(440px,86vw); text-align:center; box-shadow:0 0 40px rgba(201,162,39,0.15); }
+  .ob-title { font-family:'Space Grotesk','Inter',sans-serif; font-size:18px; font-weight:700;
+    letter-spacing:.08em; color:#F4EEE0; margin-bottom:10px; }
+  .ob-sub { font-size:14px; line-height:1.55; color:#8A9AB0; }
 </style>
 </head>
 <body>
 <div id="map"></div>
+<div id="onboard" style="display:none">
+  <div class="ob-card">
+    <div class="ob-title" id="ob-title">ARGOS : : Kefalonia Digital Twin</div>
+    <div class="ob-sub" id="ob-sub">Explore the island's geography, infrastructure and environmental risk using open data.</div>
+  </div>
+</div>
 <div id="leftcol">
 <div id="ui">
   <div class="brand"><img src="./assets/ARGOS_Emblem_v3_Icon.png" alt="ARGOS emblem"></div>
@@ -922,6 +938,40 @@ function tickClock() {
 }
 tickClock();
 setInterval(tickClock, 30000);
+</script>
+<script>
+// ---- onboarding overlay: first visit only, dismiss on click or after 5s ----
+(function () {
+  var ob = document.getElementById('onboard');
+  if (!ob) return;
+  try { if (localStorage.getItem('argos_onboarded') === '1') return; } catch (e) {}
+  var lang = 'en';
+  try { lang = localStorage.getItem('argos-lang') || 'en'; } catch (e) {}
+  var OB_COPY = {
+    en: { t: 'ARGOS : : Kefalonia Digital Twin',
+          s: "Explore the island's geography, infrastructure and environmental risk using open data." },
+    el: { t: 'ARGOS : : Ψηφιακός Δίδυμος Κεφαλονιάς',
+          s: 'Εξερευνήστε τη γεωγραφία, τις υποδομές και τους περιβαλλοντικούς κινδύνους του νησιού με ανοιχτά δεδομένα.' }
+  };
+  function obRender(l) {
+    document.getElementById('ob-title').textContent = OB_COPY[l].t;
+    document.getElementById('ob-sub').textContent = OB_COPY[l].s;
+  }
+  var dismissed = false;
+  function dismiss() {
+    if (dismissed) return;
+    dismissed = true;
+    ob.classList.add('hide');
+    try { localStorage.setItem('argos_onboarded', '1'); } catch (e) {}
+    setTimeout(function () { if (ob.parentNode) ob.parentNode.removeChild(ob); }, 350);
+  }
+  obRender(lang === 'el' ? 'el' : 'en');
+  ob.style.display = 'flex';
+  ob.addEventListener('click', dismiss);
+  setTimeout(dismiss, 5000);
+  document.getElementById('lang-en').addEventListener('click', function () { if (!dismissed) obRender('en'); });
+  document.getElementById('lang-el').addEventListener('click', function () { if (!dismissed) obRender('el'); });
+})();
 </script>
 </body>
 </html>
