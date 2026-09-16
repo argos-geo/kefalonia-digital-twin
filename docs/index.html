@@ -193,6 +193,38 @@
   .vnote a { color:#C9A227; text-decoration:none; }
   .vnote a:hover { text-decoration:underline; }
   .vnote .vsrc { display:block; margin-top:5px; color:#8A9AB0; font-size:9.5px; line-height:1.45; }
+  /* ---- T106: risk legends live in their own contextual panel, not the main one ---- */
+  #riskleg {
+    position:absolute; top:100px; right:16px; z-index:10; width:190px; display:none;
+    background:rgba(15,29,51,0.93); border:1px solid #8A7A3A; border-radius:10px;
+    padding:12px 14px; color:#E8E4DC; font-family:Inter,sans-serif;
+    backdrop-filter:blur(4px);
+  }
+  body.r-open #riskleg { display:block; }
+  .rleg-g { display:none; }
+  .rleg-g + .rleg-g { margin-top:9px; padding-top:9px; border-top:1px solid rgba(138,122,58,0.4); }
+  .rleg-h { font-size:10px; letter-spacing:0.15em; color:#C9A227; margin:0 0 5px; text-transform:uppercase; }
+  #m-rleg-close {
+    position:absolute; top:8px; right:8px; width:36px; height:36px; border-radius:8px;
+    border:1px solid #8A7A3A; background:transparent; color:#8A9AB0; font-size:14px;
+    cursor:pointer; display:none;
+  }
+  #btn-legend {
+    position:fixed; bottom:12px; right:8px; z-index:25; display:none;
+    padding:12px 18px; min-height:44px; border-radius:100px; border:1px solid #C9A227;
+    background:rgba(15,29,51,0.95); color:#C9A227; font-family:'Space Grotesk','Inter',sans-serif;
+    font-size:12px; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer;
+  }
+  body.mobile.r-open #btn-legend { display:block; }
+  body.mobile.l-open #btn-legend { display:none; }
+  body.mobile.l-open #btn-askpill { display:none; }
+  body.mobile #riskleg {
+    position:fixed; top:auto; left:8px; right:8px; bottom:8px; width:auto;
+    max-height:48vh; overflow-y:auto; z-index:30; display:none;
+  }
+  body.mobile.l-open #riskleg { display:block; }
+  body.mobile #m-rleg-close { display:block; }
+  body.mobile.r-open .maplibregl-ctrl-bottom-right { bottom:112px; }
 </style>
 </head>
 <body>
@@ -241,13 +273,6 @@
   <div class="leg"><span class="swd" style="background:#E6D9B8"></span><span id="m-leg-5">beach</span></div>
   <div class="leg"><span class="swd" style="background:#7FA89B"></span><span id="m-leg-6">POI</span></div>
   <div class="leg"><span class="sw" style="background:rgba(244,238,224,0.4)"></span><span id="m-leg-7">buildings (zoom 12+)</span></div>
-  <div class="leg"><span class="sw" style="background:#C9A227"></span><span id="m-leg-r1">wildfire: moderate</span></div>
-  <div class="leg"><span class="sw" style="background:#D4762C"></span><span id="m-leg-r2">wildfire: high</span></div>
-  <div class="leg"><span class="sw" style="background:#B03A2E"></span><span id="m-leg-r3">wildfire: very high</span></div>
-  <div class="leg"><span class="sw" style="background:#E67E22"></span><span id="m-leg-f1">flood: moderate</span></div>
-  <div class="leg"><span class="sw" style="background:#E74C3C"></span><span id="m-leg-f2">flood: high</span></div>
-  <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-f3">flood: very high</span></div>
-  <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-firecov">beyond 15-min fire response</span></div>
   <div class="foot">
     <span id="m-foot-note">Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).</span><br>
     <a href="https://argos-geo.org">argos-geo.org</a> ·
@@ -271,6 +296,26 @@
 </div>
 <button id="btn-layers" aria-label="Layers">&#9776;</button>
 <button id="btn-askpill"><span id="m-btn-ask">Ask the twin</span></button>
+<div id="riskleg">
+  <button id="m-rleg-close" aria-label="Close">&#10005;</button>
+  <div class="rleg-g" id="rleg-wildfire">
+    <div class="rleg-h" id="m-leg-g1">Wildfire risk</div>
+    <div class="leg"><span class="sw" style="background:#C9A227"></span><span id="m-leg-r1">wildfire: moderate</span></div>
+    <div class="leg"><span class="sw" style="background:#D4762C"></span><span id="m-leg-r2">wildfire: high</span></div>
+    <div class="leg"><span class="sw" style="background:#B03A2E"></span><span id="m-leg-r3">wildfire: very high</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-flood">
+    <div class="rleg-h" id="m-leg-g2">Flood risk</div>
+    <div class="leg"><span class="sw" style="background:#E67E22"></span><span id="m-leg-f1">flood: moderate</span></div>
+    <div class="leg"><span class="sw" style="background:#E74C3C"></span><span id="m-leg-f2">flood: high</span></div>
+    <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-f3">flood: very high</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-firecov">
+    <div class="rleg-h" id="m-leg-g3">Fire coverage</div>
+    <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-firecov">beyond 15-min fire response</span></div>
+  </div>
+</div>
+<button id="btn-legend"><span id="m-btn-legend">Legend</span></button>
 <div id="clock"><span id="m-clock">Pota_Irtes local time</span> · <span id="pt">--:--</span></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
@@ -529,6 +574,8 @@ map.on('load', function () {
       'm-leg-r1': 'wildfire: moderate', 'm-leg-r2': 'wildfire: high', 'm-leg-r3': 'wildfire: very high',
       'm-leg-f1': 'flood: moderate', 'm-leg-f2': 'flood: high', 'm-leg-f3': 'flood: very high',
       'm-leg-firecov': 'beyond 15-min fire response',
+      'm-leg-g1': 'Wildfire risk', 'm-leg-g2': 'Flood risk', 'm-leg-g3': 'Fire coverage',
+      'm-btn-legend': 'Legend',
       'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
       'm-clock': 'Pota_Irtes local time',
       'm-sect-ask': 'Ask the twin &middot; v0.1.0 demo',
@@ -549,13 +596,15 @@ map.on('load', function () {
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
       'm-sect-risk': 'Κίνδυνοι',
-      'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Κάλυψη πυρκαγιών',
+      'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Πυροσβεστική κάλυψη',
       'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
       'm-leg-r1': 'πυρκαγιά: μέτριος', 'm-leg-r2': 'πυρκαγιά: υψηλός', 'm-leg-r3': 'πυρκαγιά: πολύ υψηλός',
       'm-leg-f1': 'πλημμύρα: μέτριος', 'm-leg-f2': 'πλημμύρα: υψηλός', 'm-leg-f3': 'πλημμύρα: πολύ υψηλός',
       'm-leg-firecov': 'πάνω από 15 λεπτά από πυρόσβεση',
+      'm-leg-g1': 'Κίνδυνος πυρκαγιάς', 'm-leg-g2': 'Κίνδυνος πλημμύρας', 'm-leg-g3': 'Πυροσβεστική κάλυψη',
+      'm-btn-legend': 'Υπόμνημα',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
       'm-clock': 'Pota_Irtes · τοπική ώρα',
       'm-sect-ask': 'Ρώτα τον δίδυμο &middot; demo v0.1.0',
@@ -673,6 +722,14 @@ map.on('load', function () {
       var el = document.getElementById(id);
       if (el) el.innerHTML = dict[id];
     });
+    var TITLES = {
+      en: { 'm-row-firecov': 'Fire service response time per building' },
+      el: { 'm-row-firecov': 'Χρόνος απόκρισης της πυροσβεστικής ανά κτίριο' }
+    };
+    Object.keys(TITLES[lang]).forEach(function (id) {
+      var te = document.getElementById(id);
+      if (te) te.setAttribute('title', TITLES[lang][id]);
+    });
     renderVnotes(lang);
     document.getElementById('lang-en').classList.toggle('on', lang === 'en');
     document.getElementById('lang-el').classList.toggle('on', lang === 'el');
@@ -739,8 +796,25 @@ map.on('load', function () {
       TOGGLES[boxId].forEach(function (lid) {
         map.setLayoutProperty(lid, 'visibility', vis);
       });
+      riskLegSync();
     });
   });
+
+  // ---- T106: risk legend panel follows the risk toggles ----
+  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'] ];
+  function riskLegSync() {
+    var any = false;
+    RLEGS.forEach(function (p) {
+      var box = document.getElementById(p[0]);
+      var g = document.getElementById(p[1]);
+      var on = !!(box && box.checked);
+      if (g) g.style.display = on ? 'block' : 'none';
+      if (on) any = true;
+    });
+    document.body.classList.toggle('r-open', any);
+    if (!any) document.body.classList.remove('l-open');
+  }
+  riskLegSync();
 
   // ---- batch 2: fire coverage repaint (buildings colored by fire response) ----
   var FIRECOV_PAINT = {
@@ -769,21 +843,22 @@ map.on('load', function () {
   }
   document.getElementById('tgl-firecov').addEventListener('change', function (ev) {
     setFireCov(ev.target.checked);
+    riskLegSync();
   });
 
   // ---- batch 2: (i) validation + provenance notes, bilingual ----
   var VNOTES = {
     'v-wildfire': {
-      en: '<b>How do we know</b><br>ARGOS wildfire model v1.1: slope, fuel (Sentinel-2), roads, aspect and past fires (MODIS 2015-2025), weighted into a 0-100 score at 20 m. Colours: 40-60 moderate, 60-80 high, 80+ very high. Checked against 24 real fire perimeters (EFFIS): 64% of burned area sits in classes 3 and up, vs 46% island-wide. Screening layer, not a forecast.<span class="vsrc">Model run: 16 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
-      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πυρκαγιάς ARGOS v1.1: κλίση, καύσιμη ύλη (Sentinel-2), δρόμοι, προσανατολισμός και παλαιές πυρκαγιές (MODIS 2015-2025), σε σκορ 0-100 στα 20 μ. Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος σε 24 πραγματικές καμένες περιοχές (EFFIS): το 64% της καμένης έκτασης πέφτει στις κλάσεις 3 και άνω, έναντι 46% στο σύνολο του νησιού. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 16 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+      en: '<b>How do we know</b><br>ARGOS wildfire model v1.1: slope, fuel (Sentinel-2), roads, aspect and past fires (MODIS 2015-2025), weighted into a 0-100 score at 20 m. Colours: 40-60 moderate, 60-80 high, 80+ very high. Checked against 24 real fire perimeters (EFFIS): 66.9% of burned area sits in classes 3 and up, vs 47.2% island-wide. Screening layer, not a forecast.<span class="vsrc">Model run: 16 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πυρκαγιάς ARGOS v1.1: κλίση, καύσιμη ύλη (Sentinel-2), δρόμοι, προσανατολισμός και παλαιές πυρκαγιές (MODIS 2015-2025), σταθμισμένα σε σκορ 0-100 ανά 20 μ. Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος έναντι 24 πραγματικών περιμέτρων πυρκαγιάς (EFFIS): το 66,9% της καμένης έκτασης πέφτει στις κλάσεις 3 και άνω, έναντι 47,2% στο σύνολο του νησιού. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 16 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
     },
     'v-flood': {
       en: '<b>How do we know</b><br>ARGOS flash-flood model v1: where upslope water converges, how flat the receiving ground is, and how burn-prone the upstream catchment is (Copernicus 30 m terrain). Colours: 40-60 moderate, 60-80 high, 80+ very high. Checked against the Feb 2025 storm: every location named in flood reporting (Trapezaki, Poros, Peratata, Vlahata) sits in the mapped high classes. Screening layer, not a forecast.<span class="vsrc">Model run: 15 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
-      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πλημμύρας ARGOS v1: πού συγκλίνει το νερό από ψηλότερα, πόσο επίπεδο είναι το έδαφος που το δέχεται και πόσο εύφλεκτη είναι η λεκάνη απορροής (τοπογραφία Copernicus 30 μ.). Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος με την κακοκαιρία του Φεβ 2025: κάθε τοποθεσία που ανέφεραν τα ρεπορτάζ (Τραπεζάκι, Πόρος, Περατάτα, Βλαχάτα) βρίσκεται στις υψηλές κλάσεις του χάρτη. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πλημμύρας ARGOS v1: πού συγκλίνει το νερό από τα ψηλότερα, πόσο επίπεδο είναι το έδαφος που το δέχεται και πόσο εύφλεκτη είναι η λεκάνη απορροής ανάντη (τοπογραφία Copernicus 30 μ.). Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος με την κακοκαιρία του Φεβ 2025: κάθε τοποθεσία που ανέφεραν τα ρεπορτάζ (Τραπεζάκι, Πόρος, Περατάτα, Βλαχάτα) βρίσκεται στις υψηλές κλάσεις του χάρτη. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
     },
     'v-firecov': {
       en: '<b>How do we know</b><br>Travel time from each building to the nearest fire station over the modelled road network (ARGOS accessibility model T16). Red: beyond the 15-minute response envelope. Grey: inside it. Same numbers as the building popups and Ask-the-twin Q1.<span class="vsrc">Model run: 15 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
-      el: '<b>Πώς το γνωρίζουμε</b><br>Χρόνος διαδρομής από κάθε κτίριο στον πλησιέστερο πυροσβεστικό σταθμό μέσω του οδικού δικτύου (μοντέλο προσβασιμότητας ARGOS T16). Κόκκινο: πέρα από το όριο των 15 λεπτών. Γκρι: εντός του ορίου. Ίδια νούμερα με τα αναδυόμενα των κτιρίων και την ερώτηση 1.<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+      el: '<b>Πώς το γνωρίζουμε</b><br>Χρόνος διαδρομής από κάθε κτίριο στον πλησιέστερο πυροσβεστικό σταθμό μέσω του οδικού δικτύου (μοντέλο προσβασιμότητας ARGOS T16). Κόκκινο: πέρα από το όριο των 15 λεπτών. Γκρι: εντός του ορίου. Ίδια νούμερα με τα αναδυόμενα παράθυρα των κτιρίων και το «Ρώτα τον δίδυμο» (Ερώτηση 1).<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
     }
   };
   function renderVnotes(lang) {
@@ -1024,21 +1099,30 @@ map.on('load', function () {
   var mqMob = window.matchMedia('(max-width: 768px)');
   function mobSync() {
     if (mqMob.matches) document.body.classList.add('mobile');
-    else document.body.classList.remove('mobile', 'u-open', 'a-open');
+    else document.body.classList.remove('mobile', 'u-open', 'a-open', 'l-open');
   }
   if (mqMob.addEventListener) mqMob.addEventListener('change', mobSync);
   mobSync();
   document.getElementById('btn-layers').addEventListener('click', function () {
     var b = document.body, opening = !b.classList.contains('u-open');
     b.classList.toggle('u-open');
-    if (opening) b.classList.remove('a-open');
+    if (opening) { b.classList.remove('a-open'); b.classList.remove('l-open'); }
   });
   document.getElementById('btn-askpill').addEventListener('click', function () {
     document.body.classList.add('a-open');
     document.body.classList.remove('u-open');
+    document.body.classList.remove('l-open');
   });
   document.getElementById('m-ask-close').addEventListener('click', function () {
     document.body.classList.remove('a-open');
+  });
+  document.getElementById('btn-legend').addEventListener('click', function () {
+    document.body.classList.add('l-open');
+    document.body.classList.remove('a-open');
+    document.body.classList.remove('u-open');
+  });
+  document.getElementById('m-rleg-close').addEventListener('click', function () {
+    document.body.classList.remove('l-open');
   });
 
   // language: remember choice (shared 'argos-lang' key with the landing page)
