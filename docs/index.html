@@ -218,6 +218,16 @@
   body.mobile.r-open #btn-legend { display:block; }
   body.mobile.l-open #btn-legend { display:none; }
   body.mobile.l-open #btn-askpill { display:none; }
+  /* B3-2: persistent home route, hidden while onboarding owns the screen */
+  #home-pill { position:fixed; right:16px; top:50%; transform:translateY(-50%); z-index:20;
+    display:inline-flex; align-items:center; justify-content:center; min-width:74px; min-height:40px;
+    padding:10px 16px; border-radius:100px; border:1px solid #C9A227;
+    background:rgba(15,29,51,0.94); color:#C9A227; text-decoration:none;
+    font-family:'Space Grotesk','Inter',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:0.12em; text-transform:uppercase; backdrop-filter:blur(4px); }
+  #home-pill:hover { color:#F4EEE0; border-color:#F4EEE0; }
+  #onboard:not([style*="none"]) ~ #home-pill { display:none; }
+  @media (max-width:700px) { #home-pill { right:8px; min-width:64px; padding:9px 13px; } }
   body.mobile #riskleg {
     position:fixed; top:auto; left:8px; right:8px; bottom:8px; width:auto;
     max-height:48vh; overflow-y:auto; z-index:30; display:none;
@@ -316,6 +326,7 @@
   </div>
 </div>
 <button id="btn-legend"><span id="m-btn-legend">Legend</span></button>
+<a id="home-pill" href="https://argos-geo.org" aria-label="Home"><span id="m-home">Home</span></a>
 <div id="clock"><span id="m-clock">Pota_Irtes local time</span> · <span id="pt">--:--</span></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
@@ -575,7 +586,7 @@ map.on('load', function () {
       'm-leg-f1': 'flood: moderate', 'm-leg-f2': 'flood: high', 'm-leg-f3': 'flood: very high',
       'm-leg-firecov': 'beyond 15-min fire response',
       'm-leg-g1': 'Wildfire risk', 'm-leg-g2': 'Flood risk', 'm-leg-g3': 'Fire coverage',
-      'm-btn-legend': 'Legend',
+      'm-btn-legend': 'Legend', 'm-home': 'Home',
       'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
       'm-clock': 'Pota_Irtes local time',
       'm-sect-ask': 'Ask the twin &middot; v0.1.0 demo',
@@ -604,7 +615,7 @@ map.on('load', function () {
       'm-leg-f1': 'πλημμύρα: μέτριος', 'm-leg-f2': 'πλημμύρα: υψηλός', 'm-leg-f3': 'πλημμύρα: πολύ υψηλός',
       'm-leg-firecov': 'πάνω από 15 λεπτά από πυρόσβεση',
       'm-leg-g1': 'Κίνδυνος πυρκαγιάς', 'm-leg-g2': 'Κίνδυνος πλημμύρας', 'm-leg-g3': 'Πυροσβεστική κάλυψη',
-      'm-btn-legend': 'Υπόμνημα',
+      'm-btn-legend': 'Υπόμνημα', 'm-home': 'Αρχική',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
       'm-clock': 'Pota_Irtes · τοπική ώρα',
       'm-sect-ask': 'Ρώτα τον δίδυμο &middot; demo v0.1.0',
@@ -722,6 +733,8 @@ map.on('load', function () {
       var el = document.getElementById(id);
       if (el) el.innerHTML = dict[id];
     });
+    var homePill = document.getElementById('home-pill');
+    if (homePill) homePill.setAttribute('aria-label', dict['m-home']);
     var TITLES = {
       en: { 'm-row-firecov': 'Fire service response time per building' },
       el: { 'm-row-firecov': 'Χρόνος απόκρισης της πυροσβεστικής ανά κτίριο' }
