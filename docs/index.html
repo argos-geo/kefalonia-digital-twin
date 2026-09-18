@@ -258,7 +258,7 @@
     <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
   </div>
   <div class="motto" id="m-motto">Watching over the places we call home.</div>
-  <div class="sub" id="m-sub">v0.0.2 vector preview</div>
+  <div class="sub" id="m-sub">v0.0.3 vector preview</div>
   <div class="langrow">
     <button class="langbtn on" id="lang-en">EN</button>
     <button class="langbtn" id="lang-el">ΕΛ</button>
@@ -575,7 +575,7 @@ map.on('load', function () {
     en: {
       'm-motto': 'Watching over the places we call home.',
       'm-tag': 'The map that argues back',
-      'm-sub': 'v0.0.2 vector preview',
+      'm-sub': 'v0.0.3 vector preview',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
@@ -604,7 +604,7 @@ map.on('load', function () {
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
       'm-tag': 'Ο χάρτης που απαντάει',
-      'm-sub': 'Vector χάρτης v0.0.2',
+      'm-sub': 'Vector χάρτης v0.0.3',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
@@ -868,8 +868,8 @@ map.on('load', function () {
       el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πυρκαγιάς ARGOS v1.1: κλίση, καύσιμη ύλη (Sentinel-2), δρόμοι, προσανατολισμός και παλαιές πυρκαγιές (MODIS 2015-2025), σταθμισμένα σε σκορ 0-100 ανά 20 μ. Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος έναντι 24 πραγματικών περιμέτρων πυρκαγιάς (EFFIS): το 66,9% της καμένης έκτασης πέφτει στις κλάσεις 3 και άνω, έναντι 47,2% στο σύνολο του νησιού. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 16 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
     },
     'v-flood': {
-      en: '<b>How do we know</b><br>ARGOS flash-flood model v1: where upslope water converges, how flat the receiving ground is, and how burn-prone the upstream catchment is (Copernicus 30 m terrain). Colours: 40-60 moderate, 60-80 high, 80+ very high. Checked against the Feb 2025 storm: every location named in flood reporting (Trapezaki, Poros, Peratata, Vlahata) sits in the mapped high classes. Screening layer, not a forecast.<span class="vsrc">Model run: 15 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
-      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πλημμύρας ARGOS v1: πού συγκλίνει το νερό από τα ψηλότερα, πόσο επίπεδο είναι το έδαφος που το δέχεται και πόσο εύφλεκτη είναι η λεκάνη απορροής ανάντη (τοπογραφία Copernicus 30 μ.). Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος με την κακοκαιρία του Φεβ 2025: κάθε τοποθεσία που ανέφεραν τα ρεπορτάζ (Τραπεζάκι, Πόρος, Περατάτα, Βλαχάτα) βρίσκεται στις υψηλές κλάσεις του χάρτη. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+      en: '<b>How do we know</b><br>ARGOS flash-flood model v1.1: where upslope water converges, how flat the receiving ground is, how burn-prone the upstream catchment is, and (new in v1.1) where flat, low-lying ground ponds rainwater even with no upstream catchment, via a topographic wetness index capped at the high class (Copernicus 30 m terrain). Colours: 40-60 moderate, 60-80 high, 80+ very high. Checked against the Feb 2025 storm: every location named in flood reporting (Trapezaki, Poros, Peratata, Vlahata) sits in the mapped high classes, ranking unchanged from v1. Independent check: the recorded flood points on the Civil Protection historical map (Sep 2022) land on the ground v1.1 lights up. Screening layer, not a forecast.<span class="vsrc">Model run: 18 Sep 2026 &middot; Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντέλο πλημμύρας ARGOS v1.1: πού συγκλίνει το νερό από τα ψηλότερα, πόσο επίπεδο είναι το έδαφος που το δέχεται, πόσο εύφλεκτη είναι η λεκάνη ανάντη και (νέο στην v1.1) πού το επίπεδο, χαμηλό έδαφος συγκρατεί όμβρια ύδατα ακόμη και χωρίς λεκάνη απορροής, μέσω δείκτη τοπογραφικής υγρασίας με ανώτατο όριο την υψηλή κλάση (τοπογραφία Copernicus 30 μ.). Χρώματα: 40-60 μέτριος, 60-80 υψηλός, 80+ πολύ υψηλός. Έλεγχος με την κακοκαιρία του Φεβ 2025: κάθε τοποθεσία που ανέφεραν τα ρεπορτάζ (Τραπεζάκι, Πόρος, Περατάτα, Βλαχάτα) παραμένει στις υψηλές κλάσεις του χάρτη, με αμετάβλητη κατάταξη από την v1. Ανεξάρτητος έλεγχος: τα καταγεγραμμένα σημεία πλημμύρας του ιστορικού χάρτη της Πολιτικής Προστασίας (Σεπ 2022) πέφτουν πάνω στις περιοχές που ανάβει η v1.1. Ενδεικτικό επίπεδο, όχι πρόγνωση.<span class="vsrc">Εκτέλεση μοντέλου: 18 Σεπ 2026 &middot; Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
     },
     'v-firecov': {
       en: '<b>How do we know</b><br>Travel time from each building to the nearest fire station over the modelled road network (ARGOS accessibility model T16). Red: beyond the 15-minute response envelope. Grey: inside it. Same numbers as the building popups and Ask-the-twin Q1.<span class="vsrc">Model run: 15 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
