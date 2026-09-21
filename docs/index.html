@@ -328,6 +328,13 @@
     <div class="rleg-h" id="m-leg-g3">Fire coverage</div>
     <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-firecov">beyond 15-min fire response</span></div>
   </div>
+  <div class="rleg-g" id="rleg-marine">
+    <div class="rleg-h" id="m-leg-g4">Beach exposure</div>
+    <div class="leg"><span class="sw" style="background:#7FA89B"></span><span id="m-leg-m1">exposure: low (&lt;25)</span></div>
+    <div class="leg"><span class="sw" style="background:#C9A227"></span><span id="m-leg-m2">exposure: moderate (25-50)</span></div>
+    <div class="leg"><span class="sw" style="background:#D4762C"></span><span id="m-leg-m3">exposure: high (50-75)</span></div>
+    <div class="leg"><span class="sw" style="background:#B03A2E"></span><span id="m-leg-m4">exposure: very high (75+)</span></div>
+  </div>
 </div>
 <button id="btn-legend"><span id="m-btn-legend">Legend</span></button>
 <a id="home-pill" href="https://argos-geo.org" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg><span id="m-home">Home</span></a>
@@ -589,7 +596,9 @@ map.on('load', function () {
       'm-leg-r1': 'wildfire: moderate', 'm-leg-r2': 'wildfire: high', 'm-leg-r3': 'wildfire: very high',
       'm-leg-f1': 'flood: moderate', 'm-leg-f2': 'flood: high', 'm-leg-f3': 'flood: very high',
       'm-leg-firecov': 'beyond 15-min fire response',
-      'm-leg-g1': 'Wildfire risk', 'm-leg-g2': 'Flood risk', 'm-leg-g3': 'Fire coverage',
+      'm-leg-m1': 'exposure: low (<25)', 'm-leg-m2': 'exposure: moderate (25-50)',
+      'm-leg-m3': 'exposure: high (50-75)', 'm-leg-m4': 'exposure: very high (75+)',
+      'm-leg-g1': 'Wildfire risk', 'm-leg-g2': 'Flood risk', 'm-leg-g3': 'Fire coverage', 'm-leg-g4': 'Beach exposure',
       'm-btn-legend': 'Legend', 'm-home': 'Home',
       'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
       'm-clock': 'Pota_Irtes local time',
@@ -618,7 +627,9 @@ map.on('load', function () {
       'm-leg-r1': 'πυρκαγιά: μέτριος', 'm-leg-r2': 'πυρκαγιά: υψηλός', 'm-leg-r3': 'πυρκαγιά: πολύ υψηλός',
       'm-leg-f1': 'πλημμύρα: μέτριος', 'm-leg-f2': 'πλημμύρα: υψηλός', 'm-leg-f3': 'πλημμύρα: πολύ υψηλός',
       'm-leg-firecov': 'πάνω από 15 λεπτά από πυρόσβεση',
-      'm-leg-g1': 'Κίνδυνος πυρκαγιάς', 'm-leg-g2': 'Κίνδυνος πλημμύρας', 'm-leg-g3': 'Πυροσβεστική κάλυψη',
+      'm-leg-m1': 'έκθεση: χαμηλή (<25)', 'm-leg-m2': 'έκθεση: μέτρια (25-50)',
+      'm-leg-m3': 'έκθεση: υψηλή (50-75)', 'm-leg-m4': 'έκθεση: πολύ υψηλή (75+)',
+      'm-leg-g1': 'Κίνδυνος πυρκαγιάς', 'm-leg-g2': 'Κίνδυνος πλημμύρας', 'm-leg-g3': 'Πυροσβεστική κάλυψη', 'm-leg-g4': 'Θαλάσσια έκθεση',
       'm-btn-legend': 'Υπόμνημα', 'm-home': 'Αρχική',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
       'm-clock': 'Pota_Irtes · τοπική ώρα',
@@ -897,10 +908,11 @@ map.on('load', function () {
     ['marine-circle', 'marine-label'].forEach(function (lid) {
       if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
     });
+    riskLegSync();
   });
 
   // ---- T106: risk legend panel follows the risk toggles ----
-  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'] ];
+  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'] ];
   function riskLegSync() {
     var any = false;
     RLEGS.forEach(function (p) {
