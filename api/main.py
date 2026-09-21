@@ -12,9 +12,17 @@ def get_pool():
     return POOL
 from psycopg.rows import dict_row
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="ARGOS API", version="0.2.0",
               description="Kefalonia Digital Twin — open screening layers. Watching over the places we call home.")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://argos-geo.org", "https://www.argos-geo.org",
+                   "https://argos-geo.github.io"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 DB = os.environ.get("DATABASE_URL")
 
 VECTOR = {
