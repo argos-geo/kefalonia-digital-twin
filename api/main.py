@@ -116,3 +116,37 @@ def aggregate(layer: str, lat: float, lon: float, m: float = 10000):
     if not row or row.get("count") is None:
         return {"layer": layer, "count": 0}
     return {"layer": layer, **row}
+
+
+@app.get("/marine/beaches")
+def marine_beaches():
+    sql = """
+    SELECT b.osm_id, b.name, b.local_name, b.facing_deg,
+           round(ST_Y(ST_Centroid(b.geom))::numeric, 5) AS lat,
+           round(ST_X(ST_Centroid(b.geom))::numeric, 5) AS lon,
+           m.cell_lon, m.cell_lat, m.cell_dist_m
+    FROM argos.beaches b
+    JOIN (SELECT DISTINCT ON (beach_osm_id) beach_osm_id, cell_lon, cell_lat, cell_dist_m
+          FROM argos.marine_forecast ORDER BY beach_osm_id, valid_time) m
+      ON m.beach_osm_id = b.osm_id
+    WHERE b.curated
+    ORDER BY b.name;"""
+    with get_pool().connection() as conn:
+        rows = conn.execute(sql).fetchall()
+    return {"count": len(rows), "beaches": rows}
+
+@app.get("/marine/exposure")
+def marine_exposure(osm_id: int = Query(...), hours: int = Query(120, le=240)):
+    sql = """
+    SELECT beach_osm_id, name, valid_time, vhm0, vmxl, vmdr, vtm10, cur_speed, exposure
+    FROM argos.marine_exposure
+    WHERE beach_osm_id = %(oid)s
+    ORDER BY valid_time
+    LIMIT %(h)s;"""
+    with get_pool().connection() as conn:
+        rows = conn.execute(sql, {"oid": osm_id, "h": hours}).fetchall()
+    if not rows:
+        raise HTTPException(404, "no marine forecast for this beach (is it one of the curated 14?)")
+    return {"beach": rows[0]["name"], "count": len(rows),
+            "disclaimer": "Modelled offshore conditions (CMEMS 4 km grid, sampled offshore). Regional exposure, not local surf or rip currents. Not a lifeguard-grade forecast.",
+            "hours": rows}
