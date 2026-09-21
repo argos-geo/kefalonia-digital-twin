@@ -258,7 +258,7 @@
     <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
   </div>
   <div class="motto" id="m-motto">Watching over the places we call home.</div>
-  <div class="sub" id="m-sub">v0.0.4 vector preview</div>
+  <div class="sub" id="m-sub">v0.0.5 vector preview</div>
   <div class="langrow">
     <button class="langbtn on" id="lang-en">EN</button>
     <button class="langbtn" id="lang-el">ΕΛ</button>
@@ -277,6 +277,8 @@
   <div class="vnote" id="v-flood"></div>
   <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-firecov"> <span id="m-row-firecov">Fire coverage</span></label><button class="pinfo" type="button" data-v="v-firecov" aria-label="How do we know">i</button></div>
   <div class="vnote" id="v-firecov"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-marine"> <span id="m-row-marine">Beach exposure</span></label><button class="pinfo" type="button" data-v="v-marine" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-marine"></div>
   <div class="sect" id="m-sect-legend">Legend</div>
   <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
   <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
@@ -575,12 +577,12 @@ map.on('load', function () {
     en: {
       'm-motto': 'Watching over the places we call home.',
       'm-tag': 'The map that argues back',
-      'm-sub': 'v0.0.4 vector preview',
+      'm-sub': 'v0.0.5 vector preview',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
       'm-sect-risk': 'Risk',
-      'm-row-wildfire': 'Wildfire risk', 'm-row-flood': 'Flood risk', 'm-row-firecov': 'Fire coverage',
+      'm-row-wildfire': 'Wildfire risk', 'm-row-flood': 'Flood risk', 'm-row-firecov': 'Fire coverage', 'm-row-marine': 'Beach exposure (marine)',
       'm-leg-1': 'primary / secondary', 'm-leg-2': 'tertiary', 'm-leg-3': 'local / service',
       'm-leg-4': 'track / path &middot; trail', 'm-leg-5': 'beach', 'm-leg-6': 'POI',
       'm-leg-7': 'buildings (zoom 12+)',
@@ -604,12 +606,12 @@ map.on('load', function () {
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
       'm-tag': 'Ο χάρτης που απαντάει',
-      'm-sub': 'Vector χάρτης v0.0.4',
+      'm-sub': 'Vector χάρτης v0.0.5',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
       'm-sect-risk': 'Κίνδυνοι',
-      'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Πυροσβεστική κάλυψη',
+      'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Πυροσβεστική κάλυψη', 'm-row-marine': 'Θαλάσσια έκθεση παραλιών',
       'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
@@ -639,7 +641,9 @@ map.on('load', function () {
       poi_type: 'Type', category: 'Category', access_score: 'Access score',
       road_dist_m: 'Road distance', fire_min: 'Fire response', port_min: 'Nearest port',
       area_m2: 'Area', levels: 'Levels', street: 'Street', sac_scale: 'SAC scale',
-      route_type: 'Route type', curated: 'Curated'
+      route_type: 'Route type', curated: 'Curated',
+      exposure_now: 'Exposure now', max24: 'Max next 24 h',
+      peak_at: 'Peak at', vhm0_now: 'Wave height now'
     },
     el: {
       name: 'Όνομα', road_class: 'Κατηγορία δρόμου', osm_highway: 'Τύπος OSM',
@@ -647,7 +651,9 @@ map.on('load', function () {
       poi_type: 'Τύπος', category: 'Κατηγορία', access_score: 'Προσβασιμότητα',
       road_dist_m: 'Απόσταση από δρόμο', fire_min: 'Χρόνος πυρόσβεσης', port_min: 'Κοντινότερο λιμάνι',
       area_m2: 'Εμβαδόν', levels: 'Όροφοι', street: 'Οδός', sac_scale: 'Κλίμακα SAC',
-      route_type: 'Τύπος διαδρομής', curated: 'Επιμελημένο'
+      route_type: 'Τύπος διαδρομής', curated: 'Επιμελημένο',
+      exposure_now: 'Έκθεση τώρα', max24: 'Μέγιστο επόμενων 24 ωρών',
+      peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα'
     }
   };
 
@@ -656,7 +662,8 @@ map.on('load', function () {
     trails:    { en: 'trail',    el: 'Μονοπάτι' },
     pois:      { en: 'POI',      el: 'Σημείο ενδιαφέροντος' },
     buildings: { en: 'building', el: 'Κτίριο' },
-    beaches:   { en: 'beach',    el: 'Παραλία' }
+    beaches:   { en: 'beach',    el: 'Παραλία' },
+    marine:    { en: 'beach exposure', el: 'θαλάσσια έκθεση' }
   };
 
   // Greek translations for OSM enum values (draft - Panagis corrects). Fallback: raw value.
@@ -762,6 +769,8 @@ map.on('load', function () {
     if (key === 'area_m2') return Math.round(val) + (el ? ' τ.μ.' : ' m²');
     if (key === 'fire_min' || key === 'port_min') return Math.round(val * 10) / 10 + (el ? ' λεπτά' : ' min');
     if (key === 'access_score') return Math.round(val) + ' / 100';
+    if (key === 'exposure_now' || key === 'max24') return Math.round(val) + ' / 100';
+    if (key === 'vhm0_now') return (Math.round(val * 10) / 10) + ' m';
     if (key === 'maxspeed') return val + (el ? ' χλμ/ώρα' : ' km/h');
     var s = String(val);
     if (el) {
@@ -812,6 +821,81 @@ map.on('load', function () {
         map.setLayoutProperty(lid, 'visibility', vis);
       });
       riskLegSync();
+    });
+  });
+
+  // ---- T46/T47: marine beach-exposure layer (CMEMS via ARGOS API, lazy load) ----
+  var MARINE_API = 'https://api.argos-geo.org';
+  var marineLoaded = false;
+  function marineClass(e) { return e < 25 ? 'low' : (e < 50 ? 'moderate' : (e < 75 ? 'high' : 'very_high')); }
+  function loadMarine() {
+    if (marineLoaded) return;
+    marineLoaded = true;
+    fetch(MARINE_API + '/marine/beaches').then(function (r) { return r.json(); }).then(function (data) {
+      var beaches = data.beaches || [];
+      return Promise.all(beaches.map(function (b) {
+        return fetch(MARINE_API + '/marine/exposure?osm_id=' + b.osm_id + '&hours=24')
+          .then(function (r) { return r.json(); })
+          .then(function (ex) {
+            var hrs = ex.hours || [];
+            if (!hrs.length) return null;
+            var now = hrs[0];
+            var peak = hrs.reduce(function (a, h) {
+              return (h.exposure != null && h.exposure > (a.exposure != null ? a.exposure : -1)) ? h : a;
+            }, hrs[0]);
+            return {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
+              properties: {
+                name: b.name, name_en: b.name, name_el: b.local_name || b.name,
+                exposure_now: now.exposure, max24: peak.exposure,
+                peak_at: new Date(peak.valid_time).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
+                vhm0_now: now.vhm0,
+                cls: marineClass(now.exposure || 0)
+              }
+            };
+          }).catch(function () { return null; });
+      }));
+    }).then(function (feats) {
+      feats = (feats || []).filter(Boolean);
+      if (!feats.length) { marineLoaded = false; return; }
+      function add() {
+        map.addSource('marine-exp', { type: 'geojson', data: { type: 'FeatureCollection', features: feats } });
+        map.addLayer({
+          id: 'marine-circle', type: 'circle', source: 'marine-exp',
+          paint: {
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 5, 13, 10],
+            'circle-color': ['match', ['get', 'cls'], 'low', '#7FA89B', 'moderate', '#C9A227', 'high', '#D4762C', '#B03A2E'],
+            'circle-opacity': 0.9,
+            'circle-stroke-width': 1.5,
+            'circle-stroke-color': 'rgba(10,22,40,0.6)'
+          }
+        });
+        map.addLayer({
+          id: 'marine-label', type: 'symbol', source: 'marine-exp', minzoom: 11,
+          layout: {
+            'text-field': ['concat', ['get', 'name'], '  ', ['to-string', ['round', ['coalesce', ['get', 'exposure_now'], 0]]]],
+            'text-size': 11, 'text-font': ['Noto Sans Regular'],
+            'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-optional': true
+          },
+          paint: { 'text-color': '#F4EEE0', 'text-halo-color': 'rgba(10,22,40,0.85)', 'text-halo-width': 1.2 }
+        });
+        map.on('click', 'marine-circle', function (e) {
+          new maplibregl.Popup({ closeButton: true })
+            .setLngLat(e.lngLat)
+            .setHTML(popupHTML(e.features[0].properties, 'marine-circle'))
+            .addTo(map);
+        });
+        map.on('mouseenter', 'marine-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', 'marine-circle', function () { map.getCanvas().style.cursor = ''; });
+      }
+      if (map.isStyleLoaded()) add(); else map.once('load', add);
+    }).catch(function () { marineLoaded = false; });
+  }
+  document.getElementById('tgl-marine').addEventListener('change', function (ev) {
+    if (ev.target.checked) loadMarine();
+    ['marine-circle', 'marine-label'].forEach(function (lid) {
+      if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
     });
   });
 
@@ -874,6 +958,10 @@ map.on('load', function () {
     'v-firecov': {
       en: '<b>How do we know</b><br>Travel time from each building to the nearest fire station over the modelled road network (ARGOS accessibility model T16). Red: beyond the 15-minute response envelope. Grey: inside it. Same numbers as the building popups and Ask-the-twin Q1.<span class="vsrc">Model run: 15 Aug 2026 · Method and sources: <a href="https://argos-geo.org/data.html">Open Data</a></span>',
       el: '<b>Πώς το γνωρίζουμε</b><br>Χρόνος διαδρομής από κάθε κτίριο στον πλησιέστερο πυροσβεστικό σταθμό μέσω του οδικού δικτύου (μοντέλο προσβασιμότητας ARGOS T16). Κόκκινο: πέρα από το όριο των 15 λεπτών. Γκρι: εντός του ορίου. Ίδια νούμερα με τα αναδυόμενα παράθυρα των κτιρίων και το «Ρώτα τον δίδυμο» (Ερώτηση 1).<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
+    },
+    'v-marine': {
+      en: '<b>How do we know</b><br>Modelled offshore wave and surface-current conditions from Copernicus Marine (Mediterranean, 4 km grid, hourly), sampled at the nearest sea cell off 14 curated beaches and combined into a 0-100 exposure score (70% waves, 30% currents), refreshed twice daily. Colours: under 25 low, 25-50 moderate, 50-75 high, 75+ very high. Regional exposure, not local surf or rip currents; not a lifeguard-grade forecast.',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντελοποιημένες συνθήκες κυματισμού και επιφανειακών ρευμάτων από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με δειγματοληψία στο κοντινότερο θαλάσσιο κελί για 14 επιλεγμένες παραλίες, συνδυασμένες σε δείκτη έκθεσης 0-100 (70% κύμα, 30% ρεύματα), με ανανέωση δύο φορές την ημέρα. Χρώματα: κάτω από 25 χαμηλή, 25-50 μέτρια, 50-75 υψηλή, 75+ πολύ υψηλή. Περιφερειακή έκθεση, όχι τοπικός κυματισμός ή αρπακτικά ρεύματα, ούτε πρόγνωση ναυαγοσωστικού επιπέδου.'
     }
   };
   function renderVnotes(lang) {
