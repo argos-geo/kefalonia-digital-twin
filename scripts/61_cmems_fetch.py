@@ -58,6 +58,6 @@ with open('/tmp/marine_forecast.csv', 'w', newline='') as f:
             w.writerow([b['osm_id'], str(ds_w.time.values[t])[:19],
                         fv(g('VHM0')), fv(g('VMXL')), fv(g('VMDR')), fv(g('VTM10')),
                         fv(u), fv(v), fv(np.hypot(u, v)),
-                        fv(g('VSDX')), fv(g('VSDY')), cw[0], cw[1], cw[2]])
+                        fv(g('VSDX')), fv(g('VSDY')), cw[1], cw[0], cw[2]])
             rows += 1
 print('rows written:', rows)
