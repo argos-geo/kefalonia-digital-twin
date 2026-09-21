@@ -900,8 +900,8 @@ map.on('load', function () {
         map.on('mouseenter', 'marine-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', 'marine-circle', function () { map.getCanvas().style.cursor = ''; });
       }
-      if (map.isStyleLoaded()) add(); else map.once('load', add);
-    }).catch(function () { marineLoaded = false; });
+      try { add(); } catch (e) { console.error('marine layer defer:', e); map.once('load', add); }
+    }).catch(function (e) { marineLoaded = false; console.error('marine load failed:', e); });
   }
   document.getElementById('tgl-marine').addEventListener('change', function (ev) {
     if (ev.target.checked) loadMarine();
