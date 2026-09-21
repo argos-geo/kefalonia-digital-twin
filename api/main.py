@@ -140,7 +140,7 @@ def marine_exposure(osm_id: int = Query(...), hours: int = Query(120, le=240)):
     sql = """
     SELECT beach_osm_id, name, valid_time, vhm0, vmxl, vmdr, vtm10, cur_speed, exposure
     FROM argos.marine_exposure
-    WHERE beach_osm_id = %(oid)s
+    WHERE beach_osm_id = %(oid)s AND valid_time > now() - interval '1 hour'
     ORDER BY valid_time
     LIMIT %(h)s;"""
     with get_pool().connection() as conn:
