@@ -99,6 +99,36 @@ remains **directionally validated, not calibrated**.
    it harder to ignite than cured lowland grass/maquis — which the model correspondingly
    undervalues. v1 reads as *severity if burned* more than *likelihood of burning*.
    (Raised by local-knowledge review, 15 Aug 2026 — the sanity check working as designed.)
+8. **Spectral confusion with bare limestone: ANSWERED in v1.2 (21 Sep 2026, T104).**
+   The NDVI ≈ 0.3 conflation of stressed vegetation with bare rock (raised by community
+   review: @jeanmchl, Bluesky, 16 Aug 2026. Building in public works.) is resolved at the
+   source: the v1.2 fuel base is CORINE Land Cover 2018 classes, not NDVI density. Bare
+   rock (CLC 332) carries fuel exactly 0.00 (verified 0 of 10,089 px above zero) and the
+   curing gate is restricted to vegetated classes so rock cannot be cured upward.
+   Residual caveats: CLC's 100 m minimum mapping unit smooths fine karst detail (bare +
+   sparse rock read as only ~1.6% of land), CLC 2018 predates the 2021 and 2025 burn
+   scars (they read as pre-burn cover), and thin coastal fringe (~119 km2 equivalent)
+   falls outside CLC coverage. For vegetation-health claims (T35 Ainos stress) the
+   spectral caveat still stands: red-band differencing, SAVI, or a Bare Soil Index must
+   precede interpretation.
+
+
+
+## v1.2 (21 Sep 2026, T104): CLC land-cover fuel leg
+
+Fuel base swapped from NDVI density to CORINE Land Cover 2018 class scores (pure swap,
+one-variable attribution vs v1.1b): conifer 1.00, mixed forest 0.90, sclerophyllous
+0.85, transitional woodland 0.80, grassland 0.70, pastures 0.55, agri-mosaic 0.45,
+complex cultivation 0.40, olives 0.35, arable 0.30, vineyards 0.25, sparse vegetation
+0.15, urban 0.05, marsh 0.10, bare rock 0.00, water nodata. The v1.1a curing gate is
+unchanged in form (floor 0.15 + 0.75 x curing) but restricted to vegetated classes;
+the v1.1b altitude damper is unchanged. Validation, locked 24-perimeter EFFIS harness
+with the v1.1b baseline reproduced exactly: burned 59.9 vs island 54.6 (gap 5.3, was
+4.5); 21 of 24 fires above island (was 19); class >=3 burned 50.2% vs island 33.8%
+(1.49x, was 1.42x); class 4 3.2% vs 1.0% (3.2x, was 3.7x); burned class-1 share 4.7%
+(was 7.0). Net: discrimination improved, top-class enrichment slightly weaker, absolute
+scale ~4.5 points lower. Screening-grade; the known misses (278276, 13807) remain below
+the island mean and are published honestly.
 
 ## Roadmap
 - v1.1 (**DONE 16 Aug 2026**, T15.1 — validation above):
@@ -106,7 +136,10 @@ remains **directionally validated, not calibrated**.
   discrimination modestly and is published honestly. Next credibility rungs: benchmark
   against EFFIS FWI/Copernicus EMS where comparable, technical validation report,
   preprint, then fire-season case study.
-- v1.2: live Fuel Moisture / FWI from ECMWF open data → daily dynamic risk
+- v1.2 (**DONE 21 Sep 2026**, T104): CLC 2018 fuel leg, karst fix, 21/24 EFFIS (above).
+- v1.3: live Fuel Moisture / FWI from ECMWF open data → daily dynamic risk;
+  bare-ground separation (red-band differencing / SAVI / Bare Soil Index) before any
+  vegetation-health interpretation: prerequisite for T35 spectral claims
 - v2.0: suppression access + utility-infrastructure ignition points + community-reported fuel breaks (ARGOS COMMONS)
 
 *License: CC BY 4.0 for the layer, MIT for the code. Built in the open — if you're a
