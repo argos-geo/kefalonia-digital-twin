@@ -2,7 +2,7 @@ import os, psycopg2, rasterio, json
 from rasterio.features import shapes
 
 JOBS = [
-    ("argos.wildfire_risk_v1_1b_class", "wf", {3: "moderate", 4: "high", 5: "very_high"}),
+    ("argos.wildfire_risk_v1_2_class", "wf", {3: "moderate", 4: "high", 5: "very_high"}),
     ("argos.flashflood_risk_class",     "ff", {2: "moderate", 3: "high", 4: "very_high"}),
 ]
 conn = psycopg2.connect(dbname="argos", user="argos",
