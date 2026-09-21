@@ -25,6 +25,7 @@ RASTER = {
     "dem":"dem", "slope":"slope", "aspect":"aspect", "ndvi":"ndvi", "ndvi_may":"ndvi_may",
     "wildfire_risk":"wildfire_risk", "wildfire_risk_class":"wildfire_risk_class",
     "wildfire_risk_v1_1b":"wildfire_risk_v1_1b", "wildfire_risk_v1_1b_class":"wildfire_risk_v1_1b_class",
+    "wildfire_risk_v1_2":"wildfire_risk_v1_2", "wildfire_risk_v1_2_class":"wildfire_risk_v1_2_class",
     "flashflood_risk":"flashflood_risk", "flashflood_risk_class":"flashflood_risk_class",
 }
 BBOX = (20.30, 37.95, 20.90, 38.55)  # lonmin, latmin, lonmax, latmax
