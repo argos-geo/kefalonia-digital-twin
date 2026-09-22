@@ -153,8 +153,13 @@ def marine_exposure(osm_id: int = Query(...), hours: int = Query(120, le=240)):
     LIMIT %(h)s;"""
     with get_pool().connection() as conn:
         rows = conn.execute(sql, {"oid": osm_id, "h": hours}).fetchall()
-    if not rows:
+        if not rows:
         raise HTTPException(404, "no marine forecast for this beach (is it one of the curated 14?)")
+    with get_pool().connection() as conn:
+        meta = conn.execute("SELECT max(cmems_run) AS cmems_run, max(fetched_at) AS fetched_at "
+                            "FROM argos.marine_forecast WHERE beach_osm_id = %(oid)s",
+                            {"oid": osm_id}).fetchone()
     return {"beach": rows[0]["name"], "count": len(rows),
+            "cmems_run": meta["cmems_run"], "fetched_at": meta["fetched_at"],
             "disclaimer": "Modelled offshore conditions (CMEMS 4 km grid, sampled offshore). Regional exposure, not local surf or rip currents. Not a lifeguard-grade forecast.",
             "hours": rows}
