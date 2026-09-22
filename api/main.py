@@ -156,7 +156,7 @@ def marine_exposure(osm_id: int = Query(...), hours: int = Query(120, le=240)):
     if not rows:
         raise HTTPException(404, "no marine forecast for this beach (is it one of the curated 14?)")
     with get_pool().connection() as conn:
-        meta = conn.execute("SELECT max(cmems_run) AS cmems_run, max(fetched_at) AS fetched_at "
+        meta = conn.execute("SELECT max(coalesce(cmems_run, fetched_at)) AS cmems_run, max(fetched_at) AS fetched_at "
                             "FROM argos.marine_forecast WHERE beach_osm_id = %(oid)s",
                             {"oid": osm_id}).fetchone()
     return {"beach": rows[0]["name"], "count": len(rows),
