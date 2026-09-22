@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # T46: CMEMS waves + currents for the Kefalonia bbox, nearest wet cell per curated beach -> CSV for psql load.
+# Particle layer: also dump the full currents grid (all wet cells, all times) -> /tmp/marine_grid.csv for argos.marine_grid.
 import csv, datetime as dt
 import numpy as np
 import copernicusmarine as cm
@@ -61,3 +62,22 @@ with open('/tmp/marine_forecast.csv', 'w', newline='') as f:
                         fv(g('VSDX')), fv(g('VSDY')), cw[1], cw[0], cw[2]])
             rows += 1
 print('rows written:', rows)
+
+# Particle layer grid dump: every wet currents cell, every forecast hour.
+grows = 0
+with open('/tmp/marine_grid.csv', 'w', newline='') as f:
+    w = csv.writer(f)
+    w.writerow(['valid_time', 'lat', 'lon', 'uo', 'vo'])
+    glat = ds_c.latitude.values
+    glon = ds_c.longitude.values
+    for t in range(ds_c.sizes['time']):
+        uu = ds_c['uo'].isel(time=t).values
+        vv = ds_c['vo'].isel(time=t).values
+        ok = np.isfinite(uu) & np.isfinite(vv)
+        ilat, ilon = np.where(ok)
+        vt = str(ds_c.time.values[t])[:19]
+        for k in range(len(ilat)):
+            w.writerow([vt, round(float(glat[ilat[k]]), 4), round(float(glon[ilon[k]]), 4),
+                        fv(uu[ilat[k], ilon[k]]), fv(vv[ilat[k], ilon[k]])])
+        grows += len(ilat)
+print('grid rows written:', grows)
