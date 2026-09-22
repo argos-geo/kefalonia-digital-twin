@@ -163,3 +163,35 @@ def marine_exposure(osm_id: int = Query(...), hours: int = Query(120, le=240)):
             "cmems_run": meta["cmems_run"], "fetched_at": meta["fetched_at"],
             "disclaimer": "Modelled offshore conditions (CMEMS 4 km grid, sampled offshore). Regional exposure, not local surf or rip currents. Not a lifeguard-grade forecast.",
             "hours": rows}
+
+
+@app.get("/marine/grid")
+def marine_grid(hour: int = Query(0, ge=0)):
+    with get_pool().connection() as conn:
+        times = conn.execute(
+            "SELECT DISTINCT valid_time FROM argos.marine_grid ORDER BY valid_time").fetchall()
+        if not times:
+            raise HTTPException(404, "no marine grid loaded yet (argos.marine_grid fills at the next CMEMS cron run)")
+        hour = min(hour, len(times) - 1)
+        vt = times[hour]["valid_time"]
+        rows = conn.execute(
+            "SELECT lat, lon, uo, vo FROM argos.marine_grid WHERE valid_time = %(vt)s",
+            {"vt": vt}).fetchall()
+    lats = sorted({r["lat"] for r in rows})
+    lons = sorted({r["lon"] for r in rows})
+    nx, ny = len(lons), len(lats)
+    lat_i = {la: i for i, la in enumerate(lats)}
+    lon_i = {lo: i for i, lo in enumerate(lons)}
+    u = [None] * (nx * ny)
+    v = [None] * (nx * ny)
+    for r in rows:
+        k = lat_i[r["lat"]] * nx + lon_i[r["lon"]]
+        u[k] = r["uo"]
+        v[k] = r["vo"]
+    step = [round(lons[1] - lons[0], 4) if nx > 1 else None,
+            round(lats[1] - lats[0], 4) if ny > 1 else None]
+    return {"valid_time": vt, "hour": hour, "hours_available": len(times),
+            "origin": [lons[0], lats[0]], "step": step, "nx": nx, "ny": ny,
+            "order": "lat-major (index = iy * nx + ix), null = land",
+            "u": u, "v": v,
+            "disclaimer": "Modelled surface currents (CMEMS Mediterranean 4 km grid). Not for navigation."}
