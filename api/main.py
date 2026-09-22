@@ -153,7 +153,7 @@ def marine_exposure(osm_id: int = Query(...), hours: int = Query(120, le=240)):
     LIMIT %(h)s;"""
     with get_pool().connection() as conn:
         rows = conn.execute(sql, {"oid": osm_id, "h": hours}).fetchall()
-        if not rows:
+    if not rows:
         raise HTTPException(404, "no marine forecast for this beach (is it one of the curated 14?)")
     with get_pool().connection() as conn:
         meta = conn.execute("SELECT max(cmems_run) AS cmems_run, max(fetched_at) AS fetched_at "
