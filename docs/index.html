@@ -258,7 +258,7 @@
     <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
   </div>
   <div class="motto" id="m-motto">Watching over the places we call home.</div>
-  <div class="sub" id="m-sub">v0.0.5 vector preview</div>
+  <div class="sub" id="m-sub">v0.0.6 vector preview</div>
   <div class="langrow">
     <button class="langbtn on" id="lang-en">EN</button>
     <button class="langbtn" id="lang-el">ΕΛ</button>
@@ -335,6 +335,11 @@
     <div class="leg"><span class="sw" style="background:#D4762C"></span><span id="m-leg-m3">exposure: high (50-75)</span></div>
     <div class="leg"><span class="sw" style="background:#B03A2E"></span><span id="m-leg-m4">exposure: very high (75+)</span></div>
   </div>
+</div>
+<div id="marinectl" style="display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:25; background:rgba(10,22,40,0.88); border:1px solid rgba(201,162,39,0.55); border-radius:9px; padding:8px 12px; color:#F4EEE0; font-size:11px; align-items:center; gap:10px; max-width:92vw;">
+  <button id="marine-play" aria-label="Play forecast" style="background:none; border:1px solid rgba(244,238,224,0.4); color:#F4EEE0; border-radius:6px; width:26px; height:22px; cursor:pointer; line-height:1;">&#9654;</button>
+  <input type="range" id="marine-slider" min="0" max="47" value="0" step="1" style="width:min(320px, 50vw); accent-color:#C9A227;">
+  <span id="marine-time">--</span>
 </div>
 <button id="btn-legend"><span id="m-btn-legend">Legend</span></button>
 <a id="home-pill" href="https://argos-geo.org" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg><span id="m-home">Home</span></a>
@@ -584,7 +589,7 @@ map.on('load', function () {
     en: {
       'm-motto': 'Watching over the places we call home.',
       'm-tag': 'The map that argues back',
-      'm-sub': 'v0.0.5 vector preview',
+      'm-sub': 'v0.0.6 vector preview',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
@@ -615,12 +620,12 @@ map.on('load', function () {
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
       'm-tag': 'Ο χάρτης που απαντάει',
-      'm-sub': 'Vector χάρτης v0.0.5',
+      'm-sub': 'Vector χάρτης v0.0.6',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
       'm-sect-risk': 'Κίνδυνοι',
-      'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Πυροσβεστική κάλυψη', 'm-row-marine': 'Θαλάσσια έκθεση παραλιών',
+      'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Πυροσβεστική κάλυψη', 'm-row-marine': 'Θαλάσσιες συνθήκες',
       'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
@@ -629,7 +634,7 @@ map.on('load', function () {
       'm-leg-firecov': 'πάνω από 15 λεπτά από πυρόσβεση',
       'm-leg-m1': 'έκθεση: χαμηλή (<25)', 'm-leg-m2': 'έκθεση: μέτρια (25-50)',
       'm-leg-m3': 'έκθεση: υψηλή (50-75)', 'm-leg-m4': 'έκθεση: πολύ υψηλή (75+)',
-      'm-leg-g1': 'Κίνδυνος πυρκαγιάς', 'm-leg-g2': 'Κίνδυνος πλημμύρας', 'm-leg-g3': 'Πυροσβεστική κάλυψη', 'm-leg-g4': 'Θαλάσσια έκθεση',
+      'm-leg-g1': 'Κίνδυνος πυρκαγιάς', 'm-leg-g2': 'Κίνδυνος πλημμύρας', 'm-leg-g3': 'Πυροσβεστική κάλυψη', 'm-leg-g4': 'Θαλάσσιες συνθήκες',
       'm-btn-legend': 'Υπόμνημα', 'm-home': 'Αρχική',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
       'm-clock': 'Pota_Irtes · τοπική ώρα',
@@ -653,8 +658,8 @@ map.on('load', function () {
       road_dist_m: 'Road distance', fire_min: 'Fire response', port_min: 'Nearest port',
       area_m2: 'Area', levels: 'Levels', street: 'Street', sac_scale: 'SAC scale',
       route_type: 'Route type', curated: 'Curated',
-      exposure_now: 'Exposure now', max24: 'Max next 24 h',
-      peak_at: 'Peak at', vhm0_now: 'Wave height now'
+      exposure_now: 'Exposure now', max48: 'Max next 48 h',
+      peak_at: 'Peak at', vhm0_now: 'Wave height now', run_ts: 'Model data age'
     },
     el: {
       name: 'Όνομα', road_class: 'Κατηγορία δρόμου', osm_highway: 'Τύπος OSM',
@@ -663,8 +668,8 @@ map.on('load', function () {
       road_dist_m: 'Απόσταση από δρόμο', fire_min: 'Χρόνος πυρόσβεσης', port_min: 'Κοντινότερο λιμάνι',
       area_m2: 'Εμβαδόν', levels: 'Όροφοι', street: 'Οδός', sac_scale: 'Κλίμακα SAC',
       route_type: 'Τύπος διαδρομής', curated: 'Επιμελημένο',
-      exposure_now: 'Έκθεση τώρα', max24: 'Μέγιστο επόμενων 24 ωρών',
-      peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα'
+      exposure_now: 'Έκθεση τώρα', max48: 'Μέγιστο επόμενων 48 ωρών',
+      peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα', run_ts: 'Ηλικία δεδομένων'
     }
   };
 
@@ -674,7 +679,7 @@ map.on('load', function () {
     pois:      { en: 'POI',      el: 'Σημείο ενδιαφέροντος' },
     buildings: { en: 'building', el: 'Κτίριο' },
     beaches:   { en: 'beach',    el: 'Παραλία' },
-    marine:    { en: 'beach exposure', el: 'θαλάσσια έκθεση' }
+    marine:    { en: 'beach exposure', el: 'θαλάσσιες συνθήκες' }
   };
 
   // Greek translations for OSM enum values (draft - Panagis corrects). Fallback: raw value.
@@ -780,7 +785,11 @@ map.on('load', function () {
     if (key === 'area_m2') return Math.round(val) + (el ? ' τ.μ.' : ' m²');
     if (key === 'fire_min' || key === 'port_min') return Math.round(val * 10) / 10 + (el ? ' λεπτά' : ' min');
     if (key === 'access_score') return Math.round(val) + ' / 100';
-    if (key === 'exposure_now' || key === 'max24') return Math.round(val) + ' / 100';
+    if (key === 'exposure_now' || key === 'max48') return Math.round(val) + ' / 100';
+    if (key === 'run_ts') {
+      var ageH = Math.max(0, Math.round((Date.now() - new Date(val).getTime()) / 3600000));
+      return el ? ('πριν ' + ageH + ' ώ') : (ageH + ' h ago');
+    }
     if (key === 'vhm0_now') return (Math.round(val * 10) / 10) + ' m';
     if (key === 'maxspeed') return val + (el ? ' χλμ/ώρα' : ' km/h');
     var s = String(val);
@@ -838,40 +847,66 @@ map.on('load', function () {
   // ---- T46/T47: marine beach-exposure layer (CMEMS via ARGOS API, lazy load) ----
   var MARINE_API = 'https://api.argos-geo.org';
   var marineLoaded = false;
+  var marineData = [];
+  var marineHour = 0;
+  var marineTimer = null;
   function marineClass(e) { return e < 25 ? 'low' : (e < 50 ? 'moderate' : (e < 75 ? 'high' : 'very_high')); }
+  function buildMarineFC(idx) {
+    return { type: 'FeatureCollection', features: marineData.map(function (d) {
+      var now = d.hrs[Math.min(idx, d.hrs.length - 1)];
+      return {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [d.lon, d.lat] },
+        properties: {
+          name: d.name, name_en: d.name, name_el: d.local_name || d.name,
+          exposure_now: now.exposure, max48: d.peak.exposure,
+          peak_at: new Date(d.peak.valid_time).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
+          vhm0_now: now.vhm0, run_ts: d.cmems_run,
+          cls: marineClass(now.exposure || 0)
+        }
+      };
+    }) };
+  }
+  function marineUpdateTime() {
+    var lbl = document.getElementById('marine-time');
+    if (!marineData.length) { lbl.textContent = '--'; return; }
+    var hrs = marineData[0].hrs;
+    var h = Math.min(marineHour, hrs.length - 1);
+    lbl.textContent = new Date(hrs[h].valid_time).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  }
+  function marineApplyHour() {
+    var src = map.getSource('marine-exp');
+    if (src) src.setData(buildMarineFC(marineHour));
+    marineUpdateTime();
+  }
+  function marineStop() {
+    if (marineTimer) { clearInterval(marineTimer); marineTimer = null; }
+    document.getElementById('marine-play').innerHTML = '&#9654;';
+  }
   function loadMarine() {
     if (marineLoaded) return;
     marineLoaded = true;
     fetch(MARINE_API + '/marine/beaches').then(function (r) { return r.json(); }).then(function (data) {
       var beaches = data.beaches || [];
       return Promise.all(beaches.map(function (b) {
-        return fetch(MARINE_API + '/marine/exposure?osm_id=' + b.osm_id + '&hours=24')
+        return fetch(MARINE_API + '/marine/exposure?osm_id=' + b.osm_id + '&hours=48')
           .then(function (r) { return r.json(); })
           .then(function (ex) {
             var hrs = ex.hours || [];
             if (!hrs.length) return null;
-            var now = hrs[0];
             var peak = hrs.reduce(function (a, h) {
               return (h.exposure != null && h.exposure > (a.exposure != null ? a.exposure : -1)) ? h : a;
             }, hrs[0]);
-            return {
-              type: 'Feature',
-              geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
-              properties: {
-                name: b.name, name_en: b.name, name_el: b.local_name || b.name,
-                exposure_now: now.exposure, max24: peak.exposure,
-                peak_at: new Date(peak.valid_time).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
-                vhm0_now: now.vhm0,
-                cls: marineClass(now.exposure || 0)
-              }
-            };
+            return { osm_id: b.osm_id, name: b.name, local_name: b.local_name,
+                     lon: b.lon, lat: b.lat, hrs: hrs, peak: peak,
+                     cmems_run: ex.cmems_run || null };
           }).catch(function () { return null; });
       }));
-    }).then(function (feats) {
-      feats = (feats || []).filter(Boolean);
-      if (!feats.length) { marineLoaded = false; return; }
+    }).then(function (arr) {
+      marineData = (arr || []).filter(Boolean);
+      if (!marineData.length) { marineLoaded = false; return; }
       function add() {
-        map.addSource('marine-exp', { type: 'geojson', data: { type: 'FeatureCollection', features: feats } });
+        map.addSource('marine-exp', { type: 'geojson', data: buildMarineFC(0) });
         map.addLayer({
           id: 'marine-circle', type: 'circle', source: 'marine-exp',
           paint: {
@@ -899,16 +934,40 @@ map.on('load', function () {
         });
         map.on('mouseenter', 'marine-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', 'marine-circle', function () { map.getCanvas().style.cursor = ''; });
+        marineUpdateTime();
+        if (document.getElementById('tgl-marine').checked) document.getElementById('marinectl').style.display = 'flex';
       }
       try { add(); } catch (e) { console.error('marine layer defer:', e); map.once('load', add); }
     }).catch(function (e) { marineLoaded = false; console.error('marine load failed:', e); });
   }
   document.getElementById('tgl-marine').addEventListener('change', function (ev) {
-    if (ev.target.checked) loadMarine();
+    var mc = document.getElementById('marinectl');
+    if (ev.target.checked) {
+      loadMarine();
+      if (marineData.length) mc.style.display = 'flex';
+    } else {
+      mc.style.display = 'none';
+      marineStop();
+    }
     ['marine-circle', 'marine-label'].forEach(function (lid) {
       if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
     });
     riskLegSync();
+  });
+  document.getElementById('marine-slider').addEventListener('input', function () {
+    marineHour = +this.value;
+    marineApplyHour();
+  });
+  document.getElementById('marine-play').addEventListener('click', function () {
+    if (marineTimer) { marineStop(); return; }
+    if (!marineData.length) return;
+    this.innerHTML = '&#10074;&#10074;';
+    marineTimer = setInterval(function () {
+      var n = marineData[0].hrs.length || 48;
+      marineHour = (marineHour + 1) % n;
+      document.getElementById('marine-slider').value = marineHour;
+      marineApplyHour();
+    }, 700);
   });
 
   // ---- T106: risk legend panel follows the risk toggles ----
