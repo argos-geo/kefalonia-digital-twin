@@ -21,6 +21,17 @@ ds_c = cm.open_dataset(dataset_id='cmems_mod_med_phy-cur_anfc_4.2km-2D_PT1H-m',
                  start_datetime=START, end_datetime=END, **BBOX)
 print('waves times:', ds_w.sizes['time'], '| currents times:', ds_c.sizes['time'])
 
+# Real CMEMS run cycle: MEDWAM4 runs once daily at 12:00 UTC; the published hourly series starts
+# the next day at 01:00 (init + 13 h) and runs +126 h. So the cycle is the most recent 12:00 UTC
+# strictly before the first valid time. Documented in the Bible; if CMEMS changes cadence this
+# mislabels by at most 24 h and the popup age is still honest.
+t0 = dt.datetime.strptime(str(ds_w.time.values[0])[:19], '%Y-%m-%dT%H:%M:%S')
+run = t0.replace(hour=12, minute=0)
+if run >= t0:
+    run -= dt.timedelta(days=1)
+RUN_TS = run.isoformat()
+print('model run cycle:', RUN_TS)
+
 def nearest(ds, refvar, blat, blon):
     a = ds[refvar].isel(time=0).values
     ok = np.isfinite(a)
@@ -43,7 +54,7 @@ with open('/tmp/marine_forecast.csv', 'w', newline='') as f:
     w = csv.writer(f)
     w.writerow(['beach_osm_id', 'valid_time', 'vhm0', 'vmxl', 'vmdr', 'vtm10',
                 'cur_u', 'cur_v', 'cur_speed', 'stokes_x', 'stokes_y',
-                'cell_lon', 'cell_lat', 'cell_dist_m'])
+                'cell_lon', 'cell_lat', 'cell_dist_m', 'cmems_run'])
     for b in csv.DictReader(open('/tmp/beaches.csv')):
         blat, blon = float(b['lat']), float(b['lon'])
         cw = nearest(ds_w, 'VHM0', blat, blon)
@@ -59,7 +70,7 @@ with open('/tmp/marine_forecast.csv', 'w', newline='') as f:
             w.writerow([b['osm_id'], str(ds_w.time.values[t])[:19],
                         fv(g('VHM0')), fv(g('VMXL')), fv(g('VMDR')), fv(g('VTM10')),
                         fv(u), fv(v), fv(np.hypot(u, v)),
-                        fv(g('VSDX')), fv(g('VSDY')), cw[1], cw[0], cw[2]])
+                        fv(g('VSDX')), fv(g('VSDY')), cw[1], cw[0], cw[2], RUN_TS])
             rows += 1
 print('rows written:', rows)
 
