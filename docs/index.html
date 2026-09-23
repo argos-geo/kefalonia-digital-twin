@@ -974,7 +974,7 @@ map.on('load', function () {
   });
   document.getElementById('marine-play').addEventListener('click', function () {
     if (marineTimer) { marineStop(); return; }
-    if (!marineData.length) return;
+    if (!marineData.length && !(typeof CUR !== 'undefined' && CUR.on)) return;
     this.innerHTML = '&#10074;&#10074;';
     marineTimer = setInterval(function () {
       var n = marineData.length ? (marineData[0].hrs.length || 48) : CUR.hours;
@@ -984,7 +984,7 @@ map.on('load', function () {
     }, 700);
   });
   // ---- v0.0.7: animated sea-current particles (CMEMS grid via ARGOS API, canvas overlay) ----
-  var CUR = { on: false, grids: {}, hours: 48, parts: [], raf: null, canvas: null, ctx: null, loading: false, last: 0, speed: 90 };
+  var CUR = { on: false, grids: {}, hours: 48, parts: [], raf: null, canvas: null, ctx: null, loading: false, last: 0, speed: 2400 };
   function curInit() {
     if (CUR.canvas) return;
     var c = document.createElement('canvas');
@@ -1027,15 +1027,24 @@ map.on('load', function () {
     var x0 = Math.floor(fx), y0 = Math.floor(fy);
     var x1 = Math.min(x0 + 1, g.nx - 1), y1 = Math.min(y0 + 1, g.ny - 1);
     var tx = fx - x0, ty = fy - y0;
-    function gu(x, y) { var q = g.u[y * g.nx + x]; return q == null ? 0 : q; }
-    function gv(x, y) { var q = g.v[y * g.nx + x]; return q == null ? 0 : q; }
-    var u = (gu(x0, y0) * (1 - tx) + gu(x1, y0) * tx) * (1 - ty) + (gu(x0, y1) * (1 - tx) + gu(x1, y1) * tx) * ty;
-    var v = (gv(x0, y0) * (1 - tx) + gv(x1, y0) * tx) * (1 - ty) + (gv(x0, y1) * (1 - tx) + gv(x1, y1) * tx) * ty;
-    return [u, v];
+    var corners = [[x0, y0, (1 - tx) * (1 - ty)], [x1, y0, tx * (1 - ty)], [x0, y1, (1 - tx) * ty], [x1, y1, tx * ty]];
+    var u = 0, v = 0, wsum = 0;
+    for (var ci = 0; ci < 4; ci++) {
+      var cx = corners[ci][0], cy = corners[ci][1], cw = corners[ci][2];
+      var qu = g.u[cy * g.nx + cx], qv = g.v[cy * g.nx + cx];
+      if (qu == null || qv == null || cw === 0) continue;
+      u += qu * cw; v += qv * cw; wsum += cw;
+    }
+    if (!wsum) return null;
+    return [u / wsum, v / wsum];
   }
   function curSpawn(p, g) {
-    p.lon = g.origin[0] + Math.random() * (g.nx - 1) * g.step[0];
-    p.lat = g.origin[1] + Math.random() * (g.ny - 1) * g.step[1];
+    for (var tries = 0; tries < 10; tries++) {
+      p.lon = g.origin[0] + Math.random() * (g.nx - 1) * g.step[0];
+      p.lat = g.origin[1] + Math.random() * (g.ny - 1) * g.step[1];
+      var s = curSample(g, p.lon, p.lat);
+      if (s && Math.hypot(s[0], s[1]) >= 0.015) return;
+    }
   }
   function curStart() {
     if (CUR.raf || !CUR.on) return;
@@ -1064,12 +1073,20 @@ map.on('load', function () {
       var mPerPx = 156543.03392 * Math.cos(clat) / Math.pow(2, map.getZoom());
       ctx.lineWidth = 1.6;
       ctx.lineCap = 'round';
-      ctx.strokeStyle = 'rgba(201,162,39,0.5)';
+      ctx.strokeStyle = 'rgba(201,162,39,0.62)';
       ctx.beginPath();
       for (var i = 0; i < CUR.parts.length; i++) {
         var p = CUR.parts[i];
         var s = curSample(g, p.lon, p.lat);
-        if (!s) { curSpawn(p, g); continue; }
+        var spd = s ? Math.hypot(s[0], s[1]) : 0;
+        if (!s || spd < 0.015) {
+          p.dead = (p.dead || 0) + dt;
+          if (p.dead > 1.2) { curSpawn(p, g); p.dead = 0; p.age = 0; p.maxAge = 12 + Math.random() * 22; }
+          continue;
+        }
+        p.dead = 0;
+        p.age = (p.age || 0) + dt;
+        if (p.age > (p.maxAge || 20)) { curSpawn(p, g); p.age = 0; p.maxAge = 12 + Math.random() * 22; continue; }
         var k = dt * CUR.speed / 111000;
         p.lon += s[0] * k / Math.max(0.2, Math.cos(p.lat * Math.PI / 180));
         p.lat += s[1] * k;
@@ -1079,10 +1096,9 @@ map.on('load', function () {
         else if (p.lat > maxLat) p.lat = g.origin[1] + (p.lat - maxLat);
         var a = map.project([p.lon, p.lat]);
         if (a.x < -60 || a.x > CUR.canvas.width + 60 || a.y < -60 || a.y > CUR.canvas.height + 60) continue;
-        var spd = Math.hypot(s[0], s[1]);
-        var Lpx = spd * 25;
+        var Lpx = spd * 60;
         if (Lpx > 44) Lpx = 44;
-        if (Lpx < 2) Lpx = 2;
+        if (Lpx < 4) Lpx = 4;
         var tl_m = Lpx * mPerPx;
         var b = map.project([p.lon - s[0] * tl_m / (111000 * Math.max(0.2, Math.cos(p.lat * Math.PI / 180))), p.lat - s[1] * tl_m / 111000]);
         var dx = a.x - b.x, dy = a.y - b.y;
@@ -1101,7 +1117,7 @@ map.on('load', function () {
     var mc = document.getElementById('marinectl');
     if (ev.target.checked) {
       curInit();
-      if (!CUR.parts.length) { for (var i = 0; i < 1000; i++) CUR.parts.push({ lon: 0, lat: 0 }); }
+      if (!CUR.parts.length) { for (var i = 0; i < 1600; i++) CUR.parts.push({ lon: 0, lat: 0 }); }
       curLoadAll();
       var seed = CUR.grids[0];
       if (seed) CUR.parts.forEach(function (p) { curSpawn(p, seed); });
