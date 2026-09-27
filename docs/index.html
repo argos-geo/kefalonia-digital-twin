@@ -102,6 +102,13 @@
   .chip:hover { border-color:#C9A227; background:rgba(201,162,39,0.14); }
   .chip.on { border-color:#C9A227; background:rgba(201,162,39,0.18); color:#F4EEE0; }
   #ask-card { margin-top:8px; border-top:1px solid #8A7A3A; padding-top:8px; }
+  #aboutmap { margin-top:8px; border-top:1px solid #8A7A3A; padding-top:8px; }
+  #aboutmap summary { font-size:10px; letter-spacing:1.5px; color:#C9A227; cursor:pointer; text-transform:uppercase; }
+  #aboutmap-body { font-size:10.5px; line-height:1.5; color:#9AA8BC; margin-top:6px; }
+  #aboutmap-body strong { color:#E8E4DC; }
+  #aboutmap-body ul { margin:4px 0 6px 14px; padding:0; }
+  #aboutmap-body li { margin:3px 0; }
+  #aboutmap-body a { color:#C9A227; }
   #ask-ans { font-size:12px; line-height:1.5; color:#F4EEE0; }
   #ask-ans b { color:#C9A227; }
   #ask-caveat { font-size:10px; color:#D4762C; margin-top:6px; line-height:1.4; }
@@ -309,6 +316,10 @@
     <button id="m-ask-clear">&#10005; Clear</button>
   </div>
 </div>
+<details id="aboutmap">
+  <summary id="aboutmap-sum">About this map</summary>
+  <div id="aboutmap-body"><p>The ARGOS digital twin of Kefalonia in one interactive map. Toggle layers from the panel:</p><ul><li><strong>Base map:</strong> roads, trails, buildings, beaches, municipalities and points of interest from OpenStreetMap.</li><li><strong>Wildfire risk:</strong> screening index from slope, fuel, aspect, road proximity and historical burns, weighted into a 0-100 score, checked against 24 EFFIS fire perimeters (2017 to 2026); displayed as moderate, high, very high.</li><li><strong>Flash flood risk:</strong> drainage convergence, receiving slope, upstream burn scar and topographic wetness, checked against the February 2025 storm.</li><li><strong>Fire coverage:</strong> buildings coloured by drive time to the nearest fire station over the OSM road network (pgRouting); evacuation-port times sit in the same popups.</li><li><strong>Sea conditions:</strong> wave height, period and direction from the Copernicus Marine MEDWAM4 model at 14 beaches, refreshed twice daily, 48 hours forward.</li><li><strong>Sea currents:</strong> animated surface-current streaks from Copernicus Marine on the same run cycle, driven by the map time scrubber.</li><li><strong>Bathymetry:</strong> EMODnet depth contours to -3500 m.</li></ul><p><strong>Limitations:</strong> risk layers are screening baselines, not operational forecasts. Flood risk omits drainage infrastructure. Travel time assumes clear roads and no traffic. Sea conditions are regional, not local surf. Known gaps per layer are documented in the methodology on GitHub.</p><p><strong>Data sources:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet.</p></div>
+</details>
 </div>
 <button id="btn-layers" aria-label="Layers">&#9776;</button>
 <button id="btn-askpill"><span id="m-btn-ask">Ask the twin</span></button>
@@ -602,6 +613,8 @@ map.on('load', function () {
       'm-sect-risk': 'Risk',
       'm-row-wildfire': 'Wildfire risk', 'm-row-flood': 'Flood risk', 'm-row-firecov': 'Fire coverage', 'm-row-marine': 'Beach exposure (marine)',
       'm-row-currents': 'Sea currents (animated)',
+      'aboutmap-sum': 'About this map',
+      'aboutmap-body': '<p>The ARGOS digital twin of Kefalonia in one interactive map. Toggle layers from the panel:</p><ul><li><strong>Base map:</strong> roads, trails, buildings, beaches, municipalities and points of interest from OpenStreetMap.</li><li><strong>Wildfire risk:</strong> screening index from slope, fuel, aspect, road proximity and historical burns, weighted into a 0-100 score, checked against 24 EFFIS fire perimeters (2017 to 2026); displayed as moderate, high, very high.</li><li><strong>Flash flood risk:</strong> drainage convergence, receiving slope, upstream burn scar and topographic wetness, checked against the February 2025 storm.</li><li><strong>Fire coverage:</strong> buildings coloured by drive time to the nearest fire station over the OSM road network (pgRouting); evacuation-port times sit in the same popups.</li><li><strong>Sea conditions:</strong> wave height, period and direction from the Copernicus Marine MEDWAM4 model at 14 beaches, refreshed twice daily, 48 hours forward.</li><li><strong>Sea currents:</strong> animated surface-current streaks from Copernicus Marine on the same run cycle, driven by the map time scrubber.</li><li><strong>Bathymetry:</strong> EMODnet depth contours to -3500 m.</li></ul><p><strong>Limitations:</strong> risk layers are screening baselines, not operational forecasts. Flood risk omits drainage infrastructure. Travel time assumes clear roads and no traffic. Sea conditions are regional, not local surf. Known gaps per layer are documented in the methodology on GitHub.</p><p><strong>Data sources:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet.</p>',
       'm-leg-1': 'primary / secondary', 'm-leg-2': 'tertiary', 'm-leg-3': 'local / service',
       'm-leg-4': 'track / path &middot; trail', 'm-leg-5': 'beach', 'm-leg-6': 'POI',
       'm-leg-7': 'buildings (zoom 12+)',
@@ -635,6 +648,8 @@ map.on('load', function () {
       'm-sect-risk': 'Κίνδυνοι',
       'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Πυροσβεστική κάλυψη', 'm-row-marine': 'Θαλάσσιες συνθήκες',
       'm-row-currents': 'Θαλάσσια ρεύματα',
+      'aboutmap-sum': 'Σχετικά με τον χάρτη',
+      'aboutmap-body': '<p>Ο ψηφιακός δίδυμος της Κεφαλονιάς σε έναν διαδραστικό χάρτη. Ενεργοποιήστε επίπεδα από τον πίνακα:</p><ul><li><strong>Βασικός χάρτης:</strong> δρόμοι, μονοπάτια, κτίρια, παραλίες, δήμοι και σημεία ενδιαφέροντος από το OpenStreetMap.</li><li><strong>Κίνδυνος πυρκαγιάς:</strong> δείκτης ελέγχου από κλίση, καύσιμη ύλη, προσανατολισμό, εγγύτητα σε δρόμους και ιστορικές καύσεις, σε σκορ 0-100, με έλεγχο έναντι 24 περιμέτρων πυρκαγιάς EFFIS (2017 έως 2026), σε κλάσεις μέτριος, υψηλός, πολύ υψηλός.</li><li><strong>Κίνδυνος πλημμύρας:</strong> σύγκλιση απορροής, κλίση υποδοχής, καύση ανάντη και τοπογραφική υγρασία, με έλεγχο στην κακοκαιρία Φεβρουαρίου 2025.</li><li><strong>Πυροσβεστική κάλυψη:</strong> κτίρια χρωματισμένα κατά χρόνο διαδρομής στον πλησιέστερο πυροσβεστικό σταθμό στο οδικό δίκτυο OSM (pgRouting), με τους χρόνους προς τον λιμένα εκκένωσης στα ίδια αναδυόμενα.</li><li><strong>Θαλάσσιες συνθήκες:</strong> ύψος, περίοδος και κατεύθυνση κυματισμού από το μοντέλο MEDWAM4 του Copernicus Marine για 14 παραλίες, με ανανέωση δύο φορές την ημέρα, 48 ώρες μπροστά.</li><li><strong>Θαλάσσια ρεύματα:</strong> κινούμενες γραμμές επιφανειακών ρευμάτων από το Copernicus Marine στον ίδιο κύκλο εκτέλεσης, με την χρονομηχανή του χάρτη.</li><li><strong>Βυθομετρία:</strong> ισοβαθείς EMODnet έως -3500 μ.</li></ul><p><strong>Περιορισμοί:</strong> τα επίπεδα κινδύνου είναι γραμμές βάσης ελέγχου, όχι επιχειρησιακές προβλέψεις. Ο κίνδυνος πλημμύρας δεν περιλαμβάνει υποδομές απορροής. Ο χρόνος διαδρομής προϋποθέτει ελεύθερους δρόμους χωρίς κυκλοφορία. Οι θαλάσσιες συνθήκες είναι περιφερειακές, όχι τοπικός κυματισμός. Τα γνωστά κενά ανά επίπεδο τεκμηριώνονται στη μεθοδολογία στο GitHub.</p><p><strong>Πηγές δεδομένων:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet.</p>',
       'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
@@ -1038,10 +1053,17 @@ map.on('load', function () {
     if (!wsum) return null;
     return [u / wsum, v / wsum];
   }
+  function curCellWet(g, lon, lat) {
+    var ci = Math.round((lon - g.origin[0]) / g.step[0]);
+    var cj = Math.round((lat - g.origin[1]) / g.step[1]);
+    if (ci < 0 || ci >= g.nx || cj < 0 || cj >= g.ny) return false;
+    return g.u[cj * g.nx + ci] != null;
+  }
   function curSpawn(p, g) {
-    for (var tries = 0; tries < 10; tries++) {
+    for (var tries = 0; tries < 12; tries++) {
       p.lon = g.origin[0] + Math.random() * (g.nx - 1) * g.step[0];
       p.lat = g.origin[1] + Math.random() * (g.ny - 1) * g.step[1];
+      if (!curCellWet(g, p.lon, p.lat)) continue;
       var s = curSample(g, p.lon, p.lat);
       if (s && Math.hypot(s[0], s[1]) >= 0.015) return;
     }
@@ -1094,6 +1116,12 @@ map.on('load', function () {
         else if (p.lon > maxLon) p.lon = g.origin[0] + (p.lon - maxLon);
         if (p.lat < g.origin[1]) p.lat = maxLat - (g.origin[1] - p.lat);
         else if (p.lat > maxLat) p.lat = g.origin[1] + (p.lat - maxLat);
+        if (!curCellWet(g, p.lon, p.lat)) {
+          p.beach = (p.beach || 0) + dt;
+          if (p.beach > 3) { curSpawn(p, g); p.beach = 0; p.age = 0; p.maxAge = 12 + Math.random() * 22; }
+          continue;
+        }
+        p.beach = 0;
         var a = map.project([p.lon, p.lat]);
         if (a.x < -60 || a.x > CUR.canvas.width + 60 || a.y < -60 || a.y > CUR.canvas.height + 60) continue;
         var Lpx = spd * 60;
