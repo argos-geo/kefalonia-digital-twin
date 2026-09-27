@@ -350,7 +350,7 @@
   </div>
   <div class="rleg-g" id="rleg-currents">
     <div class="rleg-h" id="m-leg-g5">Sea currents</div>
-    <div class="leg"><span class="sw" style="background:linear-gradient(90deg, rgba(201,162,39,0) 0%, #C9A227 100%); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-cur">current streaks: direction = flow, length = speed</span></div>
+    <div class="leg"><span class="sw" style="background:linear-gradient(90deg, #5A6A80, #7FA89B, #C9A227, #D4762C); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-cur">current streaks: direction = flow, length + colour = speed</span></div>
   </div>
 </div>
 <div id="marinectl" style="display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:25; background:rgba(10,22,40,0.88); border:1px solid rgba(201,162,39,0.55); border-radius:9px; padding:8px 12px; color:#F4EEE0; font-size:11px; align-items:center; gap:10px; max-width:92vw;">
@@ -623,7 +623,7 @@ map.on('load', function () {
       'm-leg-firecov': 'beyond 15-min fire response',
       'm-leg-m1': 'exposure: low (<25)', 'm-leg-m2': 'exposure: moderate (25-50)',
       'm-leg-m3': 'exposure: high (50-75)', 'm-leg-m4': 'exposure: very high (75+)',
-      'm-leg-g5': 'Sea currents', 'm-leg-cur': 'current streaks: direction = flow, length = speed',
+      'm-leg-g5': 'Sea currents', 'm-leg-cur': 'current streaks: direction = flow, length + colour = speed',
       'm-leg-g1': 'Wildfire risk', 'm-leg-g2': 'Flood risk', 'm-leg-g3': 'Fire coverage', 'm-leg-g4': 'Beach exposure',
       'm-btn-legend': 'Legend', 'm-home': 'Home',
       'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
@@ -658,7 +658,7 @@ map.on('load', function () {
       'm-leg-firecov': 'πάνω από 15 λεπτά από πυρόσβεση',
       'm-leg-m1': 'έκθεση: χαμηλή (<25)', 'm-leg-m2': 'έκθεση: μέτρια (25-50)',
       'm-leg-m3': 'έκθεση: υψηλή (50-75)', 'm-leg-m4': 'έκθεση: πολύ υψηλή (75+)',
-      'm-leg-g5': 'Θαλάσσια ρεύματα', 'm-leg-cur': 'γραμμές: κατεύθυνση = φορά, μήκος = ταχύτητα',
+      'm-leg-g5': 'Θαλάσσια ρεύματα', 'm-leg-cur': 'γραμμές: κατεύθυνση = φορά, μήκος και χρώμα = ταχύτητα',
       'm-leg-g1': 'Κίνδυνος πυρκαγιάς', 'm-leg-g2': 'Κίνδυνος πλημμύρας', 'm-leg-g3': 'Πυροσβεστική κάλυψη', 'm-leg-g4': 'Θαλάσσιες συνθήκες',
       'm-btn-legend': 'Υπόμνημα', 'm-home': 'Αρχική',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
@@ -903,9 +903,20 @@ map.on('load', function () {
     var h = Math.min(marineHour, hrs.length - 1);
     lbl.textContent = new Date(hrs[h].valid_time).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   }
+  var MFILL = { low: 'rgba(127,168,155,0.45)', moderate: 'rgba(201,162,39,0.45)', high: 'rgba(212,118,44,0.45)', very_high: 'rgba(176,58,46,0.5)' };
+  function marineFillExpr() {
+    var e = ['match', ['get', 'osm_id']];
+    marineData.forEach(function (d) {
+      var now = d.hrs[Math.min(marineHour, d.hrs.length - 1)];
+      e.push(d.osm_id, MFILL[marineClass(now.exposure || 0)]);
+    });
+    e.push('rgba(0,0,0,0)');
+    return e;
+  }
   function marineApplyHour() {
     var src = map.getSource('marine-exp');
     if (src) src.setData(buildMarineFC(marineHour));
+    if (map.getLayer('marine-beach-fill')) map.setPaintProperty('marine-beach-fill', 'fill-color', marineFillExpr());
     marineUpdateTime();
   }
   function marineStop() {
@@ -936,8 +947,14 @@ map.on('load', function () {
       if (!marineData.length) { marineLoaded = false; return; }
       function add() {
         map.addSource('marine-exp', { type: 'geojson', data: buildMarineFC(0) });
+        var marineIds = marineData.map(function (d) { return d.osm_id; });
         map.addLayer({
-          id: 'marine-circle', type: 'circle', source: 'marine-exp',
+          id: 'marine-beach-fill', type: 'fill', source: 'vectors', 'source-layer': 'beaches',
+          filter: ['in', ['get', 'osm_id'], ['literal', marineIds]],
+          paint: { 'fill-color': 'rgba(0,0,0,0)' }
+        });
+        map.addLayer({
+          id: 'marine-circle', type: 'circle', source: 'marine-exp', maxzoom: 12,
           paint: {
             'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 5, 13, 10],
             'circle-color': ['match', ['get', 'cls'], 'low', '#7FA89B', 'moderate', '#C9A227', 'high', '#D4762C', '#B03A2E'],
@@ -963,6 +980,21 @@ map.on('load', function () {
         });
         map.on('mouseenter', 'marine-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', 'marine-circle', function () { map.getCanvas().style.cursor = ''; });
+        map.setPaintProperty('marine-beach-fill', 'fill-color', marineFillExpr());
+        map.on('click', 'marine-beach-fill', function (e) {
+          var oid = e.features[0].properties.osm_id;
+          var d = null;
+          for (var i = 0; i < marineData.length; i++) { if (marineData[i].osm_id === oid) d = marineData[i]; }
+          if (!d) return;
+          var now = d.hrs[Math.min(marineHour, d.hrs.length - 1)];
+          new maplibregl.Popup({ closeButton: true })
+            .setLngLat(e.lngLat)
+            .setHTML(popupHTML({ name: d.name, name_en: d.name, name_el: d.local_name || d.name,
+              exposure_now: now.exposure, max48: d.peak.exposure,
+              peak_at: new Date(d.peak.valid_time).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
+              vhm0_now: now.vhm0, run_ts: d.cmems_run, cls: marineClass(now.exposure || 0) }, 'marine-circle'))
+            .addTo(map);
+        });
         marineUpdateTime();
         if (document.getElementById('tgl-marine').checked) document.getElementById('marinectl').style.display = 'flex';
       }
@@ -978,7 +1010,7 @@ map.on('load', function () {
       if (!document.getElementById('tgl-currents').checked) mc.style.display = 'none';
       marineStop();
     }
-    ['marine-circle', 'marine-label'].forEach(function (lid) {
+    ['marine-circle', 'marine-label', 'marine-beach-fill'].forEach(function (lid) {
       if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
     });
     riskLegSync();
@@ -1053,6 +1085,11 @@ map.on('load', function () {
     if (!wsum) return null;
     return [u / wsum, v / wsum];
   }
+  function curEdgeDist(g, lon, lat) {
+    var fx = (lon - g.origin[0]) / g.step[0];
+    var fy = (lat - g.origin[1]) / g.step[1];
+    return Math.min(fx, g.nx - 1 - fx, fy, g.ny - 1 - fy);
+  }
   function curCellWet(g, lon, lat) {
     var ci = Math.round((lon - g.origin[0]) / g.step[0]);
     var cj = Math.round((lat - g.origin[1]) / g.step[1]);
@@ -1065,7 +1102,7 @@ map.on('load', function () {
       p.lat = g.origin[1] + Math.random() * (g.ny - 1) * g.step[1];
       if (!curCellWet(g, p.lon, p.lat)) continue;
       var s = curSample(g, p.lon, p.lat);
-      if (s && Math.hypot(s[0], s[1]) >= 0.015) return;
+      if (s && Math.hypot(s[0], s[1]) >= 0.015 && curEdgeDist(g, p.lon, p.lat) >= 1.2) return;
     }
   }
   function curStart() {
@@ -1095,8 +1132,11 @@ map.on('load', function () {
       var mPerPx = 156543.03392 * Math.cos(clat) / Math.pow(2, map.getZoom());
       ctx.lineWidth = 1.6;
       ctx.lineCap = 'round';
-      ctx.strokeStyle = 'rgba(201,162,39,0.62)';
-      ctx.beginPath();
+      var CUR_RGB = [[90,106,128], [127,168,155], [201,162,39], [212,118,44]];
+      var CUR_FADE = [0.2, 0.4, 0.62];
+      var bins = [];
+      var bi, fi, segs;
+      for (bi = 0; bi < 4; bi++) for (fi = 0; fi < 3; fi++) bins.push([]);
       for (var i = 0; i < CUR.parts.length; i++) {
         var p = CUR.parts[i];
         var s = curSample(g, p.lon, p.lat);
@@ -1133,10 +1173,24 @@ map.on('load', function () {
         var L = Math.sqrt(dx * dx + dy * dy);
         if (L > 48) { var f = 48 / L; b.x = a.x - dx * f; b.y = a.y - dy * f; }
         if (L < 1.5) continue;
-        ctx.moveTo(b.x, b.y);
-        ctx.lineTo(a.x, a.y);
+        bi = spd < 0.08 ? 0 : (spd < 0.2 ? 1 : (spd < 0.4 ? 2 : 3));
+        var ed = curEdgeDist(g, p.lon, p.lat);
+        fi = ed < 0.4 ? 0 : (ed < 0.8 ? 1 : 2);
+        bins[bi * 3 + fi].push(b.x, b.y, a.x, a.y);
       }
-      ctx.stroke();
+      for (bi = 0; bi < 4; bi++) {
+        for (fi = 0; fi < 3; fi++) {
+          segs = bins[bi * 3 + fi];
+          if (!segs.length) continue;
+          ctx.strokeStyle = 'rgba(' + CUR_RGB[bi][0] + ',' + CUR_RGB[bi][1] + ',' + CUR_RGB[bi][2] + ',' + CUR_FADE[fi] + ')';
+          ctx.beginPath();
+          for (var si = 0; si < segs.length; si += 4) {
+            ctx.moveTo(segs[si], segs[si + 1]);
+            ctx.lineTo(segs[si + 2], segs[si + 3]);
+          }
+          ctx.stroke();
+        }
+      }
     }
     CUR.raf = requestAnimationFrame(curFrame);
   }
@@ -1224,8 +1278,8 @@ map.on('load', function () {
       el: '<b>Πώς το γνωρίζουμε</b><br>Μοντελοποιημένες συνθήκες κυματισμού και επιφανειακών ρευμάτων από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με δειγματοληψία στο κοντινότερο θαλάσσιο κελί για 14 επιλεγμένες παραλίες, συνδυασμένες σε δείκτη έκθεσης 0-100 (70% κύμα, 30% ρεύματα), με ανανέωση δύο φορές την ημέρα. Χρώματα: κάτω από 25 χαμηλή, 25-50 μέτρια, 50-75 υψηλή, 75+ πολύ υψηλή. Περιφερειακή έκθεση, όχι τοπικός κυματισμός ή αρπακτικά ρεύματα, ούτε πρόγνωση ναυαγοσωστικού επιπέδου.'
     },
     'v-currents': {
-      en: '<b>How do we know</b><br>Animated streaks are modelled surface currents from Copernicus Marine (Mediterranean, 4 km grid, hourly), refreshed twice daily. Streak direction is the flow direction; longer streaks mean faster water. The time scrubber below the map drives them forward up to 48 h. Modelled offshore currents, not local sea state and not for navigation.',
-      el: '<b>Πώς το γνωρίζουμε</b><br>Οι ζωντανές γραμμές είναι μοντελοποιημένα επιφανειακά ρεύματα από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με ανανέωση δύο φορές την ημέρα. Η κατεύθυνση της γραμμής είναι η φορά του ρεύματος, μεγαλύτερη γραμμή σημαίνει γρηγορότερο νερό. Η χρονομηχανή κάτω από τον χάρτη τα οδηγεί έως και 48 ώρες μπροστά. Μοντελοποιημένα ρεύματα ανοιχτής θάλασσας, όχι τοπική κατάσταση θάλασσας, ούτε για πλοήγηση.'
+      en: '<b>How do we know</b><br>Animated streaks are modelled surface currents from Copernicus Marine (Mediterranean, 4 km grid, hourly), refreshed twice daily. Streak direction is the flow direction; longer streaks mean faster water, and colour follows the same scale: steel is slow, teal moderate, gold fast, orange fastest. The time scrubber below the map drives them forward up to 48 h. Modelled offshore currents, not local sea state and not for navigation.',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Οι ζωντανές γραμμές είναι μοντελοποιημένα επιφανειακά ρεύματα από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με ανανέωση δύο φορές την ημέρα. Η κατεύθυνση της γραμμής είναι η φορά του ρεύματος, μεγαλύτερη γραμμή σημαίνει γρηγορότερο νερό, και το χρώμα ακολουθεί την ίδια κλίμακα: γκρι αργό, τιρκουάζ μέτριο, χρυσό γρήγορο, πορτοκαλί ταχύτερο. Η χρονομηχανή κάτω από τον χάρτη τα οδηγεί έως και 48 ώρες μπροστά. Μοντελοποιημένα ρεύματα ανοιχτής θάλασσας, όχι τοπική κατάσταση θάλασσας, ούτε για πλοήγηση.'
     }
   };
   function renderVnotes(lang) {
