@@ -917,6 +917,8 @@ map.on('load', function () {
       if (!isNaN(r) && (run === null || r > run)) run = r;
       if (!isNaN(f) && (fet === null || f > fet)) fet = f;
     });
+    if (run === null && CUR.run_ts) { var rr = new Date(CUR.run_ts).getTime(); if (!isNaN(rr)) run = rr; }
+    if (fet === null && CUR.fetch_ts) { var ff = new Date(CUR.fetch_ts).getTime(); if (!isNaN(ff)) fet = ff; }
     var na = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03ad\u03c1\u03c9\u03c3\u03b7: --' : 'updated: --';
     if (run === null && fet === null) { if (el) el.textContent = na; if (elc) elc.textContent = na; return; }
     var age = fet !== null ? fet : run;
@@ -1231,6 +1233,8 @@ map.on('load', function () {
         p.beach = 0;
         var a = map.project([p.lon, p.lat]);
         if (a.x < -60 || a.x > CUR.canvas.width + 60 || a.y < -60 || a.y > CUR.canvas.height + 60) continue;
+        var sr = gr ? curSample(gr, p.lon, p.lat) : null;
+        var spdR = sr ? Math.hypot(sr[0], sr[1]) : spd;
         var Lpx = spdR * 60;
         if (Lpx > 44) Lpx = 44;
         if (Lpx < 4) Lpx = 4;
@@ -1240,8 +1244,6 @@ map.on('load', function () {
         var L = Math.sqrt(dx * dx + dy * dy);
         if (L > 48) { var f = 48 / L; b.x = a.x - dx * f; b.y = a.y - dy * f; }
         if (L < 1.5) continue;
-        var sr = gr ? curSample(gr, p.lon, p.lat) : null;
-        var spdR = sr ? Math.hypot(sr[0], sr[1]) : spd;
         bi = spdR < 0.08 ? 0 : (spdR < 0.2 ? 1 : (spdR < 0.4 ? 2 : 3));
         var ed = curEdgeDist(g, p.lon, p.lat);
         fi = ed < 0.4 ? 0 : (ed < 0.8 ? 1 : 2);
@@ -1263,7 +1265,16 @@ map.on('load', function () {
     }
     CUR.raf = requestAnimationFrame(curFrame);
   }
+  function curFreshProbe() {
+    if (marineData.length) return;
+    fetch(MARINE_API + '/marine/exposure?osm_id=237382151&hours=1').then(function (r) { return r.json(); }).then(function (ex) {
+      CUR.run_ts = ex.cmems_run || null;
+      CUR.fetch_ts = ex.fetched_at || null;
+      marineFresh();
+    }).catch(function (e) { console.error('curFreshProbe:', e); });
+  }
   document.getElementById('tgl-currents').addEventListener('change', function (ev) {
+    if (ev.target.checked) curFreshProbe();
     if (typeof marineFresh === 'function') marineFresh();
     CUR.on = ev.target.checked;
     var mc = document.getElementById('marinectl');
