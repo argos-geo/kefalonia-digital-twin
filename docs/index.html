@@ -352,6 +352,7 @@
   <div class="rleg-g" id="rleg-currents">
     <div class="rleg-h" id="m-leg-g5">Sea currents</div>
     <div class="leg"><span class="sw" style="background:linear-gradient(90deg, #5A6A80, #7FA89B, #C9A227, #D4762C); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-cur">current streaks: direction = flow, length + colour = speed</span></div>
+    <div class="leg"><span id="m-leg-fresh-cur" style="font-style:italic; opacity:0.8;">--</span></div>
   </div>
 </div>
 <div id="marinectl" style="display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:25; background:rgba(10,22,40,0.88); border:1px solid rgba(201,162,39,0.55); border-radius:9px; padding:8px 12px; color:#F4EEE0; font-size:11px; align-items:center; gap:10px; max-width:92vw;">
@@ -907,17 +908,32 @@ map.on('load', function () {
   }
   function marineFresh() {
     var el = document.getElementById('m-leg-fresh');
-    if (!el) return;
-    var ts = null;
+    var elc = document.getElementById('m-leg-fresh-cur');
+    if (!el && !elc) return;
+    var run = null, fet = null;
     marineData.forEach(function (d) {
-      var t = d.cmems_run ? new Date(d.cmems_run).getTime() : NaN;
-      if (!isNaN(t) && (ts === null || t > ts)) ts = t;
+      var r = d.cmems_run ? new Date(d.cmems_run).getTime() : NaN;
+      var f = d.fetched_at ? new Date(d.fetched_at).getTime() : NaN;
+      if (!isNaN(r) && (run === null || r > run)) run = r;
+      if (!isNaN(f) && (fet === null || f > fet)) fet = f;
     });
-    if (ts === null) { el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03ad\u03c1\u03c9\u03c3\u03b7: --' : 'updated: --'; return; }
-    var h = (Date.now() - ts) / 3600000;
-    if (h < 1) el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 \u03c0\u03c1\u03b9\u03bd <1 \u03ce' : 'Updated <1 h ago';
-    else if (h < 48) el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 \u03c0\u03c1\u03b9\u03bd ' + Math.round(h) + ' \u03ce' : 'Updated ' + Math.round(h) + ' h ago';
-    else el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 \u03c0\u03c1\u03b9\u03bd ' + Math.round(h / 24) + ' \u03b7\u03bc' : 'Updated ' + Math.round(h / 24) + ' d ago';
+    var na = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03ad\u03c1\u03c9\u03c3\u03b7: --' : 'updated: --';
+    if (run === null && fet === null) { if (el) el.textContent = na; if (elc) elc.textContent = na; return; }
+    var age = fet !== null ? fet : run;
+    var h = (Date.now() - age) / 3600000;
+    var a;
+    if (h < 1) a = CUR_LANG === 'el' ? '\u03c0\u03c1\u03b9\u03bd <1 \u03ce' : '<1 h ago';
+    else if (h < 48) a = CUR_LANG === 'el' ? '\u03c0\u03c1\u03b9\u03bd ' + Math.round(h) + ' \u03ce' : Math.round(h) + ' h ago';
+    else a = CUR_LANG === 'el' ? '\u03c0\u03c1\u03b9\u03bd ' + Math.round(h / 24) + ' \u03b7\u03bc' : Math.round(h / 24) + ' d ago';
+    var txt;
+    if (run !== null) {
+      var rds = new Date(run).toLocaleString(CUR_LANG === 'el' ? 'el-GR' : 'en-GB', { weekday: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+      txt = (CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 ' : 'Updated ') + a + (CUR_LANG === 'el' ? ' \u00b7 \u03ba\u03cd\u03ba\u03bb\u03bf\u03c2: ' : ' \u00b7 model run ') + rds;
+    } else {
+      txt = (CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 ' : 'Updated ') + a;
+    }
+    if (el) el.textContent = txt;
+    if (elc) elc.textContent = txt;
   }
   var MFILL = { low: 'rgba(127,168,155,0.45)', moderate: 'rgba(201,162,39,0.45)', high: 'rgba(212,118,44,0.45)', very_high: 'rgba(176,58,46,0.5)' };
   function marineFillExpr() {
@@ -955,7 +971,7 @@ map.on('load', function () {
             }, hrs[0]);
             return { osm_id: b.osm_id, name: b.name, local_name: b.local_name,
                      lon: b.lon, lat: b.lat, hrs: hrs, peak: peak,
-                     cmems_run: ex.cmems_run || null };
+                     cmems_run: ex.cmems_run || null, fetched_at: ex.fetched_at || null };
           }).catch(function () { return null; });
       }));
     }).then(function (arr) {
@@ -1213,6 +1229,7 @@ map.on('load', function () {
     CUR.raf = requestAnimationFrame(curFrame);
   }
   document.getElementById('tgl-currents').addEventListener('change', function (ev) {
+    if (typeof marineFresh === 'function') marineFresh();
     CUR.on = ev.target.checked;
     var mc = document.getElementById('marinectl');
     if (ev.target.checked) {
