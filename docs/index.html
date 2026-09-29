@@ -347,6 +347,7 @@
     <div class="leg"><span class="sw" style="background:#C9A227"></span><span id="m-leg-m2">exposure: moderate (25-50)</span></div>
     <div class="leg"><span class="sw" style="background:#D4762C"></span><span id="m-leg-m3">exposure: high (50-75)</span></div>
     <div class="leg"><span class="sw" style="background:#B03A2E"></span><span id="m-leg-m4">exposure: very high (75+)</span></div>
+    <div class="leg"><span id="m-leg-fresh" style="font-style:italic; opacity:0.8;">--</span></div>
   </div>
   <div class="rleg-g" id="rleg-currents">
     <div class="rleg-h" id="m-leg-g5">Sea currents</div>
@@ -798,6 +799,7 @@ map.on('load', function () {
     document.getElementById('lang-el').classList.toggle('on', lang === 'el');
     document.documentElement.lang = lang;
     try { localStorage.setItem('argos-lang', lang); } catch (e) {}
+    if (typeof marineFresh === 'function') marineFresh();
     if (typeof demoState !== 'undefined' && demoState.q) renderAnswer();
   }
   document.getElementById('lang-en').addEventListener('click', function () { setLang('en'); });
@@ -903,6 +905,20 @@ map.on('load', function () {
     var h = Math.min(marineHour, hrs.length - 1);
     lbl.textContent = new Date(hrs[h].valid_time).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   }
+  function marineFresh() {
+    var el = document.getElementById('m-leg-fresh');
+    if (!el) return;
+    var ts = null;
+    marineData.forEach(function (d) {
+      var t = d.cmems_run ? new Date(d.cmems_run).getTime() : NaN;
+      if (!isNaN(t) && (ts === null || t > ts)) ts = t;
+    });
+    if (ts === null) { el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03ad\u03c1\u03c9\u03c3\u03b7: --' : 'updated: --'; return; }
+    var h = (Date.now() - ts) / 3600000;
+    if (h < 1) el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 \u03c0\u03c1\u03b9\u03bd <1 \u03ce' : 'Updated <1 h ago';
+    else if (h < 48) el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 \u03c0\u03c1\u03b9\u03bd ' + Math.round(h) + ' \u03ce' : 'Updated ' + Math.round(h) + ' h ago';
+    else el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 \u03c0\u03c1\u03b9\u03bd ' + Math.round(h / 24) + ' \u03b7\u03bc' : 'Updated ' + Math.round(h / 24) + ' d ago';
+  }
   var MFILL = { low: 'rgba(127,168,155,0.45)', moderate: 'rgba(201,162,39,0.45)', high: 'rgba(212,118,44,0.45)', very_high: 'rgba(176,58,46,0.5)' };
   function marineFillExpr() {
     var e = ['match', ['get', 'osm_id']];
@@ -964,10 +980,11 @@ map.on('load', function () {
           }
         });
         map.addLayer({
-          id: 'marine-label', type: 'symbol', source: 'marine-exp', minzoom: 11,
+          id: 'marine-label', type: 'symbol', source: 'marine-exp', minzoom: 8,
           layout: {
             'text-field': ['concat', ['get', 'name'], '  ', ['to-string', ['round', ['coalesce', ['get', 'exposure_now'], 0]]]],
-            'text-size': 11, 'text-font': ['Noto Sans Regular'],
+            'text-size': ['interpolate', ['linear'], ['zoom'], 8, 9.5, 11, 11, 14, 12.5],
+            'text-font': ['Noto Sans Regular'],
             'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-optional': true
           },
           paint: { 'text-color': '#F4EEE0', 'text-halo-color': 'rgba(10,22,40,0.85)', 'text-halo-width': 1.2 }
@@ -996,6 +1013,7 @@ map.on('load', function () {
             .addTo(map);
         });
         marineUpdateTime();
+        marineFresh();
         if (document.getElementById('tgl-marine').checked) document.getElementById('marinectl').style.display = 'flex';
       }
       try { add(); } catch (e) { console.error('marine layer defer:', e); map.once('load', add); }
@@ -1005,7 +1023,7 @@ map.on('load', function () {
     var mc = document.getElementById('marinectl');
     if (ev.target.checked) {
       loadMarine();
-      if (marineData.length) mc.style.display = 'flex';
+      if (marineData.length) { mc.style.display = 'flex'; marineFresh(); }
     } else {
       if (!document.getElementById('tgl-currents').checked) mc.style.display = 'none';
       marineStop();
