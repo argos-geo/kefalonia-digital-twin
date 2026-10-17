@@ -321,7 +321,7 @@
 </div>
 <div id="ask">
   <button id="m-ask-close" aria-label="Close">&#10005;</button>
-  <div class="sect" id="m-sect-ask">Ask the twin &middot; v0.1.0 demo</div>
+  <div class="sect" id="m-sect-ask">Ask the twin &middot; experimental demo</div>
   <button class="chip" id="m-q1" data-q="q1">Which buildings are more than 15 min from fire response?</button>
   <button class="chip" id="m-q2" data-q="q2">How many accommodations sit within 1 km of each named beach?</button>
   <button class="chip" id="m-q3" data-q="q3">Which named beaches lack a paved road within 500 m?</button>
@@ -339,7 +339,7 @@
 </details>
 </div>
 <button id="btn-layers" aria-label="Layers">&#9776;</button>
-<button id="btn-askpill"><span id="m-btn-ask">Ask the twin</span></button>
+<button id="btn-askpill"><span id="m-btn-ask">Ask the twin &middot; experimental</span></button>
 <div id="riskleg">
   <button id="m-rleg-close" aria-label="Close">&#10005;</button>
   <div class="rleg-g" id="rleg-wildfire">
@@ -651,7 +651,7 @@ map.on('load', function () {
       'm-btn-legend': 'Legend', 'm-home': 'Home',
       'm-foot-note': 'Click any feature for its ARGOS attributes (fire/Port travel times live in buildings &amp; POIs).',
       'm-clock': 'Pota_Irtes local time',
-      'm-sect-ask': 'Ask the twin &middot; v0.1.0 demo',
+      'm-sect-ask': 'Ask the twin &middot; experimental demo',
       'm-q1': 'Which buildings are more than 15 min from fire response?',
       'm-q2': 'How many accommodations sit within 1 km of each named beach?',
       'm-q3': 'Which named beaches lack a paved road within 500 m?',
@@ -659,7 +659,7 @@ map.on('load', function () {
       'm-ask-note': 'Pre-wired questions, real PostGIS + pgRouting underneath. It pretends to be smart, honestly.',
       'm-ask-clear': '&#10005; Clear',
       'bm-argos': 'ARGOS', 'bm-sat': 'Satellite', 'bm-osm': 'Streets',
-      'm-btn-ask': 'Ask the twin'
+      'm-btn-ask': 'Ask the twin &middot; experimental'
     },
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
@@ -688,7 +688,7 @@ map.on('load', function () {
       'm-btn-legend': 'Υπόμνημα', 'm-home': 'Αρχική',
       'm-foot-note': 'Κάντε κλικ σε οποιοδήποτε στοιχείο για τα χαρακτηριστικά ARGOS (χρόνοι πυρόσβεσης &amp; λιμανιού σε κτίρια και POIs).',
       'm-clock': 'Pota_Irtes · τοπική ώρα',
-      'm-sect-ask': 'Ρώτα τον δίδυμο &middot; demo v0.1.0',
+      'm-sect-ask': 'Ρώτα τον δίδυμο &middot; πειραματικό demo',
       'm-q1': 'Ποια κτίρια απέχουν πάνω από 15 λεπτά από πυροσβεστική κάλυψη;',
       'm-q2': 'Πόσες καταλύσεις βρίσκονται εντός 1 χλμ από κάθε επώνυμη παραλία;',
       'm-q3': 'Ποιες επώνυμες παραλίες δεν έχουν ασφαλτοστρωμένο δρόμο σε 500 μ.;',
@@ -696,7 +696,7 @@ map.on('load', function () {
       'm-ask-note': 'Έτοιμες ερωτήσεις, πραγματικά PostGIS + pgRouting από κάτω. Παριστάνει το έξυπνο, τίμια.',
       'm-ask-clear': '&#10005; Καθαρισμός',
       'bm-argos': 'ARGOS', 'bm-sat': 'Δορυφορικός', 'bm-osm': 'Δρόμοι',
-      'm-btn-ask': 'Ρώτα τον δίδυμο'
+      'm-btn-ask': 'Ρώτα τον δίδυμο &middot; πειραματικό'
     }
   };
 
@@ -1750,6 +1750,36 @@ setInterval(tickClock, 30000);
     var gr = elb && elb.classList.contains('on');
     showToast(gr ? ('\u039a\u03ac\u03bd\u03c4\u03b5 \u03b6\u03bf\u03c5\u03bc \u03b3\u03b9\u03b1 \u03bd\u03b1 \u03b4\u03b5\u03af\u03c4\u03b5: ' + name) : ('Zoom in to see: ' + name));
   });
+})();
+</script>
+
+<script>
+/* Batch 4 (f): per-layer tooltip one-liners, bilingual, follow the language toggle */
+(function () {
+  var TIPS = {
+    'tgl-roads':    ['How do I get there, and how long does it take?', '\u03a0\u03ce\u03c2 \u03c0\u03ac\u03c9 \u03b5\u03ba\u03b5\u03af \u03ba\u03b1\u03b9 \u03c0\u03cc\u03c3\u03bf \u03ba\u03ac\u03bd\u03b5\u03b9;'],
+    'tgl-trails':   ['Where can I walk?', '\u03a0\u03bf\u03cd \u03bc\u03c0\u03bf\u03c1\u03ce \u03bd\u03b1 \u03c0\u03b5\u03c1\u03c0\u03b1\u03c4\u03ae\u03c3\u03c9;'],
+    'tgl-buildings':['What is built, and how far is it from help?', '\u03a4\u03b9 \u03b5\u03af\u03bd\u03b1\u03b9 \u03c7\u03c4\u03b9\u03c3\u03bc\u03ad\u03bd\u03bf \u03ba\u03b1\u03b9 \u03c0\u03cc\u03c3\u03bf \u03b1\u03c0\u03ad\u03c7\u03b5\u03b9 \u03b1\u03c0\u03cc \u03b2\u03bf\u03ae\u03b8\u03b5\u03b9\u03b1;'],
+    'tgl-beaches':  ['Where do I swim, and what is it like?', '\u03a0\u03bf\u03cd \u03ba\u03ac\u03bd\u03c9 \u03bc\u03c0\u03ac\u03bd\u03b9\u03bf \u03ba\u03b1\u03b9 \u03c0\u03ce\u03c2 \u03b5\u03af\u03bd\u03b1\u03b9;'],
+    'tgl-pois':     ['What is around me?', '\u03a4\u03b9 \u03c5\u03c0\u03ac\u03c1\u03c7\u03b5\u03b9 \u03b3\u03cd\u03c1\u03c9 \u03bc\u03bf\u03c5;'],
+    'tgl-muni':     ['Who governs where?', '\u03a0\u03bf\u03b9\u03bf\u03c2 \u03b4\u03b9\u03bf\u03b9\u03ba\u03b5\u03af \u03c0\u03bf\u03cd;'],
+    'tgl-wildfire': ['Where could fire burn hardest?', '\u03a0\u03bf\u03cd \u03bc\u03c0\u03bf\u03c1\u03b5\u03af \u03bd\u03b1 \u03ba\u03ac\u03bd\u03b5\u03b9 \u03bc\u03b5\u03b3\u03b1\u03bb\u03cd\u03c4\u03b5\u03c1\u03b7 \u03b6\u03b7\u03bc\u03b9\u03ac \u03b7 \u03c6\u03c9\u03c4\u03b9\u03ac;'],
+    'tgl-flood':    ['Where does heavy rain turn dangerous?', '\u03a0\u03bf\u03cd \u03b7 \u03ad\u03bd\u03c4\u03bf\u03bd\u03b7 \u03b2\u03c1\u03bf\u03c7\u03ae \u03b3\u03af\u03bd\u03b5\u03c4\u03b1\u03b9 \u03b5\u03c0\u03b9\u03ba\u03af\u03bd\u03b4\u03c5\u03bd\u03b7;'],
+    'tgl-firecov':  ['Which buildings are beyond 15-minute fire response?', '\u03a0\u03bf\u03b9\u03b1 \u03ba\u03c4\u03af\u03c1\u03b9\u03b1 \u03b5\u03af\u03bd\u03b1\u03b9 \u03c0\u03ad\u03c1\u03b1 \u03b1\u03c0\u03cc 15 \u03bb\u03b5\u03c0\u03c4\u03ac \u03c0\u03c5\u03c1\u03bf\u03c3\u03b2\u03b5\u03c3\u03c4\u03b9\u03ba\u03ae\u03c2 \u03ba\u03ac\u03bb\u03c5\u03c8\u03b7\u03c2;'],
+    'tgl-marine':   ['Which beaches face rough seas today?', '\u03a0\u03bf\u03b9\u03b5\u03c2 \u03c0\u03b1\u03c1\u03b1\u03bb\u03af\u03b5\u03c2 \u03b5\u03af\u03bd\u03b1\u03b9 \u03b5\u03ba\u03c4\u03b5\u03b8\u03b5\u03b9\u03bc\u03ad\u03bd\u03b5\u03c2 \u03c3\u03b5 \u03b4\u03c5\u03bd\u03b1\u03c4\u03cc \u03ba\u03cd\u03bc\u03b1 \u03c3\u03ae\u03bc\u03b5\u03c1\u03b1;'],
+    'tgl-currents': ['Where is the water moving, and how fast?', '\u03a0\u03bf\u03cd \u03ba\u03b9\u03bd\u03b5\u03af\u03c4\u03b1\u03b9 \u03c4\u03bf \u03bd\u03b5\u03c1\u03cc \u03ba\u03b1\u03b9 \u03c0\u03cc\u03c3\u03bf \u03b3\u03c1\u03ae\u03b3\u03bf\u03c1\u03b1;']
+  };
+  function applyTips() {
+    var gr = document.getElementById('lang-el').classList.contains('on');
+    Object.keys(TIPS).forEach(function (id) {
+      var el = document.getElementById(id);
+      var lab = el && el.closest('label');
+      if (lab) lab.title = TIPS[id][gr ? 1 : 0];
+    });
+  }
+  document.getElementById('lang-en').addEventListener('click', applyTips);
+  document.getElementById('lang-el').addEventListener('click', applyTips);
+  applyTips();
 })();
 </script>
 </body>
