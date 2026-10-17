@@ -1770,15 +1770,17 @@ setInterval(tickClock, 30000);
     'tgl-currents': ['Where is the water moving, and how fast?', '\u03a0\u03bf\u03cd \u03ba\u03b9\u03bd\u03b5\u03af\u03c4\u03b1\u03b9 \u03c4\u03bf \u03bd\u03b5\u03c1\u03cc \u03ba\u03b1\u03b9 \u03c0\u03cc\u03c3\u03bf \u03b3\u03c1\u03ae\u03b3\u03bf\u03c1\u03b1;']
   };
   function applyTips() {
-    var gr = document.getElementById('lang-el').classList.contains('on');
+    var roads = document.getElementById('m-row-roads');
+    var gr = roads && roads.textContent.trim() !== 'Roads';
     Object.keys(TIPS).forEach(function (id) {
       var el = document.getElementById(id);
       var lab = el && el.closest('label');
       if (lab) lab.title = TIPS[id][gr ? 1 : 0];
     });
   }
-  document.getElementById('lang-en').addEventListener('click', applyTips);
-  document.getElementById('lang-el').addEventListener('click', applyTips);
+  function deferred() { setTimeout(applyTips, 0); }
+  document.getElementById('lang-en').addEventListener('click', deferred);
+  document.getElementById('lang-el').addEventListener('click', deferred);
   applyTips();
 })();
 </script>
