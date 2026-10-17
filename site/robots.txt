@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://argos-geo.org/sitemap.xml

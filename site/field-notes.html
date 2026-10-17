@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARGOS : : Kefalonia Digital Twin</title>
+<meta name="description" content="Build logs, methodology, and honest limitations from the ARGOS project. How we process Sentinel-2, model wildfire risk, validate against real events, and keep the code open.">
+<link rel="canonical" href="https://argos-geo.org/field-notes">
+<meta property="og:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta property="og:description" content="Build logs, methodology, and honest limitations from the ARGOS project. How we process Sentinel-2, model wildfire risk, validate against real events, and keep the code open.">
+<meta property="og:url" content="https://argos-geo.org/field-notes">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="ARGOS">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta name="twitter:description" content="Build logs, methodology, and honest limitations from the ARGOS project. How we process Sentinel-2, model wildfire risk, validate against real events, and keep the code open.">
+<meta name="twitter:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
+<link rel="icon" type="image/png" href="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png">
+<style>
+@font-face{font-family:'Space Grotesk';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/SpaceGrotesk-Argos.woff2') format('woff2');font-weight:300 700;font-display:swap;}
+@font-face{font-family:'Inter';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/Inter-Argos.woff2') format('woff2');font-weight:100 700;font-display:swap;}
+:root{
+  --navy-deep:#0a1628; --navy-mid:#0f1d33;
+  --gold:#c9a227; --gold-dim:#8a7a3a;
+  --sea:#7fa89b; --parchment:#f4eee0;
+  --text-primary:#e8e4dc; --text-secondary:#8a9ab0; --text-muted:#5a6a80;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--navy-deep); color:var(--text-primary);
+  min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden;
+}
+.stars{position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 140px 80px, rgba(255,255,255,.35), transparent),
+    radial-gradient(1.5px 1.5px at 290px 40px, rgba(201,162,39,.5), transparent),
+    radial-gradient(1px 1px at 430px 90px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1.5px 1.5px at 560px 20px, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 700px 60px, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 850px 90px, rgba(127,168,155,.45), transparent),
+    radial-gradient(1.5px 1.5px at 1000px 30px, rgba(255,255,255,.4), transparent);
+  background-repeat:repeat; background-size:1000px 120px}
+.topbar{position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between;
+  padding:1.2rem 1.6rem; max-width:760px; width:100%; margin:0 auto}
+.brandlink{display:inline-flex; align-items:center; gap:.6rem; text-decoration:none}
+.brandlink img{width:34px; height:34px; object-fit:contain}
+.brandlink span{font-family:'Space Grotesk','Inter',sans-serif; font-weight:700; letter-spacing:.25em;
+  color:var(--parchment); font-size:.95rem}
+.homelink{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted);
+  text-decoration:none; transition:color .2s}
+.homelink:hover{color:var(--gold)}
+.page{position:relative; z-index:1; flex:1; width:100%; max-width:760px; margin:0 auto; padding:1.5rem 1.6rem 3rem}
+.kicker{font-size:.72rem; text-transform:uppercase; letter-spacing:.25em; color:var(--gold-dim); margin-bottom:.7rem}
+h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:700; color:var(--parchment);
+  letter-spacing:.04em; margin-bottom:1.1rem}
+.lead{font-size:1.05rem; line-height:1.7; color:var(--sea); margin-bottom:2rem}
+.notes{display:flex; flex-direction:column; gap:.8rem; margin-bottom:2.2rem}
+.note{display:flex; align-items:baseline; gap:1rem; background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:1rem 1.2rem;
+  transition:border-color .25s}
+.note:hover{border-color:rgba(201,162,39,.3)}
+.note .num{font-family:'Space Grotesk','Inter',sans-serif; font-size:1.15rem; font-weight:700;
+  color:var(--gold-dim); min-width:1.6rem}
+.note .body{flex:1}
+.note h2{font-family:'Space Grotesk','Inter',sans-serif; font-size:1rem; font-weight:600;
+  color:var(--parchment); letter-spacing:.02em; line-height:1.5; margin-bottom:.35rem}
+.note .meta{font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; color:var(--text-muted)}
+.note .meta .plat{color:var(--sea)}
+.note .meta a{color:var(--sea); text-decoration:none}
+.note .meta a:hover{color:var(--gold)}
+.note h2 a{color:inherit; text-decoration:none}
+.note h2 a:hover{color:var(--gold)}
+.soon{color:var(--gold-dim)}
+.method{padding:1.2rem 1.3rem; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
+  border-left:3px solid var(--gold-dim); border-radius:10px}
+.method p{font-size:.9rem; line-height:1.75; color:var(--text-secondary); margin-bottom:0}
+.sitenav{position:relative; z-index:1; display:flex; flex-wrap:wrap; justify-content:center; gap:1.4rem;
+  padding:0 1.6rem; margin-bottom:1.4rem}
+.sitenav a{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted);
+  text-decoration:none; transition:color .2s}
+.sitenav a:hover{color:var(--gold)}
+.sitenav a.here{color:var(--gold)}
+.foot{position:relative; z-index:1; text-align:center; font-size:.75rem; color:var(--text-muted);
+  letter-spacing:.05em; line-height:1.9; padding-bottom:2rem}
+.foot a{color:var(--text-muted); text-decoration:none; transition:color .2s}
+.foot a:hover{color:var(--sea)}
+@media (max-width:560px){ h1{font-size:1.55rem} .note{gap:.7rem} }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<header class="topbar">
+  <a href="/" class="brandlink"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png" alt="ARGOS emblem"><span>ARGOS</span></a>
+  <a href="/" class="homelink">&larr; Home</a>
+</header>
+<main class="page">
+  <div class="kicker">Field Notes</div>
+  <h1>Field Notes</h1>
+  <p class="lead">Build logs document the technical work on GitHub. Narrative investigations live on DEV. Field Notes brings both together, with the honest limitations intact.</p>
+  <div class="notes">
+    <div class="note">
+      <div class="num">1</div>
+      <div class="body">
+        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener">Processing my first Sentinel-2 pass in 48 hours</a></h2>
+        <div class="meta">Aug 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">2</div>
+      <div class="body">
+        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener">Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha</a></h2>
+        <div class="meta">Aug 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">3</div>
+      <div class="body">
+        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener">Greek firs and the problem with NDVI on karst</a></h2>
+        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">4</div>
+      <div class="body">
+        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener">Where the water goes: drainage, slope, and the February 2025 storm</a></h2>
+        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">5</div>
+      <div class="body">
+        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener">Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)</a></h2>
+        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">6</div>
+      <div class="body">
+        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener">Build Log #6: The Buildings the Map Missed</a></h2>
+        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">7</div>
+      <div class="body">
+        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener">The actual SQL behind "The Answer You Didn't Want", Rounds 4 and 5</a></h2>
+        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">8</div>
+      <div class="body">
+        <h2><a href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">The Answer You Didn't Want: Fiskardo Evacuation Routing</a></h2>
+        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">DEV</a></span></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="num">9</div>
+      <div class="body">
+        <h2>The sea looks calm when it is not: Myrtos Beach marine safety</h2>
+        <div class="meta">Oct 2026 &middot; <span class="plat">DEV</span> &middot; <span class="soon">Coming soon</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="method">
+    <p>Build logs and SQL supplements are canonical on GitHub Discussions. Narrative forensics are canonical on DEV. Each one links from here the day it publishes.</p>
+  </div>
+</main>
+<nav class="sitenav">
+  <a href="/map">Map</a>
+  <a href="/about">About</a>
+  <a href="/data">Open Data</a>
+  <a href="/field-notes" class="here">Field Notes</a>
+</nav>
+<footer class="foot">
+  <a href="https://argos-geo.org">argos-geo.org</a> &middot; Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way
+</footer>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARGOS : : Kefalonia Digital Twin</title>
+<meta name="description" content="The open datasets powering ARGOS: OpenStreetMap, Microsoft Building Footprints, Copernicus Sentinel-2, Copernicus DEM, EFFIS, and EMODnet. All free, all documented.">
+<link rel="canonical" href="https://argos-geo.org/data">
+<meta property="og:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta property="og:description" content="The open datasets powering ARGOS: OpenStreetMap, Microsoft Building Footprints, Copernicus Sentinel-2, Copernicus DEM, EFFIS, and EMODnet. All free, all documented.">
+<meta property="og:url" content="https://argos-geo.org/data">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="ARGOS">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta name="twitter:description" content="The open datasets powering ARGOS: OpenStreetMap, Microsoft Building Footprints, Copernicus Sentinel-2, Copernicus DEM, EFFIS, and EMODnet. All free, all documented.">
+<meta name="twitter:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
+<link rel="icon" type="image/png" href="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png">
+<style>
+@font-face{font-family:'Space Grotesk';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/SpaceGrotesk-Argos.woff2') format('woff2');font-weight:300 700;font-display:swap;}
+@font-face{font-family:'Inter';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/Inter-Argos.woff2') format('woff2');font-weight:100 700;font-display:swap;}
+:root{
+  --navy-deep:#0a1628; --navy-mid:#0f1d33;
+  --gold:#c9a227; --gold-dim:#8a7a3a;
+  --sea:#7fa89b; --parchment:#f4eee0;
+  --text-primary:#e8e4dc; --text-secondary:#8a9ab0; --text-muted:#5a6a80;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--navy-deep); color:var(--text-primary);
+  min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden;
+}
+.stars{position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 140px 80px, rgba(255,255,255,.35), transparent),
+    radial-gradient(1.5px 1.5px at 290px 40px, rgba(201,162,39,.5), transparent),
+    radial-gradient(1px 1px at 430px 90px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1.5px 1.5px at 560px 20px, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 700px 60px, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 850px 90px, rgba(127,168,155,.45), transparent),
+    radial-gradient(1.5px 1.5px at 1000px 30px, rgba(255,255,255,.4), transparent);
+  background-repeat:repeat; background-size:1000px 120px}
+.topbar{position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between;
+  padding:1.2rem 1.6rem; max-width:860px; width:100%; margin:0 auto}
+.brandlink{display:inline-flex; align-items:center; gap:.6rem; text-decoration:none}
+.brandlink img{width:34px; height:34px; object-fit:contain}
+.brandlink span{font-family:'Space Grotesk','Inter',sans-serif; font-weight:700; letter-spacing:.25em;
+  color:var(--parchment); font-size:.95rem}
+.homelink{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted);
+  text-decoration:none; transition:color .2s}
+.homelink:hover{color:var(--gold)}
+.page{position:relative; z-index:1; flex:1; width:100%; max-width:860px; margin:0 auto; padding:1.5rem 1.6rem 3rem}
+.kicker{font-size:.72rem; text-transform:uppercase; letter-spacing:.25em; color:var(--gold-dim); margin-bottom:.7rem}
+h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:700; color:var(--parchment);
+  letter-spacing:.04em; margin-bottom:1.1rem}
+.lead{font-size:1.05rem; line-height:1.7; color:var(--sea); margin-bottom:2rem}
+.cards{display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:2.2rem}
+.card{background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:10px;
+  padding:1.1rem 1.2rem; transition:border-color .25s}
+.card:hover{border-color:rgba(201,162,39,.3)}
+.card h2{font-family:'Space Grotesk','Inter',sans-serif; font-size:1.05rem; color:var(--parchment);
+  letter-spacing:.03em; margin-bottom:.45rem}
+.card .meta{font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; color:var(--gold-dim);
+  margin-bottom:.8rem; line-height:1.7}
+.card .lbl{font-size:.68rem; text-transform:uppercase; letter-spacing:.14em; color:var(--sea); margin-bottom:.2rem}
+.card p{font-size:.86rem; line-height:1.65; color:var(--text-secondary); margin-bottom:.7rem}
+.card p:last-child{margin-bottom:0}
+.method{padding:1.2rem 1.3rem; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
+  border-left:3px solid var(--gold-dim); border-radius:10px}
+.method h2{font-family:'Space Grotesk','Inter',sans-serif; font-size:.8rem; text-transform:uppercase;
+  letter-spacing:.2em; color:var(--gold); margin-bottom:.7rem}
+.method p{font-size:.9rem; line-height:1.75; color:var(--text-secondary); margin-bottom:0}
+.method code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.82rem; color:var(--sea);
+  background:rgba(127,168,155,.08); padding:.1rem .18rem; border-radius:4px}
+.sitenav{position:relative; z-index:1; display:flex; flex-wrap:wrap; justify-content:center; gap:1.4rem;
+  padding:0 1.6rem; margin-bottom:1.4rem}
+.sitenav a{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted);
+  text-decoration:none; transition:color .2s}
+.sitenav a:hover{color:var(--gold)}
+.sitenav a.here{color:var(--gold)}
+.foot{position:relative; z-index:1; text-align:center; font-size:.75rem; color:var(--text-muted);
+  letter-spacing:.05em; line-height:1.9; padding-bottom:2rem}
+.foot a{color:var(--text-muted); text-decoration:none; transition:color .2s}
+.foot a:hover{color:var(--sea)}
+@media (max-width:700px){ .cards{grid-template-columns:1fr} h1{font-size:1.55rem} }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<header class="topbar">
+  <a href="/" class="brandlink"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png" alt="ARGOS emblem"><span>ARGOS</span></a>
+  <a href="/" class="homelink">&larr; Home</a>
+</header>
+<main class="page">
+  <div class="kicker">Open Data</div>
+  <h1>Open Data</h1>
+  <p class="lead">ARGOS is built entirely on open data. These are the datasets that power the digital twin.</p>
+  <div class="cards">
+    <div class="card">
+      <h2>OpenStreetMap</h2>
+      <div class="meta">OpenStreetMap Contributors &middot; ODbL</div>
+      <div class="lbl">What it contains</div>
+      <p>12,217 roads, 22,013 original building footprints, 1,831 POIs, beach geometries</p>
+      <div class="lbl">How ARGOS uses it</div>
+      <p>Base map, routing network, original building layer, POI and beach locations</p>
+    </div>
+    <div class="card">
+      <h2>Copernicus Sentinel-2</h2>
+      <div class="meta">ESA / Copernicus &middot; Free and open</div>
+      <div class="lbl">What it contains</div>
+      <p>10m multispectral imagery, red edge, SWIR</p>
+      <div class="lbl">How ARGOS uses it</div>
+      <p>NDVI, vegetation stress, burn scar detection, fuel type proxy</p>
+    </div>
+    <div class="card">
+      <h2>Copernicus DEM</h2>
+      <div class="meta">ESA / Copernicus &middot; Free and open</div>
+      <div class="lbl">What it contains</div>
+      <p>30m digital elevation model</p>
+      <div class="lbl">How ARGOS uses it</div>
+      <p>Slope, aspect, drainage direction, terrain analysis</p>
+    </div>
+    <div class="card">
+      <h2>EFFIS</h2>
+      <div class="meta">JRC / Copernicus &middot; Free and open</div>
+      <div class="lbl">What it contains</div>
+      <p>Historical fire records, burnt area shapefiles, fuel maps</p>
+      <div class="lbl">How ARGOS uses it</div>
+      <p>Model validation, fuel type comparison, burn scar overlay</p>
+    </div>
+    <div class="card">
+      <h2>EMODnet</h2>
+      <div class="meta">EU / EMODnet &middot; Free and open</div>
+      <div class="lbl">What it contains</div>
+      <p>Bathymetry, seabed habitats, human activities</p>
+      <div class="lbl">How ARGOS uses it</div>
+      <p>Marine safety layers, subsurface current risk at beaches</p>
+    </div>
+    <div class="card">
+      <h2>Microsoft Building Footprints</h2>
+      <div class="meta">Microsoft &middot; CDLA Permissive 2.0</div>
+      <div class="lbl">What it contains</div>
+      <p>Machine-detected building polygons from satellite imagery, with confidence scores and height estimates where available</p>
+      <div class="lbl">How ARGOS uses it</div>
+      <p>Adds 24,921 footprints with no OpenStreetMap partner, lifting the merged building layer from 22,013 to 46,934 after PostGIS conflation</p>
+    </div>
+  </div>
+  <div class="method">
+    <h2>Note on methodology</h2>
+    <p>Every dataset is preserved in its original form before transformation. Raw data lives in <code>data/raw/</code>. Processed data lives in <code>data/processed/</code>. The pipeline is documented in the ARGOS Code Bible. No black boxes.</p>
+  </div>
+</main>
+<nav class="sitenav">
+  <a href="/map">Map</a>
+  <a href="/about">About</a>
+  <a href="/data" class="here">Open Data</a>
+  <a href="/field-notes">Field Notes</a>
+</nav>
+<footer class="foot">
+  <a href="https://argos-geo.org">argos-geo.org</a> &middot; Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way
+</footer>
+</body>
+</html>

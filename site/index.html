@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARGOS : : Kefalonia Digital Twin</title>
+<meta name="description" content="ARGOS is an open-source digital twin of Kefalonia, Greece. Built with Sentinel-2, OpenStreetMap, Copernicus DEM, PostGIS, and MapLibre. Explore wildfire risk, flood screening, and travel-time accessibility.">
+<link rel="canonical" href="https://argos-geo.org/">
+<meta name="google-site-verification" content="73LNmTndr0yXgLZwZBnHcSV63yBFhzR3HP64WgQ6BXQ" />
+<meta property="og:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta property="og:description" content="ARGOS is an open-source digital twin of Kefalonia, Greece. Built with Sentinel-2, OpenStreetMap, Copernicus DEM, PostGIS, and MapLibre. Explore wildfire risk, flood screening, and travel-time accessibility.">
+<meta property="og:url" content="https://argos-geo.org/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="ARGOS">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ARGOS : : Kefalonia Digital Twin">
+<meta name="twitter:description" content="ARGOS is an open-source digital twin of Kefalonia, Greece. Built with Sentinel-2, OpenStreetMap, Copernicus DEM, PostGIS, and MapLibre. Explore wildfire risk, flood screening, and travel-time accessibility.">
+<meta name="twitter:image" content="https://argos-geo.org/assets/ARGOS_Emblem_v3_Full.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "ARGOS : : Kefalonia Digital Twin",
+  "description": "Open-source geospatial digital twin of Kefalonia, Greece. Wildfire risk, flood screening, and travel-time accessibility built with Sentinel-2, OpenStreetMap, PostGIS, and MapLibre.",
+  "url": "https://argos-geo.org",
+  "codeRepository": "https://github.com/argos-geo/kefalonia-digital-twin",
+  "license": "https://opensource.org/licenses/MIT",
+  "programmingLanguage": ["Python", "SQL", "JavaScript"],
+  "keywords": ["Kefalonia", "digital twin", "geospatial", "open data", "wildfire risk", "flood screening", "Sentinel-2", "OpenStreetMap", "PostGIS", "MapLibre", "Greece", "civil protection"],
+  "spatialCoverage": {
+    "@type": "Place",
+    "name": "Kefalonia, Greece",
+    "geo": {
+      "@type": "GeoShape",
+      "box": "37.95 20.30 38.55 20.90"
+    }
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Panagis Tzivras",
+    "url": "https://argos-geo.org"
+  }
+}
+</script>
+<link rel="icon" type="image/png" href="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png">
+<link rel="preload" as="image" href="assets/argos_map_preview.webp" imagesrcset="assets/argos_map_preview.webp 1200w" imagesizes="(max-width: 700px) 92vw, 576px">
+<style>
+@font-face{font-family:'Space Grotesk';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/SpaceGrotesk-Argos.woff2') format('woff2');font-weight:300 700;font-display:swap;}
+@font-face{font-family:'Inter';src:url('https://argos-geo.github.io/kefalonia-digital-twin/assets/fonts/Inter-Argos.woff2') format('woff2');font-weight:100 700;font-display:swap;}
+</style>
+<style>
+:root{
+  --navy-deep:#0a1628; --navy-mid:#0f1d33;
+  --gold:#c9a227; --gold-dim:#8a7a3a;
+  --sea:#7fa89b; --parchment:#f4eee0;
+  --text-primary:#e8e4dc; --text-secondary:#8a9ab0; --text-muted:#5a6a80;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--navy-deep); color:var(--text-primary);
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; overflow-x:hidden; position:relative;
+}
+.stars,.stars2{position:fixed; inset:0; pointer-events:none; z-index:0}
+.mapbg{position:fixed; top:3vh; left:2.5vw; width:clamp(170px,24vw,340px);
+  pointer-events:none; z-index:0; opacity:.22}
+
+.stars{
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 140px 80px, rgba(255,255,255,.35), transparent),
+    radial-gradient(1.5px 1.5px at 290px 40px, rgba(201,162,39,.5), transparent),
+    radial-gradient(1px 1px at 430px 90px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1.5px 1.5px at 560px 20px, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 700px 60px, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 850px 90px, rgba(127,168,155,.45), transparent),
+    radial-gradient(1.5px 1.5px at 1000px 30px, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 1150px 70px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1px 1px at 75px 130px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1.5px 1.5px at 240px 160px, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 390px 120px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1px 1px at 640px 150px, rgba(201,162,39,.4), transparent),
+    radial-gradient(1px 1px at 920px 140px, rgba(255,255,255,.35), transparent),
+    radial-gradient(1.5px 1.5px at 1100px 170px, rgba(255,255,255,.4), transparent);
+  background-size:1200px 200px;
+  animation:twinkle 5s ease-in-out infinite;
+}
+.stars2{
+  background-image:
+    radial-gradient(1px 1px at 90px 45px, rgba(255,255,255,.4), transparent),
+    radial-gradient(1.5px 1.5px at 320px 95px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1px 1px at 510px 55px, rgba(255,255,255,.45), transparent),
+    radial-gradient(1px 1px at 770px 25px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1.5px 1.5px at 960px 85px, rgba(201,162,39,.35), transparent),
+    radial-gradient(1px 1px at 180px 180px, rgba(255,255,255,.3), transparent),
+    radial-gradient(1px 1px at 480px 170px, rgba(127,168,155,.4), transparent),
+    radial-gradient(1px 1px at 830px 160px, rgba(255,255,255,.35), transparent);
+  background-size:1200px 200px;
+  animation:twinkle 7s ease-in-out infinite 2.5s;
+}
+@keyframes twinkle{0%,100%{opacity:.55}50%{opacity:1}}
+.wave-decoration{position:fixed; bottom:0; left:0; width:100%; height:120px;
+  background:linear-gradient(to top, rgba(127,168,155,.12), transparent); pointer-events:none; z-index:0}
+.wave-decoration::after{content:''; position:absolute; bottom:0; left:0; width:100%; height:60px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='rgba(127,168,155,0.18)' d='M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,64C960,75,1056,85,1152,80C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+  background-size:cover}
+.container{position:relative; z-index:1; text-align:center; padding:2rem; max-width:640px; width:100%}
+.logo-container{margin-bottom:2.2rem; position:relative; display:inline-block}
+.logo-container::before{content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:200px; height:200px; border-radius:50%; pointer-events:none; filter:blur(10px);
+  background:radial-gradient(circle, rgba(201,162,39,.14) 0%, transparent 65%)}
+.logo{width:132px; height:132px; border-radius:50%; position:relative; z-index:1;
+  filter:blur(2px); opacity:.88; transition:all .5s ease;
+  box-shadow:0 0 30px rgba(201,162,39,.14), 0 0 60px rgba(127,168,155,.08)}
+.logo:hover{filter:blur(0); opacity:1;
+  box-shadow:0 0 44px rgba(201,162,39,.22), 0 0 90px rgba(127,168,155,.12)}
+h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:700;
+  letter-spacing:.08em; margin-bottom:.6rem; text-transform:none}
+.tagline{font-size:1.15rem; font-weight:300; font-style:italic; color:var(--text-secondary);
+  margin-bottom:.35rem; letter-spacing:.02em}
+.tagline::before{content:'\201C'; color:var(--gold-dim); margin-right:.2em}
+.tagline::after{content:'\201D'; color:var(--gold-dim); margin-left:.2em}
+.tagline-gr{font-size:.85rem; font-weight:400; color:var(--gold-dim); letter-spacing:.06em; margin-bottom:1.4rem}
+.pillars{display:flex; justify-content:center; gap:1rem; margin-bottom:1.6rem; flex-wrap:wrap}
+.pillar{display:inline-flex; align-items:center; gap:.5rem; font-size:.7rem; text-transform:uppercase;
+  letter-spacing:.14em; color:var(--text-secondary); font-weight:600; padding:.4rem .95rem .4rem .55rem;
+  border-radius:100px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+  transition:border-color .3s ease}
+.pillar img{width:22px; height:22px; object-fit:contain}
+.pillar:hover{border-color:rgba(201,162,39,.35)}
+.status{font-size:.95rem; color:var(--text-muted); margin-bottom:2.2rem; line-height:1.6}
+.status strong{color:var(--sea); font-weight:500}
+.intro{max-width:600px; margin:0 auto 2.4rem; font-size:.9rem; line-height:1.75; color:var(--text-secondary); text-align:center}
+.sitenav{display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem; margin-bottom:2.2rem}
+.sitenav a{font-size:.74rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-secondary); text-decoration:none;
+  padding:.5rem 1.15rem; border-radius:100px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.03); transition:all .25s ease}
+.sitenav a:hover{color:var(--gold); border-color:rgba(201,162,39,.45); background:rgba(201,162,39,.08)}
+.divider{width:60px; height:1px; margin:0 auto 2.2rem;
+  background:linear-gradient(to right, transparent, var(--gold-dim), transparent)}
+.coming-soon{display:inline-flex; align-items:center; gap:.6rem; padding:.5rem 1.2rem; border-radius:100px;
+  background:rgba(127,168,155,.1); border:1px solid rgba(127,168,155,.25); font-size:.8rem;
+  color:var(--sea); font-weight:500; letter-spacing:.05em; text-transform:uppercase; margin-bottom:2rem}
+.launch-wrap{display:flex; flex-direction:column; align-items:center; gap:.9rem; margin-bottom:2rem}
+.map-preview{display:block; width:100%; max-width:640px; height:auto; aspect-ratio:16/9; object-fit:cover;
+  border:1px solid rgba(201,162,39,.32); border-radius:12px; margin-bottom:.25rem;
+  box-shadow:0 12px 34px rgba(0,0,0,.28), 0 0 24px rgba(201,162,39,.08)}
+.launch-btn{display:inline-flex; align-items:center; gap:.6rem; padding:.85rem 2.1rem; border-radius:100px;
+  background:linear-gradient(135deg, #D9B23A, #C9A227);
+  border:1px solid var(--gold); color:#0A1628; text-decoration:none;
+  font-family:'Space Grotesk','Inter',sans-serif; font-size:1.05rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase;
+  box-shadow:0 0 22px rgba(201,162,39,.18);
+  transition:all .25s cubic-bezier(.33,0,0,1)}
+.launch-btn:hover{background:linear-gradient(135deg, #E3BE45, #D4AC2E);
+  color:#0A1628; transform:translateY(-2px);
+  box-shadow:0 0 38px rgba(201,162,39,.45)}
+.launch-btn .arrow{transition:transform .25s ease}
+.launch-btn:hover .arrow{transform:translateX(4px)}
+.live-pill{display:inline-flex; align-items:center; gap:.5rem; font-size:.72rem; text-transform:uppercase;
+  letter-spacing:.14em; color:var(--sea); font-weight:600}
+.live-pill .pulse{width:6px; height:6px; background:#E74C3C; border-radius:50%;
+  animation:pulse 2s ease-in-out infinite}
+.langswitch{position:fixed; top:1rem; right:1.4rem; z-index:30; display:flex; gap:0;
+  border:1px solid var(--gold-dim); border-radius:100px; overflow:hidden; background:rgba(10,22,40,.85);
+  backdrop-filter:blur(6px)}
+.langswitch button{border:0; background:transparent; color:var(--text-muted); cursor:pointer;
+  font-family:'Space Grotesk','Inter',sans-serif; font-size:.72rem; font-weight:600;
+  letter-spacing:.14em; padding:.35rem .85rem; transition:all .2s ease}
+.langswitch button.on{background:rgba(201,162,39,.15); color:var(--gold)}
+.coming-soon .pulse{width:6px; height:6px; background:var(--sea); border-radius:50%;
+  animation:pulse 2s ease-in-out infinite}
+.roadmap{display:flex; justify-content:center; gap:.8rem; margin-bottom:2rem; flex-wrap:wrap}
+.rm-card{background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:8px;
+  padding:.7rem 1.1rem; min-width:135px; text-align:center}
+.rm-label{font-size:.65rem; text-transform:uppercase; letter-spacing:.16em; color:var(--gold);
+  font-weight:700; margin-bottom:.3rem}
+.rm-text{font-size:.8rem; color:var(--text-secondary); line-height:1.4}
+@keyframes pulse{0%,100%{opacity:1; transform:scale(1)}50%{opacity:.4; transform:scale(.8)}}
+.links{display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; margin-bottom:2.4rem}
+.link-btn{display:inline-flex; align-items:center; gap:.5rem; padding:.6rem 1.2rem; border-radius:6px;
+  text-decoration:none; font-size:.85rem; font-weight:500; color:var(--text-secondary);
+  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+  transition:all .25s cubic-bezier(.33,0,0,1); backdrop-filter:blur(10px)}
+.link-btn:hover{background:rgba(201,162,39,.08); border-color:rgba(201,162,39,.3);
+  color:var(--text-primary); transform:translateY(-1px)}
+.link-btn svg{width:16px; height:16px; fill:currentColor; opacity:.7}
+.features{display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin:0 auto 2.4rem;
+  text-align:left; max-width:480px}
+.feature{padding:1rem; border-radius:8px; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)}
+.feature-label{font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--gold-dim);
+  margin-bottom:.3rem; font-weight:600}
+.feature-value{font-size:.85rem; color:var(--text-secondary); line-height:1.4}
+.footer{font-size:.75rem; color:var(--text-muted); letter-spacing:.05em; line-height:1.9}
+.footer a{color:var(--text-muted); text-decoration:none; transition:color .2s}
+.footer a:hover{color:var(--sea)}
+.localtime{font-variant-numeric:tabular-nums; color:var(--gold-dim)}
+@media (max-width:480px){
+  h1{font-size:1.35rem; letter-spacing:.06em}
+  .tagline{font-size:1rem}
+  .logo{width:108px; height:108px}
+  .links{gap:.5rem}
+  .link-btn{padding:.5rem 1rem; font-size:.8rem}
+  .features{grid-template-columns:1fr; max-width:320px}
+  .features .feature:nth-child(3),.features .feature:nth-child(4){grid-column:auto}
+  .mapbg{width:clamp(130px,36vw,190px); opacity:.18; top:1.5vh; left:2vw}
+  .pillars{gap:.6rem}
+}
+
+.bio-fab{position:fixed; right:1.4rem; bottom:1.4rem; z-index:10; width:54px; height:54px;
+  border-radius:50%; border:2px solid var(--gold); background:var(--navy-mid); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; padding:0;
+  box-shadow:0 0 18px rgba(201,162,39,.25); transition:transform .2s, box-shadow .2s}
+.bio-fab:hover{transform:scale(1.06); box-shadow:0 0 26px rgba(201,162,39,.45)}
+.bio-fab span{font-family:'Space Grotesk','Inter',sans-serif; font-weight:700; font-size:1.05rem;
+  color:var(--gold); letter-spacing:.02em}
+.bio-modal{position:fixed; right:1.4rem; bottom:5.6rem; z-index:10; width:min(430px, calc(100vw - 2.4rem));
+  background:rgba(15,29,51,.96); border:1px solid rgba(201,162,39,.35); border-radius:12px;
+  padding:1.1rem 1.2rem 1rem; backdrop-filter:blur(6px);
+  opacity:0; visibility:hidden; transform:translateY(8px); transition:opacity .25s, transform .25s, visibility .25s}
+.bio-modal.open{opacity:1; visibility:visible; transform:translateY(0)}
+.bio-card{font-family:ui-monospace,'Cascadia Code','Courier New',monospace; font-size:.62rem;
+  line-height:1.35; color:var(--sea); white-space:pre; overflow-x:auto; margin-bottom:.9rem}
+.bio-text{font-size:.82rem; color:var(--text-secondary); line-height:1.55; max-height:10.5em; overflow-y:auto}
+.bio-toggle{display:flex; align-items:center; justify-content:center; gap:.6rem; margin-top:.9rem;
+  font-size:.72rem; letter-spacing:.08em; color:var(--text-muted); font-weight:600}
+.bio-switch{width:46px; height:24px; border-radius:12px; border:1px solid var(--gold-dim);
+  background:var(--navy-deep); position:relative; cursor:pointer; padding:0}
+.bio-switch::after{content:''; position:absolute; top:3px; left:4px; width:16px; height:16px;
+  border-radius:50%; background:var(--gold); transition:left .2s}
+.bio-switch.gr::after{left:24px}
+.bio-toggle .on{color:var(--gold)}
+.bio-fab img{width:100%; height:100%; border-radius:50%; object-fit:cover; display:block}
+.bio-text strong{color:var(--parchment); font-weight:600}
+.bio-text em{color:var(--sea)}
+.bio-card strong{color:var(--parchment); font-weight:700}
+
+.social-fab{position:fixed; left:1.4rem; bottom:1.4rem; z-index:10; width:54px; height:54px;
+  border-radius:50%; border:2px solid var(--gold); background:var(--navy-mid); cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:0;
+  box-shadow:0 0 18px rgba(201,162,39,.25); transition:transform .2s, box-shadow .2s}
+.social-fab:hover{transform:scale(1.06); box-shadow:0 0 26px rgba(201,162,39,.45)}
+.social-fab svg{width:20px; height:20px; stroke:var(--gold); fill:none; stroke-width:2.2;
+  stroke-linecap:round}
+.social-fab span{font-size:.42rem; letter-spacing:.14em; color:var(--gold-dim); font-weight:600}
+.social-fab.open{border-color:var(--sea)}
+.feed-overlay{position:fixed; left:1.4rem; bottom:5.6rem; z-index:20;
+  width:min(430px, calc(100vw - 2.4rem)); max-height:62vh; overflow-y:auto;
+  background:rgba(15,29,51,.96); border:1px solid rgba(201,162,39,.35); border-radius:12px;
+  padding:1.1rem 1.1rem 1rem; backdrop-filter:blur(6px);
+  opacity:0; visibility:hidden; transform:translateY(8px);
+  transition:opacity .25s, transform .25s, visibility .25s}
+.feed-overlay.open{opacity:1; visibility:visible; transform:translateY(0)}
+.feed-wrap{position:relative}
+.feed-close{position:absolute; top:.55rem; right:.8rem; background:none; border:none; cursor:pointer;
+  font-size:1.35rem; line-height:1; color:var(--text-muted); padding:.2rem; transition:color .2s}
+.feed-close:hover{color:var(--gold)}
+.feed-title{font-family:'Space Grotesk','Inter',sans-serif; font-size:1.1rem; letter-spacing:.25em;
+  text-transform:uppercase; color:var(--parchment); text-align:center; margin-bottom:.4rem}
+.feed-sub{text-align:center; font-size:.8rem; color:var(--text-muted); margin-bottom:2rem}
+.feed-net{margin-bottom:1.8rem}
+.feed-net-head{display:flex; align-items:center; gap:.5rem; font-size:.72rem; font-weight:600;
+  text-transform:uppercase; letter-spacing:.14em; color:var(--gold-dim); margin-bottom:.6rem}
+.feed-net-head svg{width:15px; height:15px; fill:var(--gold-dim)}
+.feed-net-head a{margin-left:auto; color:var(--text-muted); text-decoration:none;
+  font-size:.7rem; letter-spacing:.05em; text-transform:none}
+.feed-net-head a:hover{color:var(--sea)}
+.feed-card{display:block; text-decoration:none; background:rgba(15,29,51,.85);
+  border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:.85rem 1rem;
+  margin-bottom:.6rem; transition:border-color .25s, transform .25s}
+.feed-card:hover{border-color:rgba(201,162,39,.4); transform:translateY(-1px)}
+.feed-text{font-size:.85rem; color:var(--text-primary); line-height:1.5; margin-bottom:.4rem}
+.feed-meta{font-size:.7rem; color:var(--text-muted); letter-spacing:.04em}
+.feed-loading,.feed-error{font-size:.8rem; color:var(--text-muted); padding:.6rem 0}
+.feed-error a{color:var(--sea)}
+@media (max-width:480px){.social-fab{left:1rem; bottom:1rem}}
+</style>
+</head>
+<body>
+<a rel="me" href="https://mapstodon.space/@argos_geo" style="display:none;">Mastodon</a>
+<div class="langswitch">
+  <button id="sl-en" class="on" aria-label="English">EN</button>
+  <button id="sl-el" aria-label="Greek">ΕΛ</button>
+</div>
+<div class="stars"></div><div class="stars2"></div>
+<div class="wave-decoration"></div>
+<div class="mapbg"><svg class="mapbg-svg" viewBox="0 0 899 713" aria-hidden="true"><defs><clipPath id="mapclip"><rect x="5" y="5" width="889" height="703"/></clipPath></defs><g clip-path="url(#mapclip)"><path d="M178.3,676.2L172.2,683.6L170.1,679.4L167.0,680.1L166.9,672.3L173.7,671.8L178.3,676.2Z M179.8,636.1L178.2,638.4L174.9,636.8L179.8,636.1Z M182.3,632.1L184.0,632.6L185.2,629.0L186.9,630.0L185.6,631.4L186.7,633.5L180.8,636.5L182.3,632.1Z M103.8,504.0L104.3,505.1L102.2,505.1L103.8,504.0Z M85.3,438.8L82.8,434.1L83.2,431.6L87.5,433.8L85.3,438.8Z M81.3,428.1L80.7,432.5L78.4,429.8L81.3,428.1Z M134.8,366.6L128.0,382.0L131.5,387.1L126.9,420.6L128.1,423.3L125.7,426.0L125.7,430.1L124.0,432.2L116.0,426.8L111.6,428.4L106.2,424.9L108.5,426.7L106.4,430.3L106.6,437.2L100.5,442.6L95.7,440.1L93.1,443.2L90.2,434.4L87.5,433.3L83.6,426.8L85.7,423.1L83.7,419.6L86.8,410.5L86.1,402.2L88.7,404.7L90.4,404.8L88.3,403.8L90.0,397.8L86.8,395.0L85.8,397.5L84.4,395.0L83.8,389.4L87.7,386.2L87.3,377.6L84.1,374.8L83.9,369.4L80.7,363.6L75.7,363.7L77.4,359.2L75.2,357.5L78.1,350.5L77.3,346.7L81.4,351.9L88.8,353.0L99.5,347.4L105.9,339.4L110.7,338.0L112.4,333.4L114.8,333.5L115.1,335.7L115.5,336.0L120.6,336.7L121.3,340.8L121.8,338.5L124.2,338.1L125.7,339.5L123.8,344.3L129.1,344.9L123.5,348.4L128.3,348.7L127.4,349.9L131.2,352.1L128.9,354.2L134.8,366.6Z M77.9,345.2L82.0,339.2L82.5,341.6L77.9,345.2Z M121.1,336.4L122.4,334.1L122.3,337.1L121.1,336.4Z M120.3,332.9L121.1,335.0L119.0,335.2L118.9,334.4L120.3,332.9Z M94.6,286.5L89.8,281.7L93.7,279.2L95.5,272.4L98.2,273.1L98.9,271.1L107.5,268.5L109.9,265.3L116.0,268.0L117.8,264.5L116.5,260.4L118.4,256.3L117.9,252.8L122.1,253.5L122.7,262.1L121.3,269.5L124.3,273.1L125.4,292.3L119.9,301.2L119.9,312.5L117.9,316.5L116.0,316.2L115.5,317.5L118.1,318.3L113.1,324.4L113.1,326.3L114.5,325.3L113.6,327.9L109.1,326.4L110.0,325.0L108.5,322.8L103.4,322.5L98.4,319.2L98.7,315.6L103.0,313.0L93.6,310.5L98.1,307.1L96.9,306.1L98.9,303.3L92.1,303.6L91.1,300.4L96.7,297.0L95.1,294.0L90.2,291.9L91.4,291.0L89.8,287.9L94.6,286.5Z M172.1,281.0L173.5,284.3L171.3,282.2L172.1,281.0Z M143.8,270.8L144.0,272.7L142.7,272.2L143.8,270.8Z M156.1,265.8L152.9,263.8L146.1,265.1L144.5,262.9L153.2,261.9L155.5,258.8L156.3,262.0L154.7,263.9L156.1,265.8Z M15.3,251.7L17.8,250.9L15.3,252.6L15.3,251.7Z M135.6,250.3L134.7,252.6L133.4,251.7L134.1,249.9L135.6,250.3Z M231.0,597.0L233.0,598.5L230.0,597.2L231.0,597.0Z M294.1,580.7L293.3,576.2L295.2,575.3L294.2,576.2L299.8,578.3L301.9,582.1L300.5,584.1L294.1,580.7Z M288.8,571.9L290.9,571.5L293.7,573.4L289.7,574.1L288.8,571.9Z M209.9,536.3L213.2,538.6L212.5,540.9L209.2,538.7L209.9,536.3Z M334.8,479.1L324.7,494.0L322.9,502.9L320.4,507.0L320.8,513.8L326.0,517.1L323.6,519.5L327.8,524.3L327.1,526.8L328.9,528.5L322.7,532.5L320.5,538.2L321.9,543.9L320.5,544.9L299.1,538.5L291.7,527.0L286.4,523.8L278.2,524.4L271.9,521.1L252.8,506.6L247.6,506.3L244.6,502.8L234.7,503.0L229.3,498.4L226.5,492.3L228.8,482.0L236.3,477.9L237.2,474.1L243.2,481.7L248.8,479.2L250.2,474.3L257.9,472.9L260.5,478.3L264.8,477.9L269.6,483.0L274.5,484.2L282.6,480.7L291.5,482.3L299.9,481.0L307.8,475.7L313.9,474.4L320.2,477.1L323.4,475.8L325.5,470.8L327.4,473.5L335.8,469.1L340.1,470.3L337.2,472.6L334.8,479.1Z M221.2,486.3L222.5,485.5L224.4,486.4L223.5,487.0L221.2,486.3Z M315.2,464.0L317.4,465.6L316.7,466.3L315.2,464.0Z M316.0,461.8L313.6,460.8L314.0,459.3L315.9,459.3L316.0,461.8Z M309.9,456.7L312.5,456.3L312.3,458.2L309.9,456.7Z M280.7,357.2L280.0,358.7L276.6,358.1L277.1,355.9L280.7,357.2Z M245.2,350.4L244.9,348.8L246.3,347.9L245.2,350.4Z M419.7,266.6L417.4,265.3L417.1,264.4L419.3,265.3L419.7,266.6Z M399.0,262.6L410.8,264.8L414.0,267.0L399.0,262.6Z M381.8,265.4L382.6,262.9L385.4,264.2L381.8,265.4Z M394.7,256.6L374.9,256.0L377.3,254.4L374.6,253.8L388.7,253.8L394.7,256.6Z M354.6,252.2L354.1,250.0L361.3,249.4L356.7,252.4L354.6,252.2Z M365.5,244.0L372.9,244.3L370.7,242.5L374.1,242.7L378.0,245.4L394.4,247.1L376.0,247.2L365.5,244.0Z M367.9,235.9L376.6,235.7L383.8,238.6L381.0,240.7L372.3,240.6L367.2,238.4L367.9,235.9Z M359.4,234.3L363.0,235.2L366.2,237.1L359.4,234.3Z M356.4,233.2L357.6,231.9L358.4,232.9L356.4,233.2Z M359.8,230.5L361.7,229.4L365.6,230.5L359.8,230.5Z M343.2,224.1L340.8,223.7L338.4,222.0L343.2,224.1Z M340.9,220.2L342.7,221.3L342.5,222.1L340.9,220.2Z M337.1,214.7L338.4,215.0L340.6,217.7L337.1,214.7Z M325.2,212.8L326.5,213.6L331.1,217.5L325.2,212.8Z M330.7,208.4L332.9,212.2L326.3,206.5L330.7,208.4Z M324.0,212.9L320.9,210.4L311.8,198.9L324.8,211.0L321.8,210.6L324.0,212.9Z M322.3,205.8L319.9,204.6L319.7,203.3L322.3,205.8Z M326.1,206.2L319.3,199.6L325.1,204.0L326.1,206.2Z M312.5,200.5L311.3,200.5L310.8,200.0L310.9,199.2L312.5,200.5Z M308.4,193.6L309.7,194.7L307.9,194.5L308.4,193.6Z M318.7,192.0L322.0,193.7L318.0,192.5L318.7,192.0Z M308.8,187.9L310.1,191.2L308.6,190.3L308.8,187.9Z M315.6,188.0L314.8,188.1L313.2,186.0L315.6,188.0Z M307.8,174.7L319.8,184.7L314.0,181.6L326.1,191.4L323.0,190.1L324.9,192.6L321.7,192.6L321.3,189.2L313.5,184.4L307.8,174.7Z M295.1,180.9L293.7,174.0L300.7,184.7L296.8,180.6L295.1,180.9Z M291.2,178.9L290.1,177.8L290.5,176.6L291.8,175.8L291.2,178.9Z M306.7,170.1L306.1,168.0L308.4,168.1L312.2,174.0L305.1,170.3L306.7,170.1Z M297.0,176.8L292.3,165.2L292.5,163.6L295.6,165.2L296.4,163.0L291.7,155.8L293.6,152.9L295.6,159.2L298.6,162.3L297.8,170.3L300.7,177.8L297.0,176.8Z M273.2,166.2L272.6,164.5L274.1,165.4L273.2,166.2Z M309.3,165.2L310.3,164.7L311.4,166.2L309.3,165.2Z M299.2,162.0L300.5,161.6L301.2,162.8L300.7,163.0L299.2,162.0Z M297.4,157.8L300.6,154.8L301.8,149.5L303.0,153.3L305.3,153.6L305.3,157.0L308.0,157.6L310.6,162.0L306.8,163.5L304.1,162.0L303.8,158.9L297.4,157.8Z M472.5,398.3L471.6,397.3L473.3,397.2L472.5,398.3Z M596.6,553.6L598.0,551.5L598.6,553.6L596.6,553.6Z M638.1,499.0L638.7,494.8L639.3,494.4L639.5,495.8L638.1,499.0Z M644.3,483.1L642.3,483.8L643.2,482.1L644.3,483.1Z M830.5,568.1L831.7,568.5L830.2,569.4L830.5,568.1Z M745.7,531.0L744.7,532.4L743.8,531.1L745.7,531.0Z M755.2,529.1L756.9,530.0L757.3,530.6L755.7,530.4L755.2,529.1Z M731.8,516.2L730.5,513.9L732.7,515.8L731.8,516.2Z M729.8,510.5L731.5,511.7L731.0,512.4L729.8,510.5Z M718.7,502.5L720.3,501.3L720.9,502.5L718.7,502.5Z M722.5,504.7L721.5,501.3L722.9,501.5L722.9,498.9L723.8,500.6L722.5,504.7Z M731.0,461.7L729.2,460.8L729.4,458.1L730.5,459.0L731.0,461.7Z M713.7,459.9L711.3,458.1L714.3,459.2L713.7,459.9Z M706.7,398.2L707.4,400.9L704.0,398.6L704.9,398.1L706.7,398.2Z M694.9,382.4L702.6,379.9L703.5,383.8L705.2,384.3L695.8,386.5L692.9,385.2L694.9,382.4Z M761.4,367.7L763.1,370.3L760.5,369.6L761.4,367.7Z M794.0,367.3L793.5,365.2L794.3,365.0L794.6,365.4L794.0,367.3Z M758.7,362.0L762.2,360.5L765.8,362.2L761.3,364.5L758.7,362.0Z M836.2,133.8L848.4,124.5L850.2,123.7L842.5,130.3L838.9,132.7L836.2,133.8Z M6.9,533.5L9.7,527.9L16.3,524.7L21.1,530.2L29.0,531.2L32.0,533.9L40.8,532.9L44.2,529.2L41.6,525.5L43.1,524.9L48.8,525.2L60.4,530.7L63.4,529.3L62.5,534.1L65.8,535.7L78.7,530.9L88.0,533.4L99.5,529.9L113.1,518.2L132.0,513.1L136.0,513.9L136.1,516.5L132.9,519.2L134.5,522.0L137.9,520.8L138.3,519.2L134.6,518.5L136.8,516.9L143.1,516.8L150.5,520.8L145.5,521.7L149.0,523.6L147.4,527.8L153.2,534.5L147.6,538.3L150.5,537.5L155.2,541.6L159.2,540.2L161.6,534.7L166.8,533.8L172.7,526.8L178.0,525.3L180.8,535.7L177.0,538.7L169.1,554.2L160.4,557.6L157.7,569.8L162.9,582.2L167.2,585.6L170.0,585.1L170.6,588.9L177.6,591.7L176.7,595.5L179.2,597.7L177.7,605.6L181.8,610.9L173.3,623.0L171.7,630.3L163.0,637.9L162.0,641.9L144.6,653.0L141.1,659.2L141.7,663.6L143.5,669.5L152.6,680.7L158.2,683.2L166.2,680.5L166.9,685.3L164.7,687.9L166.2,690.8L173.0,688.2L173.9,683.7L178.3,685.0L180.1,688.2L179.8,696.3L186.5,699.8L180.9,698.7L182.5,703.3L191.5,704.1L188.6,701.1L197.4,707.4L204.2,709.3L200.5,706.7L211.5,713.0L0.0,713.0L0.0,536.0L6.9,533.5Z M898.6,541.4L893.0,537.8L873.1,535.9L869.9,534.0L865.8,539.1L865.8,550.7L862.4,556.5L864.0,559.3L860.8,564.6L859.8,565.5L859.3,562.4L851.3,561.3L849.6,564.0L847.4,563.1L834.2,569.3L833.1,566.4L831.0,566.5L832.5,565.8L825.3,564.4L825.0,562.7L822.8,564.3L813.9,557.0L815.1,556.1L814.5,549.6L811.0,549.8L811.9,546.3L814.6,545.8L813.9,544.4L808.3,540.4L805.2,544.4L805.9,546.0L807.0,544.7L805.9,547.1L804.4,547.3L804.9,545.7L801.5,542.9L797.2,542.8L796.7,537.5L792.4,538.1L791.2,534.4L788.5,535.7L790.2,536.9L789.2,538.7L785.0,538.4L786.3,536.9L784.3,536.1L784.0,539.7L785.6,541.9L783.5,541.9L776.5,549.0L773.8,547.3L778.4,545.4L774.0,543.3L779.3,541.9L778.1,540.6L779.8,540.3L779.4,538.2L772.3,540.9L765.3,540.2L763.6,544.7L753.0,543.8L752.5,542.2L762.7,537.9L776.2,539.1L776.7,531.8L781.1,533.1L782.7,529.0L786.8,527.3L759.8,530.2L755.5,527.7L753.5,529.3L753.3,527.7L749.3,530.7L748.1,526.2L750.4,523.9L749.2,523.9L748.9,523.3L753.5,522.0L756.2,524.9L759.9,523.2L758.6,520.1L761.5,519.8L761.7,516.4L756.3,517.4L757.3,513.9L754.0,514.1L755.5,511.0L754.3,510.0L751.6,512.8L746.7,512.6L748.0,510.4L747.8,507.1L746.3,507.5L747.3,501.5L740.4,498.4L748.8,494.8L749.7,486.3L748.4,483.6L739.1,480.0L735.5,481.4L731.6,473.0L727.2,473.6L725.7,478.2L723.1,474.7L719.5,473.8L718.5,471.0L717.2,472.5L713.0,470.4L715.6,468.1L715.1,466.0L718.3,468.4L721.5,466.1L720.7,463.4L722.8,463.1L718.4,462.1L717.1,453.8L719.0,451.8L722.6,453.0L727.0,459.1L727.4,461.5L725.5,461.8L725.5,463.7L728.5,468.9L729.5,463.2L732.8,466.5L743.1,464.5L745.8,462.1L737.7,463.0L733.5,458.0L736.1,459.6L734.2,457.7L734.7,455.5L730.1,453.0L731.3,452.3L730.1,449.8L736.6,449.2L737.7,447.6L736.4,445.4L738.6,445.9L738.5,444.2L742.2,442.2L741.5,439.8L735.3,441.0L733.2,439.3L732.7,436.0L735.6,432.8L730.8,427.9L730.1,424.9L726.2,424.3L737.5,414.6L737.8,410.6L707.4,415.2L710.3,407.1L710.7,392.2L715.7,390.1L719.1,382.1L722.4,381.2L730.7,372.4L739.7,373.1L743.4,370.2L750.1,369.5L751.6,372.0L750.4,372.3L755.9,376.2L766.9,376.5L771.1,373.2L767.9,372.9L764.1,368.2L766.8,366.3L776.5,369.2L771.9,372.6L773.3,374.2L787.5,372.4L811.7,374.2L815.8,371.0L812.8,368.8L807.5,369.3L802.5,367.0L803.2,365.5L810.0,361.3L827.8,357.5L830.2,359.2L843.6,357.2L834.0,355.0L823.8,356.2L821.6,353.1L819.4,353.7L820.9,352.4L819.8,351.0L811.5,345.8L810.7,343.6L812.7,341.5L813.7,338.5L812.9,338.0L816.5,334.3L850.5,338.4L855.7,335.1L875.1,341.3L889.1,340.8L894.3,337.0L894.8,331.0L898.6,328.8L898.6,541.4Z M897.9,80.1L896.5,78.2L898.6,82.3L892.8,87.3L886.6,86.1L873.6,89.6L872.3,91.3L873.8,94.5L872.9,96.8L868.7,99.2L869.8,101.2L863.1,111.3L850.6,123.3L850.2,120.0L849.0,123.5L845.4,122.0L844.1,125.5L843.1,123.6L843.3,127.7L841.8,125.8L838.8,127.1L840.8,130.2L836.3,132.7L834.5,128.9L834.9,125.1L833.0,123.0L831.3,135.3L835.4,134.6L831.8,139.0L833.1,140.7L836.8,139.7L837.1,146.2L836.2,150.1L832.5,151.0L835.1,153.6L832.0,167.9L816.0,170.9L810.5,175.3L809.6,172.7L815.4,170.0L813.9,166.7L814.1,168.3L812.0,167.2L812.3,163.5L814.4,162.4L809.9,160.4L805.9,163.6L805.8,166.4L808.8,169.0L808.6,171.8L803.4,173.9L802.9,177.1L805.9,176.6L806.9,174.0L809.3,174.8L810.0,175.9L808.3,177.8L809.6,175.4L801.9,178.2L802.0,185.6L807.8,178.5L797.6,192.4L798.9,207.1L795.8,216.2L795.6,230.9L791.9,236.1L786.6,233.3L780.8,234.2L775.9,242.3L771.9,243.7L773.3,245.2L771.1,251.6L771.4,266.3L765.8,266.1L766.1,268.6L762.1,270.1L762.9,273.3L759.1,273.0L756.0,276.9L756.4,279.3L756.7,277.8L762.7,278.0L765.3,279.9L765.6,283.4L767.5,283.4L766.6,287.1L775.5,297.3L776.9,303.7L774.4,304.2L774.3,307.2L781.5,319.3L788.8,324.4L814.3,334.2L810.0,344.9L797.3,346.5L794.7,341.3L794.3,345.5L781.1,341.1L773.2,346.3L766.0,344.4L758.5,345.5L750.1,358.6L728.8,370.0L726.0,375.1L716.9,381.8L718.0,383.9L710.6,388.7L714.3,380.4L712.5,375.8L734.0,363.3L732.6,360.6L722.6,363.5L708.0,363.2L705.9,357.2L708.7,356.7L712.8,349.8L717.4,346.6L716.1,333.7L723.8,328.9L726.7,329.4L725.8,316.8L712.7,310.5L708.6,311.5L706.4,314.0L710.5,320.7L710.9,325.1L709.0,328.5L700.6,331.0L698.1,329.3L693.5,331.3L689.0,330.4L678.8,334.0L665.5,326.5L661.6,328.9L654.8,324.7L652.3,319.1L644.7,321.3L642.5,319.1L640.3,321.4L635.9,320.8L635.5,324.2L630.6,323.6L620.6,327.9L609.2,326.6L604.6,330.4L591.3,329.6L588.6,338.5L586.5,336.7L584.6,339.2L579.7,339.7L565.5,338.0L560.6,340.5L555.5,348.5L549.1,351.1L542.8,349.2L539.0,351.4L527.3,351.9L526.6,355.8L529.8,360.7L529.0,365.7L526.3,369.2L520.5,371.6L516.1,386.6L508.6,388.0L506.6,391.2L503.8,391.6L507.3,399.4L503.2,400.0L503.7,404.0L499.8,407.6L492.9,405.4L493.7,397.2L490.0,395.3L491.3,393.8L488.5,388.9L474.9,381.2L468.3,371.7L470.4,371.2L473.0,375.8L474.8,375.0L475.0,370.1L472.9,368.4L471.9,367.0L471.7,366.0L473.4,367.7L474.1,365.5L472.7,364.2L471.7,365.7L468.8,361.0L472.4,353.2L471.5,349.2L473.6,347.4L473.6,350.9L476.5,348.7L475.6,344.9L474.1,348.5L474.8,345.2L473.6,344.0L473.7,338.4L476.2,332.3L472.9,330.2L472.0,326.0L473.2,326.5L476.3,321.4L473.6,318.1L479.7,317.2L477.7,314.6L478.9,307.3L464.1,301.9L461.0,293.9L454.1,285.9L450.3,286.5L446.8,281.2L444.6,282.1L442.1,279.5L447.5,280.9L447.1,276.8L440.6,278.0L440.8,280.4L419.1,262.6L413.0,261.0L414.5,263.2L414.0,263.5L395.2,253.8L388.6,252.8L387.7,250.6L396.1,252.0L413.7,260.4L405.2,254.3L404.2,252.4L405.3,251.6L402.9,252.2L402.6,250.0L390.2,242.0L383.4,234.3L366.2,229.5L369.1,228.2L367.7,227.7L356.5,228.9L358.5,230.5L356.4,231.0L351.0,229.8L351.9,227.9L349.7,227.3L349.5,224.1L351.2,223.5L349.0,223.2L350.7,223.1L350.6,221.3L342.0,217.9L322.2,198.0L321.0,194.8L322.1,194.0L323.4,195.5L324.1,193.1L327.5,195.5L326.3,191.7L332.1,194.7L335.8,194.5L328.0,190.7L317.4,180.8L313.0,173.7L314.4,162.9L312.0,156.7L300.7,146.6L301.4,147.7L292.9,145.2L290.1,154.1L287.0,158.3L287.2,162.0L284.3,163.3L284.9,161.6L283.3,159.2L284.6,161.7L280.9,165.5L281.9,169.6L278.0,168.7L279.0,171.2L278.5,171.5L274.4,166.7L276.3,166.1L274.7,165.8L273.9,162.7L268.6,157.6L268.3,155.6L272.3,154.8L267.8,154.7L266.9,146.9L268.1,146.3L266.1,145.6L264.8,140.9L264.5,137.5L267.4,138.5L266.7,136.2L273.2,135.6L271.7,133.7L275.1,132.7L268.8,125.5L266.1,124.5L266.2,127.1L260.8,129.9L261.9,128.5L259.7,126.7L250.9,125.5L249.3,128.9L251.9,128.6L249.7,131.5L226.4,140.8L226.6,138.7L231.9,135.6L229.3,134.6L227.3,137.5L225.4,136.2L226.4,138.1L221.0,139.7L219.1,146.5L216.7,147.6L217.8,149.1L219.1,147.5L220.1,151.9L222.3,150.4L223.0,156.4L222.3,155.1L221.9,156.9L224.4,160.5L224.4,158.0L230.2,162.4L227.1,169.3L226.9,165.5L225.8,166.0L226.1,170.0L220.8,169.0L221.4,184.6L224.4,195.5L235.8,207.4L244.2,210.9L255.6,220.7L268.4,227.2L281.2,265.4L289.7,277.4L301.6,288.6L306.9,290.9L308.0,295.1L321.5,302.0L357.3,302.7L359.2,308.6L348.9,316.7L350.0,322.9L373.3,335.5L389.6,341.2L404.4,352.8L423.1,361.1L424.2,365.4L431.3,369.9L441.0,384.6L435.1,400.3L425.4,395.1L421.7,388.4L423.2,386.6L418.0,377.9L405.7,377.0L394.7,371.7L395.6,369.2L399.0,368.1L389.4,367.1L384.5,370.5L373.7,387.1L374.6,392.6L369.6,401.3L371.6,406.6L380.0,408.9L393.2,418.3L391.7,424.0L392.0,432.8L394.9,435.6L391.3,441.6L385.3,439.8L373.0,446.3L371.2,450.8L372.2,463.8L363.2,470.3L358.4,476.4L356.0,484.8L352.4,486.7L340.6,484.5L339.4,472.9L345.8,469.2L349.0,461.2L349.4,457.7L346.9,452.6L357.8,449.4L360.1,441.6L355.3,433.5L353.6,421.1L347.7,411.1L344.4,396.0L339.1,387.4L336.0,387.4L331.6,391.3L326.3,389.6L326.4,387.6L321.6,383.2L314.0,379.9L317.1,372.7L309.5,360.2L294.0,364.8L293.8,362.3L298.6,357.4L292.3,352.4L289.1,354.1L284.8,352.8L284.8,355.0L283.6,354.7L282.7,348.6L272.1,333.4L267.6,333.4L265.8,335.5L256.7,331.4L248.2,334.5L242.9,326.6L233.8,324.4L227.2,316.0L219.9,311.1L217.4,304.5L212.1,299.3L205.3,297.4L199.4,286.1L189.5,280.3L179.9,281.0L179.7,278.6L182.8,276.9L181.8,273.1L174.2,264.8L166.7,262.0L167.9,256.8L158.6,255.7L159.6,241.6L152.1,230.3L149.8,214.1L144.1,205.8L135.5,202.0L135.0,205.1L113.8,190.7L113.1,193.0L109.3,189.8L96.5,187.3L86.9,193.0L84.9,198.1L79.5,201.1L76.4,209.0L72.9,211.8L61.2,216.3L52.0,216.9L46.9,221.4L40.6,222.9L40.1,227.5L33.9,228.2L31.5,233.3L26.3,233.8L20.8,240.6L24.4,240.4L23.3,244.2L14.2,246.2L13.2,248.8L6.8,248.0L5.4,249.7L6.3,251.3L3.4,251.6L4.5,249.7L0.0,248.3L0.0,0.0L898.6,0.0L897.9,80.1Z" fill="none" stroke="rgba(244,238,224,0.30)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M527.3,351.9L540.2,351.2L542.8,349.2L546.5,349.6L549.1,351.2L552.7,348.3L555.5,348.5L556.2,346.6L560.1,342.5L560.6,340.5L565.5,338.0L567.5,339.4L571.1,337.6L574.5,338.3L574.7,339.3L579.7,339.8L584.6,339.2L586.5,336.7L588.6,338.6L590.3,330.5L591.3,329.6L604.6,330.4L606.1,329.7L606.9,327.6L609.2,326.7L610.5,328.0L613.7,326.6L620.6,327.9L622.7,326.5L625.6,326.6L626.4,325.3L630.6,323.6L632.5,324.9L634.3,323.6L635.5,324.2L636.1,323.7L636.0,320.8L638.4,320.5L640.3,321.5L642.5,319.2L644.7,321.3L649.7,320.7L652.3,319.2L654.7,324.7L658.9,326.2L661.6,329.0L662.3,329.0L662.6,326.9L665.5,326.6L673.1,329.5L677.3,333.5L679.6,334.0L687.3,332.1L689.0,330.5L693.5,331.3L698.1,329.3L700.6,331.0L709.0,328.5L711.0,325.1L709.9,323.0L710.5,320.7L709.4,319.6L708.8,316.6L706.7,315.2L706.5,313.3L708.6,311.5L712.7,310.5L714.4,312.1L717.4,312.1L721.5,313.9L721.1,315.2L725.1,317.8L725.7,316.8L727.2,326.6L726.2,329.8L723.8,328.8L719.3,332.8L716.1,333.7L716.6,338.0L715.9,339.4L716.7,339.7L716.2,341.6L717.9,343.6L716.5,345.4L717.4,346.6L715.1,348.4L715.5,349.2L713.9,348.7L713.2,350.3L712.7,349.6L712.2,352.0L707.6,357.2L706.3,357.0L705.0,354.0L706.7,352.8L704.7,352.4L704.7,353.4L701.9,351.8L688.5,351.0L680.1,347.2L678.9,348.4L675.9,347.6L674.2,346.7L675.5,345.2L674.4,344.5L670.9,344.7L669.2,347.7L665.7,348.7L662.5,351.7L659.3,351.8L657.6,350.5L656.4,351.5L654.3,347.2L652.1,346.8L648.1,347.9L645.3,350.5L646.0,351.7L645.1,352.3L646.3,352.8L638.2,357.5L633.8,357.3L628.7,355.0L624.8,356.4L623.6,357.8L623.7,360.0L625.7,361.3L627.0,364.0L631.3,366.2L628.0,367.7L628.2,369.8L629.6,372.0L634.4,373.2L634.0,370.4L634.7,370.3L637.3,374.2L640.6,374.8L641.5,376.4L642.5,376.4L648.2,384.0L644.9,385.1L640.2,378.3L635.0,376.7L632.0,374.2L624.8,374.5L623.5,376.8L624.3,379.3L626.5,381.7L634.0,385.5L633.5,386.8L634.5,387.9L633.8,389.1L634.7,389.0L635.0,390.3L633.9,391.5L634.2,392.2L633.2,392.5L634.0,393.1L631.5,393.0L631.6,392.2L628.8,389.9L628.2,390.6L626.7,387.9L627.0,386.7L622.8,381.0L614.5,378.2L611.9,379.0L611.0,380.5L611.9,384.1L613.2,384.4L616.6,389.1L622.7,391.6L623.6,393.7L625.4,394.2L623.8,395.0L615.6,392.3L611.8,392.8L612.5,390.9L609.8,386.2L610.5,383.0L609.6,380.2L600.1,376.0L597.8,373.5L595.1,373.2L595.2,371.8L592.8,367.9L597.0,367.2L598.5,365.6L595.9,361.3L593.9,361.6L593.8,363.7L590.5,364.9L589.8,367.3L587.5,366.8L586.7,369.3L584.2,369.5L587.1,374.0L583.3,383.3L583.9,388.5L585.0,390.3L588.8,392.8L589.5,396.3L593.8,400.6L596.9,410.3L602.5,413.9L608.6,422.1L611.2,428.7L606.4,430.9L607.2,431.6L606.2,432.2L600.9,432.5L601.9,430.2L603.1,429.7L602.6,432.2L606.7,428.7L603.8,423.3L599.8,422.4L599.0,420.6L596.8,420.4L597.0,423.1L593.5,423.7L592.9,426.8L593.9,429.7L594.7,428.2L595.6,428.7L596.2,431.2L597.7,431.5L599.0,433.8L597.8,436.6L601.6,435.3L598.5,439.1L595.5,440.7L593.6,440.4L593.3,441.8L591.7,442.6L588.1,442.6L585.7,440.9L582.3,442.3L582.3,443.5L584.0,443.2L583.3,444.0L585.0,444.2L584.7,444.8L588.6,443.9L591.2,447.0L600.5,448.7L602.7,453.6L605.5,452.9L606.0,452.3L605.0,451.7L605.6,451.4L609.8,453.0L610.8,455.2L609.4,456.4L609.1,457.4L609.9,456.8L612.5,458.4L610.9,459.8L619.0,459.9L620.2,461.2L619.3,462.1L622.8,466.6L632.6,469.6L636.7,473.6L637.1,475.4L636.4,477.0L635.6,476.4L633.9,477.4L635.4,482.6L634.7,486.4L635.9,487.3L634.7,488.0L636.6,489.2L636.2,491.2L637.4,492.9L636.4,495.3L636.8,497.3L635.4,499.0L632.5,497.8L632.3,495.5L631.6,495.8L630.8,493.0L629.5,491.8L627.7,490.8L626.5,492.1L623.6,485.8L621.2,486.1L621.7,485.2L618.8,484.3L620.1,482.0L619.3,480.8L614.9,482.0L613.0,483.6L614.2,483.9L613.5,484.2L607.0,484.2L602.4,487.1L599.6,486.4L598.9,488.4L599.5,490.0L603.1,489.9L605.5,491.8L605.5,493.4L603.3,494.9L605.2,495.9L605.0,500.7L610.9,504.4L611.7,502.6L610.0,500.6L613.1,499.7L613.3,501.4L612.2,503.4L613.9,504.7L613.0,505.3L615.9,506.4L617.6,508.8L608.3,510.6L607.2,511.8L608.8,512.9L605.6,513.3L606.2,515.1L605.0,515.2L604.0,514.8L604.8,514.1L601.6,512.7L601.6,510.5L602.4,511.1L603.1,509.4L604.0,510.1L603.7,508.4L600.7,507.9L600.7,506.6L599.2,507.9L598.4,505.6L596.3,504.1L593.9,505.3L591.2,501.5L589.4,502.9L590.5,510.7L592.7,513.2L595.8,520.1L595.6,523.4L597.5,523.3L598.4,525.2L597.8,525.2L599.0,527.5L599.5,531.8L602.3,537.4L601.9,538.7L603.1,539.1L602.2,541.3L600.9,540.6L600.1,541.6L600.2,543.1L601.1,543.1L600.3,545.1L601.9,548.4L604.5,550.1L603.8,551.7L606.2,554.0L606.0,555.1L602.4,554.6L600.8,551.0L598.1,551.1L596.6,547.6L594.6,546.0L595.0,544.9L593.3,543.4L592.5,544.2L591.5,538.5L588.0,537.8L584.2,539.0L584.2,540.9L582.3,543.5L583.2,543.8L583.3,545.1L582.0,544.4L582.3,546.8L580.9,547.1L581.8,553.5L581.1,557.0L580.4,554.2L577.2,552.9L576.3,551.5L577.5,549.4L577.5,547.3L576.8,547.3L577.5,542.5L576.4,542.7L571.6,533.7L570.0,534.0L568.7,532.8L569.2,528.0L565.5,527.4L561.8,529.3L561.1,535.3L561.3,537.2L562.8,538.4L559.7,541.6L557.6,537.8L555.5,538.4L553.5,537.4L552.8,534.0L553.6,531.6L552.1,530.9L552.6,530.2L551.9,530.9L548.6,523.7L548.8,520.2L553.1,514.4L552.3,510.8L548.0,503.2L542.7,498.9L540.7,498.2L539.6,499.7L539.6,495.6L538.6,492.9L532.9,490.5L532.3,488.6L533.3,485.5L534.4,486.2L535.9,485.5L540.1,482.0L538.6,482.3L541.5,477.4L541.8,472.9L543.0,474.4L542.7,473.1L550.5,475.9L553.3,473.6L555.5,469.4L558.5,467.3L564.5,468.6L565.5,470.4L567.8,470.7L571.5,474.3L575.5,474.8L587.8,479.9L594.4,485.8L597.2,485.5L598.2,484.0L593.9,481.4L594.7,480.7L597.0,479.2L601.5,480.3L605.1,479.3L606.7,478.2L605.2,476.3L606.9,475.7L603.6,475.1L604.3,474.4L603.4,473.4L601.4,474.6L600.2,474.4L600.9,474.1L599.9,473.0L597.4,472.6L596.3,473.5L598.0,474.1L595.8,474.1L595.3,471.9L592.2,472.6L590.8,471.6L592.0,470.0L588.4,468.4L586.6,465.1L585.9,465.9L586.6,466.4L585.4,466.3L584.5,467.5L585.0,469.1L583.6,469.5L580.3,463.6L578.0,462.1L578.2,463.9L577.0,465.0L577.9,465.7L577.3,467.2L571.7,466.4L570.5,468.1L568.5,465.9L562.3,464.1L559.6,465.6L557.9,464.8L555.4,467.9L553.8,466.5L549.7,466.9L546.8,469.4L543.7,467.8L545.8,468.8L545.8,466.5L543.4,466.3L543.2,464.9L541.9,464.7L541.3,461.5L539.9,460.2L541.0,463.1L540.4,464.8L537.0,467.8L535.3,467.3L535.6,468.1L534.1,469.0L533.5,467.5L531.6,467.2L533.5,464.7L531.6,464.1L531.6,462.7L532.3,463.4L532.8,462.7L532.3,463.1L532.3,460.9L531.4,460.6L532.1,460.3L532.0,458.5L529.6,459.5L529.4,455.0L528.2,452.5L525.6,451.4L523.6,446.0L521.9,447.9L520.6,448.0L519.0,445.8L519.7,443.6L521.7,443.1L520.0,441.3L520.5,438.9L522.1,440.6L523.6,438.8L523.9,440.4L525.2,440.3L525.8,439.1L529.5,440.1L529.5,441.7L531.6,443.2L532.2,441.1L534.8,442.7L533.5,439.7L534.2,437.1L531.6,434.1L531.4,435.3L529.9,436.0L530.6,436.6L526.9,435.4L526.3,434.4L526.8,433.8L525.1,433.4L523.9,434.6L524.6,435.3L523.1,435.3L523.6,434.3L522.4,433.8L522.3,431.7L520.7,432.8L521.0,434.7L519.5,435.6L522.6,438.7L520.3,438.0L519.2,439.3L517.5,433.7L510.2,426.6L510.3,424.0L504.8,423.0L502.8,419.2L501.6,418.6L500.9,416.7L502.8,416.4L500.9,414.2L502.6,413.6L498.0,412.6L498.5,410.7L499.5,410.5L499.7,408.3L493.3,405.1L500.4,407.6L503.8,404.0L503.2,400.0L507.0,400.3L507.2,398.6L504.5,394.8L503.8,391.6L506.6,391.3L508.6,388.1L513.7,387.9L516.2,386.7L518.0,378.2L520.5,374.3L520.5,371.6L522.9,369.3L526.3,369.3L529.2,365.3L529.8,360.7L526.6,355.8L527.3,351.9Z M638.8,627.3L639.1,629.5L635.9,627.7L637.6,627.0L638.8,627.3Z M740.1,600.9L740.2,602.7L735.7,604.9L734.7,603.9L736.5,601.5L740.1,600.9Z M715.8,607.3L714.1,609.0L715.3,612.5L716.1,611.9L714.5,616.4L713.1,619.4L709.9,620.9L704.2,619.2L698.0,620.7L681.8,621.4L673.3,623.9L660.3,624.1L661.0,619.1L659.6,616.7L654.2,616.1L648.5,612.2L636.0,612.2L633.8,610.3L628.2,609.4L623.1,610.6L620.6,610.2L617.3,606.8L618.5,606.2L618.0,603.8L619.3,601.0L619.5,594.5L620.4,592.8L620.9,596.9L622.3,597.9L624.4,597.4L624.1,591.2L625.2,589.4L626.5,590.1L626.5,594.5L627.8,596.4L635.2,597.0L637.6,595.5L637.2,593.9L640.7,594.1L641.4,596.1L640.7,597.4L637.1,597.3L636.8,598.1L640.9,600.2L643.2,599.0L643.6,604.0L646.3,605.0L659.7,601.3L663.9,602.4L665.8,601.5L668.0,602.4L668.5,601.5L671.4,602.4L671.5,604.7L672.2,605.2L682.8,605.2L685.5,607.5L692.8,604.9L696.5,605.6L695.1,607.5L695.2,608.8L696.0,607.9L696.3,609.0L695.3,609.7L694.6,612.6L695.2,614.9L697.5,615.7L701.1,612.5L706.9,610.3L710.2,611.9L713.9,607.9L715.1,607.8L715.1,606.5L716.1,606.5L715.8,607.3Z M748.2,597.8L748.2,599.3L746.4,599.4L744.8,602.4L745.0,601.7L743.3,600.2L744.2,598.8L744.0,595.7L742.4,593.9L745.4,588.0L745.5,584.1L747.8,582.9L747.7,587.6L745.5,592.5L747.8,595.7L747.2,596.8L748.2,597.8Z M608.6,579.4L610.7,581.2L610.8,582.9L608.6,579.4Z M599.5,560.8L602.7,564.1L601.1,565.0L600.9,568.3L598.7,568.7L595.8,565.5L595.6,559.4L597.1,557.1L599.5,560.8Z M695.3,557.5L696.6,556.5L699.7,558.3L695.8,558.5L695.3,557.5Z M783.7,554.8L783.6,557.8L781.0,564.1L777.4,569.6L778.6,570.2L777.9,571.5L778.4,572.5L775.0,572.1L769.2,579.0L767.5,580.1L765.8,578.9L765.1,577.2L766.7,571.1L764.1,567.7L767.2,565.9L768.3,562.6L771.7,559.4L779.4,555.3L781.7,555.5L782.8,554.0L783.7,554.8Z M684.3,553.4L686.8,556.7L685.3,559.5L682.3,558.6L684.9,557.0L684.4,554.2L682.5,553.5L684.3,553.4Z M753.7,555.6L755.7,556.4L754.1,557.6L752.9,556.9L752.3,555.2L751.1,556.1L750.6,553.2L750.9,553.9L753.0,553.3L753.7,555.6Z M718.6,545.7L721.2,548.2L717.9,548.7L716.8,551.6L714.1,549.8L714.2,547.6L716.8,548.8L719.0,547.9L717.5,546.0L718.6,545.7Z M770.7,546.3L770.9,550.1L769.7,550.7L769.2,550.4L769.9,549.8L767.9,548.9L768.5,548.5L766.8,548.5L767.8,546.6L770.3,545.3L768.7,546.9L770.7,546.3Z M664.9,544.4L668.2,547.6L663.9,544.4L664.9,544.4Z M676.1,541.9L674.1,544.6L671.9,545.7L673.2,542.8L676.1,541.9Z M555.3,540.4L556.1,541.1L556.0,542.8L555.0,542.2L555.3,540.4Z M651.0,540.6L653.5,540.3L653.2,543.7L645.8,545.1L645.8,541.9L646.8,540.3L648.6,542.5L650.5,542.8L650.5,541.6L648.7,540.0L651.0,540.6Z M655.7,539.1L657.8,539.9L657.0,540.6L655.7,539.1Z M682.7,544.9L678.4,541.6L678.8,539.7L680.3,538.4L684.0,542.2L682.7,544.9Z M553.1,540.9L553.6,538.1L554.3,538.4L553.1,540.9Z M655.7,536.9L654.5,539.0L653.3,538.9L652.6,537.4L654.1,536.1L655.7,536.9Z M684.8,537.2L685.3,535.6L686.4,534.9L686.4,536.6L684.8,537.2Z M749.9,533.2L752.5,535.3L747.5,537.1L744.6,540.0L741.7,539.3L739.7,540.3L739.0,543.8L737.1,542.1L737.4,539.8L739.5,539.7L742.2,536.4L745.8,534.0L749.9,533.2Z M691.2,533.9L692.4,533.1L693.6,534.0L692.6,534.6L691.2,533.9Z M704.7,531.8L707.4,533.9L705.0,534.0L700.5,538.4L696.1,539.6L695.6,538.4L699.3,537.8L699.9,536.5L699.3,535.9L703.8,533.7L703.0,532.8L704.7,531.8Z M671.9,531.1L670.4,528.6L672.6,527.1L671.6,530.2L672.4,531.2L671.9,531.1Z M659.5,528.1L661.3,531.3L659.3,533.4L656.9,526.8L659.5,528.1Z M737.2,530.9L738.4,527.7L737.1,527.1L736.1,524.9L739.5,526.8L740.2,529.0L741.6,529.2L741.4,531.5L739.8,531.2L739.4,532.2L738.1,532.4L737.2,530.9Z M699.0,524.3L697.0,523.3L698.9,522.7L699.0,524.3Z M679.0,526.9L676.2,529.7L673.2,528.4L674.8,523.9L677.9,522.0L677.4,522.8L678.7,523.3L678.9,522.0L679.9,522.0L678.8,524.9L679.0,526.9Z M688.3,519.8L690.4,522.4L690.0,528.2L689.0,530.4L685.4,532.8L681.6,525.2L688.3,519.8Z M649.7,520.5L652.6,519.6L653.0,523.0L652.6,522.4L651.8,523.9L650.5,522.7L649.2,523.3L649.7,520.5Z M602.4,516.4L604.6,516.5L604.8,517.8L602.4,516.4Z M619.7,511.9L616.8,512.9L616.6,514.3L612.2,515.1L615.4,512.6L619.7,511.9Z M647.2,510.1L649.9,506.6L649.5,508.5L651.3,510.0L649.9,512.9L647.2,514.8L648.5,511.9L648.2,510.1L647.2,510.1Z M685.6,508.5L680.3,510.1L681.0,507.7L680.5,506.5L681.8,505.6L682.8,507.5L683.5,506.3L685.8,507.4L685.6,508.5Z M667.7,506.7L668.3,510.5L665.4,512.3L665.6,510.7L664.6,510.7L665.9,508.4L665.8,505.5L667.7,506.7Z M616.0,503.4L617.6,505.0L614.4,505.0L615.8,504.1L616.0,503.4Z M677.1,504.5L669.4,499.7L669.0,497.8L678.2,500.3L678.7,501.9L677.1,504.5Z M648.5,498.8L645.3,504.2L644.0,504.5L644.1,500.3L645.6,497.8L647.5,497.4L648.5,498.8Z M717.5,497.4L712.9,502.7L703.9,505.3L704.0,503.8L707.4,499.7L711.7,499.9L714.7,497.9L717.5,497.4Z M618.9,493.7L617.6,497.1L616.1,497.8L614.0,494.0L618.9,493.7Z M741.2,494.0L742.2,496.5L736.8,497.8L735.1,499.4L732.5,499.2L731.6,497.3L729.7,496.2L725.8,497.8L725.2,494.9L727.9,492.5L733.2,491.5L738.8,494.6L738.1,492.7L742.4,493.4L741.2,494.0Z M523.3,490.5L528.1,495.4L528.4,496.8L524.8,495.3L523.1,496.7L523.2,498.9L522.1,499.0L515.2,491.2L515.2,489.2L517.5,486.2L518.3,486.4L519.5,489.3L523.3,490.5Z M669.3,494.3L668.0,497.4L665.7,493.7L662.5,491.5L661.6,489.3L660.3,488.0L659.5,488.6L658.4,486.1L658.7,484.6L661.7,483.0L663.5,484.7L664.2,486.9L667.9,487.3L667.5,490.2L669.0,491.5L668.0,493.4L669.3,494.3Z M613.2,487.3L616.6,484.5L613.9,484.8L615.2,484.2L614.2,483.6L617.3,483.0L618.3,485.2L619.3,485.2L617.3,487.7L615.5,488.3L613.2,487.3Z M518.6,479.9L515.0,477.5L513.2,478.8L511.3,477.9L509.9,474.1L511.3,474.7L509.0,470.3L508.3,474.9L506.7,476.0L505.5,474.6L507.4,466.3L510.2,468.8L512.0,467.5L512.0,465.0L512.8,465.3L512.3,461.2L513.5,461.2L515.4,466.8L514.4,469.1L515.6,471.1L517.4,470.0L521.7,477.7L521.3,480.0L518.6,479.9Z M519.0,465.1L520.0,465.9L519.3,465.9L520.2,468.1L518.7,468.5L517.6,467.5L515.2,460.9L517.0,460.1L516.6,461.8L518.3,462.5L517.1,465.6L519.0,465.1Z M526.5,455.2L525.3,457.7L524.8,457.7L526.2,455.3L526.5,455.2Z M710.5,458.0L709.8,460.3L709.1,460.6L710.2,461.5L709.7,463.7L710.5,469.1L708.8,469.9L708.7,472.8L706.2,473.8L705.1,475.8L701.6,472.6L700.9,472.9L700.9,471.6L700.0,471.7L700.4,470.3L703.5,469.1L704.4,465.6L703.0,464.3L702.8,462.1L699.2,459.3L699.4,456.3L705.3,455.3L707.0,455.9L708.6,458.0L709.8,457.0L710.5,458.0Z M688.1,455.2L691.5,456.1L690.8,458.4L689.3,458.4L688.1,455.2Z M514.6,454.2L512.5,456.8L514.6,447.0L517.5,443.9L519.0,447.0L519.0,449.4L517.9,451.3L518.8,450.5L518.6,454.2L517.8,453.6L518.1,454.6L516.2,455.0L516.2,456.1L514.6,454.2Z M658.2,445.9L657.5,447.6L655.5,446.5L654.3,447.9L653.0,446.4L654.5,445.8L653.9,444.1L649.7,442.6L650.6,441.1L650.5,438.5L651.6,437.9L654.0,439.6L654.7,442.7L658.2,445.9Z M655.0,475.7L655.2,480.1L653.7,484.0L651.1,484.7L649.4,482.0L647.4,484.3L644.4,479.0L641.5,478.8L641.7,477.3L640.7,476.8L641.7,475.4L640.8,473.0L638.7,473.0L639.7,470.1L638.1,471.2L638.6,468.8L635.2,467.8L636.6,466.9L635.8,464.5L621.9,464.3L620.7,461.8L620.0,462.1L621.4,460.0L620.7,457.3L616.8,455.5L614.8,451.9L606.2,444.8L601.5,444.1L598.0,442.1L597.5,442.6L598.8,443.2L598.4,444.1L593.2,445.2L593.3,443.7L600.3,440.4L603.5,436.7L609.9,435.2L614.0,439.1L616.0,444.4L620.0,446.7L620.0,447.6L624.5,448.0L625.6,449.9L629.3,451.6L636.9,451.7L639.8,453.0L638.7,453.8L638.7,455.5L642.4,459.0L640.9,461.2L641.5,464.0L640.8,464.2L643.2,469.6L643.2,472.5L646.4,475.7L651.1,476.6L655.0,475.7Z M615.3,430.9L613.0,430.3L613.1,429.5L615.6,427.2L617.1,428.8L615.3,430.9Z M622.2,432.5L619.7,427.5L627.0,431.6L624.3,433.4L622.2,432.5Z M497.7,426.1L500.0,427.7L500.4,428.7L498.9,428.3L497.7,426.1Z M633.1,425.4L629.5,430.4L628.4,430.3L632.8,423.7L633.1,425.4Z M726.3,435.1L725.8,436.5L723.8,436.1L723.1,435.3L723.3,433.2L722.0,431.8L720.2,432.2L724.0,437.6L719.7,438.5L710.6,436.0L707.9,433.2L712.7,430.9L715.1,428.9L714.6,428.0L711.4,427.7L707.0,432.8L700.8,430.3L698.9,428.7L699.2,426.5L701.8,423.3L702.5,424.3L705.9,424.0L706.4,423.1L706.9,423.7L710.5,422.1L710.5,419.6L717.5,419.6L717.3,420.6L719.5,421.8L718.2,424.3L723.8,429.4L723.5,430.1L726.3,435.1Z M671.2,411.9L670.9,413.1L669.0,415.5L668.7,412.3L669.6,411.1L671.2,411.9Z M496.2,416.4L497.1,420.2L490.2,417.2L490.8,416.4L488.6,415.4L487.3,410.7L484.5,408.5L483.4,406.0L482.1,405.7L481.8,403.7L481.1,404.1L480.2,402.6L481.6,400.5L488.1,399.1L491.5,400.6L491.0,402.9L487.7,404.6L487.9,407.0L490.8,408.2L489.8,409.2L491.1,415.2L494.5,416.8L496.2,416.4Z M685.1,389.8L685.4,391.5L683.7,392.7L683.2,394.7L681.8,395.3L682.5,395.6L681.5,396.8L682.6,399.4L681.8,400.8L677.9,397.5L679.4,396.1L678.4,394.7L676.5,395.9L677.5,396.3L675.8,398.1L676.6,398.3L677.1,400.0L674.6,399.4L675.3,397.5L674.3,398.5L673.8,397.5L671.2,398.5L671.9,394.6L670.7,391.2L677.5,390.6L679.6,393.1L683.0,390.0L685.1,389.8Z M694.0,371.1L689.5,372.6L685.2,368.8L689.8,367.3L693.2,368.6L694.0,371.1Z M661.3,357.2L662.0,358.4L661.3,360.2L661.8,362.8L656.9,364.8L655.0,362.4L652.5,361.6L653.1,358.0L656.9,354.0L660.1,355.0L662.0,357.2L661.3,357.2Z M761.7,563.8L761.5,565.0L758.3,565.0L758.6,564.0L761.7,563.8Z M746.9,547.1L747.0,548.9L744.6,548.8L744.8,547.4L746.9,547.1Z M734.5,521.5L736.0,524.1L734.3,524.2L734.8,523.3L733.6,523.5L733.5,522.3L732.0,520.6L733.2,519.8L734.7,520.4L734.5,521.5Z M726.0,512.9L724.1,514.0L724.8,516.4L724.0,516.3L723.4,515.2L723.7,511.9L726.0,512.9Z M660.1,499.9L659.6,501.7L657.5,501.1L660.1,499.9Z M526.9,453.1L526.5,454.1L524.0,456.2L525.2,453.4L526.9,453.1Z M521.7,452.4L520.1,454.1L521.5,455.6L519.8,454.2L519.3,453.0L521.7,452.4Z M637.5,420.9L637.2,423.0L636.5,423.3L635.9,421.3L636.7,420.3L637.5,420.9Z" fill="none" stroke="rgba(127,168,155,0.85)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M509.9,474.1L510.3,474.3L510.9,474.9L511.3,475.1L511.3,474.7L510.7,474.2L510.4,473.5L509.4,471.0L509.0,470.3L508.7,470.2L508.4,471.0L508.4,471.7L508.7,473.2L508.7,474.1L508.3,474.9L507.4,475.5L506.9,476.0L506.7,476.0L506.5,475.2L505.5,474.6L505.3,473.8L505.9,472.5L505.7,471.7L505.8,471.4L506.7,470.4L507.1,469.2L507.4,467.7L507.4,466.3L507.7,467.2L507.9,467.2L508.4,466.3L508.7,466.6L508.9,467.5L509.4,468.1L509.7,467.8L509.9,468.5L510.2,468.8L510.6,468.6L511.2,467.9L512.0,467.5L512.3,466.7L512.3,465.8L512.0,465.0L512.8,465.3L512.3,463.4L512.5,461.9L512.3,461.5L512.3,461.2L513.5,461.2L515.4,466.8L515.5,467.2L515.4,467.9L515.2,468.3L514.4,469.1L515.6,471.1L516.0,471.3L517.4,470.0L517.1,470.7L517.8,470.8L518.0,471.3L518.1,471.9L518.3,472.6L519.8,473.9L520.2,475.2L521.4,477.0L521.7,477.7L521.8,478.4L521.7,479.2L521.3,480.0L521.1,480.0L520.2,479.8L519.2,480.1L518.6,479.9L517.4,478.5L516.3,477.9L515.0,477.5L513.8,477.7L513.2,478.8L512.6,478.3L511.3,477.9L510.8,477.3L510.6,475.7L510.0,474.6L509.9,474.1Z M517.8,467.2L516.8,465.9L516.2,464.3L515.9,462.5L515.2,461.9L515.0,461.5L515.2,460.9L515.7,461.2L516.0,461.0L516.4,459.9L517.0,460.1L517.1,460.7L516.9,461.4L516.6,461.8L517.2,461.8L518.3,462.5L517.8,464.2L517.1,465.6L517.7,465.9L518.6,465.9L518.6,465.6L518.1,465.3L518.8,465.3L518.6,465.0L519.4,465.3L520.0,465.9L519.3,465.9L519.5,467.2L519.8,467.6L520.2,467.8L520.2,468.1L519.3,468.3L518.7,468.5L518.2,468.4L517.6,467.5L517.8,467.2Z" fill="rgba(201,162,39,0.10)" stroke="#c9a227" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/></g></svg></div>
+<div class="container">
+  <div class="logo-container">
+    <img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Full.png" alt="ARGOS emblem" class="logo">
+  </div>
+  <h1>ARGOS : : Kefalonia Digital Twin</h1>
+  <p class="tagline" id="i-tagline">Watching over the places we call home.</p>
+  <p class="tagline-gr" id="i-tagline2">Προστατεύοντας τους τόπους μας</p>
+  <div class="pillars">
+    <div class="pillar"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/icon_geo.png" alt="ARGOS GEO · Ainos contours mark">Geo</div>
+    <div class="pillar"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/icon_watch.png" alt="ARGOS WATCH · hound mark">Watch</div>
+    <div class="pillar"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/icon_commons.png" alt="ARGOS COMMONS · community mark">Commons</div>
+  </div>
+  <p class="status" id="i-status"><strong>Open-source digital twin</strong> of Kefalonia, Greece.<br>
+  Building in public. <strong>v0.0.7</strong> vector map is live.</p>
+  <div class="divider"></div>
+  <div class="launch-wrap">
+    <img class="map-preview" src="assets/argos_map_preview.webp" width="1200" height="675" alt="ARGOS map preview showing Kefalonia wildfire and flood risk layers" fetchpriority="high" decoding="async">
+    <a href="/map" class="launch-btn" id="i-launch">Explore the map <span class="arrow">&rarr;</span></a>
+    <div class="live-pill" id="i-live"><span class="pulse"></span><span id="i-live-txt">Live &middot; v0.0.7 vector preview</span></div>
+  </div>
+  <div class="roadmap">
+    <div class="rm-card"><div class="rm-label" id="i-rm1l">NOW</div><div class="rm-text" id="i-rm1t">Static island twin.</div></div>
+    <div class="rm-card"><div class="rm-label" id="i-rm2l">NEXT</div><div class="rm-text" id="i-rm2t">Live environmental feeds.</div></div>
+    <div class="rm-card"><div class="rm-label" id="i-rm3l">THEN</div><div class="rm-text" id="i-rm3t">Hazard outlook + history.</div></div>
+  </div>
+  <div class="links">
+    <a href="https://github.com/argos-geo/kefalonia-digital-twin" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a>
+    <a href="https://bsky.app/profile/argos-geo.org" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z"/></svg>Bluesky</a>
+    <a href="https://x.com/argos_geo" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</a>
+    <a href="https://mapstodon.space/@argos_geo" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-6.288.309C3.882.692 1.496 2.518.917 5.127.64 6.412.61 7.837.671 9.346c.074 1.83.088 3.657.226 5.46.118 1.51.292 3.018.566 4.474.515 2.751 3.385 4.719 6.244 4.722 1.318.001 2.603-.222 3.877-.633l.9-.244c.745-.201 1.468-.441 2.165-.72l-.084-1.882s-1.237.383-2.637.48c-1.40.097-2.872-.094-4.17-.42-.263-.068-.527-.15-.787-.232a10.965 10.965 0 0 1-.566-.195c-.208-.078-.413-.16-.615-.248a4.586 4.586 0 0 1-.579-.3c-.59-.364-1.11-.852-1.49-1.445a3.86 3.86 0 0 1-.425-.818c-.103-.272-.177-.556-.223-.844 0 0 1.125.275 2.551.382l.393.023c.872.047 1.748.07 2.63.07 1.08 0 2.064-.03 3.02-.094l.315-.021c.96-.066 1.892-.19 2.79-.37.226-.047.45-.096.67-.15 2.195-.523 4.11-1.603 4.348-2.855.372-1.952.342-4.764.342-4.764v-.012c0-1.108-.022-2.21-.065-3.316z"/></svg>Mastodon</a>
+    <a href="/cdn-cgi/l/email-protection#2d45484141426d4c5f4a425e004a484203425f4a" class="link-btn">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email</a>
+  </div>
+  <p class="intro" id="i-intro">ARGOS is an open-source geospatial digital twin of Kefalonia, the largest island in the Ionian Sea. It combines satellite imagery from Copernicus Sentinel-2, topographic data from the Copernicus DEM, and the OpenStreetMap road and building network into a single interactive map. The project screens for wildfire risk, flash flood susceptibility, and travel-time accessibility to evacuation points. Models are challenged with independent evidence where possible. Every limitation is documented. The code is open. The data is open. The methodology is public.</p>
+  <div class="sitenav">
+    <a href="/map">Map</a>
+    <a href="/about">About</a>
+    <a href="/data">Open Data</a>
+    <a href="/field-notes">Field Notes</a>
+  </div>
+  <div class="features">
+    <div class="feature"><div class="feature-label" id="i-fl1">Data</div><div class="feature-value" id="i-fv1">OSM, Sentinel-2, Copernicus DEM</div></div>
+    <div class="feature"><div class="feature-label" id="i-fl2">Stack</div><div class="feature-value" id="i-fv2">PostGIS, FastAPI, MapLibre</div></div>
+    <div class="feature"><div class="feature-label" id="i-fl3">License</div><div class="feature-value" id="i-fv3">MIT - open source forever</div></div>
+    <div class="feature"><div class="feature-label" id="i-fl4">Focus</div><div class="feature-value" id="i-fv4">Wildfire &middot; Flood &middot; Accessibility &middot; Marine</div></div>
+  </div>
+  <div class="footer">
+    <a href="https://argos-geo.org">argos-geo.org</a> &middot; Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way<br>
+    <span class="localtime" id="ktime"></span>
+  </div>
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function tick(){
+  const t = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Athens',hour:'2-digit',minute:'2-digit'});
+  const d = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Athens',timeZoneName:'short'});
+  const tz = d.formatToParts(new Date()).find(p=>p.type==='timeZoneName').value;
+  document.getElementById('ktime').textContent = 'Pota_Irtes local time · ' + t.format(new Date()) + ' ' + tz;
+}
+tick(); setInterval(tick, 30000);
+</script>
+<script>
+const I18N = {
+  en: {
+    'i-tagline': 'Watching over the places we call home.',
+    'i-tagline2': 'Προστατεύοντας τους τόπους μας',
+    'i-status': '<strong>Open-source digital twin</strong> of Kefalonia, Greece.<br>Building in public. <strong>v0.0.7</strong> vector map is live.',
+    'i-live-txt': 'Live &middot; v0.0.7 vector preview',
+    'i-intro': 'ARGOS is an open-source geospatial digital twin of Kefalonia, the largest island in the Ionian Sea. It combines satellite imagery from Copernicus Sentinel-2, topographic data from the Copernicus DEM, and the OpenStreetMap road and building network into a single interactive map. The project screens for wildfire risk, flash flood susceptibility, and travel-time accessibility to evacuation points. Models are challenged with independent evidence where possible. Every limitation is documented. The code is open. The data is open. The methodology is public.',
+    'i-fl1': 'Data', 'i-fl2': 'Stack', 'i-fl3': 'License', 'i-fl4': 'Focus',
+    'i-fv3': 'MIT - open source forever',
+    'i-fv4': 'Wildfire &middot; Flood &middot; Accessibility &middot; Marine',
+    'i-rm1l': 'NOW', 'i-rm1t': 'Static island twin.',
+    'i-rm2l': 'NEXT', 'i-rm2t': 'Live environmental feeds.',
+    'i-rm3l': 'THEN', 'i-rm3t': 'Hazard outlook + history.'
+  },
+  el: {
+    'i-tagline': 'Προστατεύοντας τους τόπους μας.',
+    'i-tagline2': 'Watching over the places we call home',
+    'i-status': '<strong>Ψηφιακός δίδυμος ανοικτού κώδικα</strong> της Κεφαλονιάς.<br>Χτίζεται δημόσια. Η έκδοση <strong>v0.0.7</strong> είναι live.',
+    'i-live-txt': 'Live &middot; Vector χάρτης v0.0.7',
+    'i-intro': 'Το ARGOS είναι ένα ανοιχτού κώδικα γεωχωρικό ψηφιακό δίδυμο της Κεφαλονιάς, του μεγαλύτερου νησιού του Ιονίου. Συνδυάζει δορυφορικά δεδομένα από το Copernicus Sentinel-2, τοπογραφικά δεδομένα από το Copernicus DEM, και το οδικό και κτιριακό δίκτυο του OpenStreetMap σε έναν ενιαίο διαδραστικό χάρτη. Το έργο ελέγχει τον κίνδυνο πυρκαγιάς, την ευαισθησία σε πλημμύρες, και την προσβασιμότητα σε σημεία εκκένωσης. Κάθε μοντέλο δοκιμάζεται με ανεξάρτητα τεκμήρια όπου είναι εφικτό. Κάθε περιορισμός τεκμηριώνεται. Ο κώδικας είναι ανοιχτός. Τα δεδομένα είναι ανοιχτά. Η μεθοδολογία είναι δημόσια.',
+    'i-fl1': 'Δεδομένα', 'i-fl2': 'Τεχνολογίες', 'i-fl3': 'Άδεια', 'i-fl4': 'Εστίαση',
+    'i-fv3': 'MIT - ανοικτός κώδικας για πάντα',
+    'i-fv4': 'Πυρκαγιά &middot; Πλημμύρα &middot; Προσβασιμότητα &middot; Θάλασσα',
+    'i-rm1l': 'ΤΩΡΑ', 'i-rm1t': 'Στατικός ψηφιακός δίδυμος.',
+    'i-rm2l': 'ΕΠΟΜΕΝΟ', 'i-rm2t': 'Ζωντανά περιβαλλοντικά δεδομένα.',
+    'i-rm3l': 'ΜΕΤΑ', 'i-rm3t': 'Πρόβλεψη + ιστορικό κινδύνων.'
+  }
+};
+const LAUNCH = { en: 'Explore the map', el: 'Εξερεύνησε τον χάρτη' };
+function setSiteLang(l) {
+  const dict = I18N[l];
+  Object.keys(dict).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = dict[id];
+  });
+  document.getElementById('i-launch').innerHTML = LAUNCH[l] + ' <span class="arrow">&rarr;</span>';
+  document.getElementById('sl-en').classList.toggle('on', l === 'en');
+  document.getElementById('sl-el').classList.toggle('on', l === 'el');
+  document.documentElement.lang = l;
+  try { localStorage.setItem('argos-lang', l); } catch (e) {}
+}
+document.getElementById('sl-en').addEventListener('click', () => setSiteLang('en'));
+document.getElementById('sl-el').addEventListener('click', () => setSiteLang('el'));
+try {
+  const saved = localStorage.getItem('argos-lang');
+  if (saved === 'el') setSiteLang('el');
+} catch (e) {}
+</script>
+
+
+<button class="social-fab" id="socialFab" aria-label="Latest news"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="2" fill="var(--gold)" stroke="none"/><path d="M3 11a10 10 0 0 1 10 10"/><path d="M3 4a17 17 0 0 1 17 17"/></svg><span>NEWS</span></button>
+<div class="feed-overlay" id="feedOverlay" role="dialog" aria-modal="true" aria-label="Latest ARGOS posts">
+  <div class="feed-wrap">
+    <button class="feed-close" id="feedClose" aria-label="Close">&times;</button>
+    <div class="feed-title">Field Notes</div>
+    <div class="feed-sub">Latest from ARGOS &middot; building in public</div>
+    <div class="feed-net" id="netBsky">
+      <div class="feed-net-head">
+        <svg viewBox="0 0 24 24"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z"/></svg>
+        Bluesky <a href="https://bsky.app/profile/argos-geo.org" target="_blank" rel="noopener">@argos-geo.org &rarr;</a>
+      </div>
+      <div class="feed-loading">Tuning the receiver&hellip;</div>
+    </div>
+    <div class="feed-net" id="netMasto">
+      <div class="feed-net-head">
+        <svg viewBox="0 0 24 24"><path d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-6.288.309C3.882.692 1.496 2.518.917 5.127.64 6.412.61 7.837.671 9.346c.074 1.83.088 3.657.226 5.46.118 1.51.292 3.018.566 4.474.515 2.751 3.385 4.719 6.244 4.722 1.318.001 2.603-.222 3.877-.633l.9-.244c.745-.201 1.468-.441 2.165-.72l-.084-1.882s-1.237.383-2.637.48c-1.40.097-2.872-.094-4.17-.42-.263-.068-.527-.15-.787-.232a10.965 10.965 0 0 1-.566-.195c-.208-.078-.413-.16-.615-.248a4.586 4.586 0 0 1-.579-.3c-.59-.364-1.11-.852-1.49-1.445a3.86 3.86 0 0 1-.425-.818c-.103-.272-.177-.556-.223-.844 0 0 1.125.275 2.551.382l.393.023c.872.047 1.748.07 2.63.07 1.08 0 2.064-.03 3.02-.094l.315-.021c.96-.066 1.892-.19 2.79-.37.226-.047.45-.096.67-.15 2.195-.523 4.11-1.603 4.348-2.855.372-1.952.342-4.764.342-4.764v-.012c0-1.108-.022-2.21-.065-3.316z"/></svg>
+        Mastodon <a href="https://mapstodon.space/@argos_geo" target="_blank" rel="noopener">@argos_geo&#64;mapstodon.space &rarr;</a>
+      </div>
+      <div class="feed-loading">Tuning the receiver&hellip;</div>
+    </div>
+    <div class="feed-net" id="netX">
+      <div class="feed-net-head">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X <a href="https://x.com/argos_geo" target="_blank" rel="noopener">@argos_geo &rarr;</a>
+      </div>
+      <a class="feed-card" href="https://x.com/argos_geo" target="_blank" rel="noopener">
+        <div class="feed-text">&ldquo;Why I&rsquo;m building ARGOS&rdquo; &mdash; the launch thread: one island, one hound, one digital twin.</div>
+        <div class="feed-meta">Pinned thread &middot; August 2026 &middot; read on X &rarr;</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<button class="bio-fab" id="bioFab" aria-label="About the builder"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/bio_fab.png" alt="Panagis"></button>
+<div class="bio-modal" id="bioModal">
+  <pre class="bio-card">┌──────────────────────────────────────────────────┐
+│  <strong>Panagis Tzivras</strong> — Human                         │
+│  Version <strong>40.9</strong> (stable, occasional memory leaks)  │
+├──────────────────────────────────────────────────┤
+│  <strong>Day Job</strong>    │ Keeps databases from burning down  │
+│  <strong>Night Job</strong>  │ Building ARGOS (open-source        │
+│  <strong></strong>           │ digital twin for an island)        │
+│  <strong>Languages</strong>  │ Python, SQL, PostGIS, Podman,      │
+│  <strong></strong>           │ Greek, English, Bureaucratic       │
+│  <strong>Superpower</strong> │ Explaining spatial joins to PMs    │
+│  <strong>Weakness</strong>   │ Souvlaki, spatial indexes          │
+│  <strong>Status</strong>     │ Accepting PRs and feta bribes      │
+│  <strong>Location</strong>   │ Kefalonia, Greece (UTC+3, always)  │
+└──────────────────────────────────────────────────┘</pre>
+  <div class="bio-text" id="bioText"></div>
+  <div class="bio-toggle">
+    <span id="lblEN" class="on">EN</span>
+    <button class="bio-switch" id="bioSwitch" aria-label="Toggle language"></button>
+    <span id="lblGR">GR</span>
+  </div>
+</div>
+<script>
+const BIO_EN = "<strong>Panagis</strong> is a Data Engineer and GIS Specialist who, by day, keeps geospatial platforms from catching fire (sometimes literally, thanks to his Copernicus EMS integration). By night, he's building ARGOS, an open-source digital twin for Kefalonia, because one full-time job and a Mediterranean island clearly weren't enough. He speaks <strong>Python</strong>, <strong>SQL</strong>, <strong>PostGIS</strong>, and <strong>Podman</strong> with equal fluency, and firmly believes every problem can be solved with a spatial index and enough coffee. He once explained a spatial join so well that a product manager almost understood it. <em>Almost</em>. Currently accepting pull requests and decent souvlaki recommendations.";
+const BIO_GR = "<strong>\u039f \u03a0\u03b1\u03bd\u03b1\u03b3\u03ae\u03c2</strong> \u03b5\u03af\u03bd\u03b1\u03b9 \u039c\u03b7\u03c7\u03b1\u03bd\u03b9\u03ba\u03cc\u03c2 \u0394\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03c9\u03bd \u03ba\u03b1\u03b9 \u0395\u03b9\u03b4\u03b9\u03ba\u03cc\u03c2 \u0393\u03b5\u03c9\u03c7\u03c9\u03c1\u03b9\u03ba\u03ce\u03bd \u03a3\u03c5\u03c3\u03c4\u03b7\u03bc\u03ac\u03c4\u03c9\u03bd \u03c0\u03bf\u03c5 \u03c4\u03b7 \u03bc\u03ad\u03c1\u03b1 \u03ba\u03c1\u03b1\u03c4\u03ac\u03b5\u03b9 \u03c0\u03bb\u03b1\u03c4\u03c6\u03cc\u03c1\u03bc\u03b5\u03c2 \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03c9\u03bd \u03bc\u03b1\u03ba\u03c1\u03b9\u03ac \u03b1\u03c0\u03cc \u03c4\u03b7\u03bd \u03b1\u03bd\u03ac\u03c6\u03bb\u03b5\u03be\u03b7 (\u03bc\u03b5\u03c1\u03b9\u03ba\u03ad\u03c2 \u03c6\u03bf\u03c1\u03ad\u03c2 \u03ba\u03c5\u03c1\u03b9\u03bf\u03bb\u03b5\u03ba\u03c4\u03b9\u03ba\u03ac). \u03a4\u03b7 \u03bd\u03cd\u03c7\u03c4\u03b1 \u03c7\u03c4\u03af\u03b6\u03b5\u03b9 \u03c4\u03bf ARGOS, \u03ad\u03bd\u03b1\u03bd \u03b1\u03bd\u03bf\u03b9\u03c7\u03c4\u03bf\u03cd \u03ba\u03ce\u03b4\u03b9\u03ba\u03b1 \u03c8\u03b7\u03c6\u03b9\u03b1\u03ba\u03cc \u03b4\u03af\u03b4\u03c5\u03bc\u03bf \u03c4\u03b7\u03c2 \u039a\u03b5\u03c6\u03b1\u03bb\u03bf\u03bd\u03b9\u03ac\u03c2, \u03b3\u03b9\u03b1\u03c4\u03af \u03c0\u03c1\u03bf\u03c6\u03b1\u03bd\u03ce\u03c2 \u03bc\u03b9\u03b1 \u03c0\u03bb\u03ae\u03c1\u03b7\u03c2 \u03b4\u03bf\u03c5\u03bb\u03b5\u03b9\u03ac \u03ba\u03b1\u03b9 \u03ad\u03bd\u03b1 \u03bd\u03b7\u03c3\u03af \u03c3\u03c4\u03bf \u0399\u03cc\u03bd\u03b9\u03bf \u03b4\u03b5\u03bd \u03ae\u03c4\u03b1\u03bd \u03b1\u03c1\u03ba\u03b5\u03c4\u03ac. \u039c\u03b9\u03bb\u03ac\u03b5\u03b9 <strong>Python</strong>, <strong>SQL</strong>, <strong>PostGIS</strong> \u03ba\u03b1\u03b9 <strong>Podman</strong> \u03bc\u03b5 \u03c4\u03b7\u03bd \u03af\u03b4\u03b9\u03b1 \u03ac\u03bd\u03b5\u03c3\u03b7 \u03c0\u03bf\u03c5 \u03bc\u03b9\u03bb\u03ac\u03b5\u03b9 \u03b5\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac \u03ba\u03b1\u03b9 \u03b1\u03b3\u03b3\u03bb\u03b9\u03ba\u03ac, \u03ba\u03b1\u03b9 \u03c0\u03b9\u03c3\u03c4\u03b5\u03cd\u03b5\u03b9 \u03b1\u03ba\u03c1\u03ac\u03b4\u03b1\u03bd\u03c4\u03b1 \u03cc\u03c4\u03b9 \u03ba\u03ac\u03b8\u03b5 \u03c0\u03c1\u03cc\u03b2\u03bb\u03b7\u03bc\u03b1 \u03bb\u03cd\u03bd\u03b5\u03c4\u03b1\u03b9 \u03bc\u03b5 \u03ad\u03bd\u03b1\u03bd spatial index \u03ba\u03b1\u03b9 \u03b1\u03c1\u03ba\u03b5\u03c4\u03cc \u03ba\u03b1\u03c6\u03ad. \u0395\u03be\u03ae\u03b3\u03b7\u03c3\u03b5 \u03ba\u03ac\u03c0\u03bf\u03c4\u03b5 \u03ad\u03bd\u03b1 spatial join \u03c4\u03cc\u03c3\u03bf \u03ba\u03b1\u03bb\u03ac \u03c0\u03bf\u03c5 \u03c3\u03c7\u03b5\u03b4\u03cc\u03bd \u03c4\u03bf \u03ba\u03b1\u03c4\u03ac\u03bb\u03b1\u03b2\u03b5 \u03ad\u03bd\u03b1\u03c2 product manager. <em>\u03a3\u03c7\u03b5\u03b4\u03cc\u03bd</em>. \u0394\u03ad\u03c7\u03b5\u03c4\u03b1\u03b9 pull requests \u03ba\u03b1\u03b9 \u03c0\u03c1\u03bf\u03c4\u03ac\u03c3\u03b5\u03b9\u03c2 \u03b3\u03b9\u03b1 \u03ba\u03b1\u03bb\u03cc \u03c3\u03bf\u03c5\u03b2\u03bb\u03ac\u03ba\u03b9.";
+const fab=document.getElementById('bioFab'), modal=document.getElementById('bioModal'),
+      sw=document.getElementById('bioSwitch'), bt=document.getElementById('bioText'),
+      lEN=document.getElementById('lblEN'), lGR=document.getElementById('lblGR');
+bt.innerHTML = BIO_EN;
+fab.addEventListener('click', e=>{e.stopPropagation(); modal.classList.toggle('open')});
+sw.addEventListener('click', e=>{e.stopPropagation();
+  const gr = sw.classList.toggle('gr');
+  bt.innerHTML = gr ? BIO_GR : BIO_EN;
+  lEN.classList.toggle('on', !gr); lGR.classList.toggle('on', gr)});
+document.addEventListener('click', e=>{ if(!modal.contains(e.target)) modal.classList.remove('open') });
+</script>
+
+<script>
+(function(){
+  const fab = document.getElementById('socialFab'), ov = document.getElementById('feedOverlay');
+  let loaded = false;
+  const closeOv = () => { ov.classList.remove('open'); fab.classList.remove('open'); };
+  fab.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = ov.classList.toggle('open');
+    fab.classList.toggle('open', open);
+    if (open && !loaded) { loaded = true; loadFeeds(); }
+  });
+  document.getElementById('feedClose').addEventListener('click', closeOv);
+  document.addEventListener('click', e => {
+    if (!ov.contains(e.target) && !fab.contains(e.target)) closeOv();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOv(); });
+
+  const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ago = iso => {
+    const s = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (s < 3600) return Math.max(1, Math.round(s/60)) + 'm ago';
+    if (s < 86400) return Math.round(s/3600) + 'h ago';
+    return new Date(iso).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  };
+  const card = (url, text, meta) =>
+    '<a class="feed-card" href="' + url + '" target="_blank" rel="noopener">' +
+      '<div class="feed-text">' + esc(text) + '</div>' +
+      '<div class="feed-meta">' + meta + '</div></a>';
+  const fail = (net, url, handle) =>
+    '<div class="feed-error">Signal lost &mdash; <a href="' + url + '" target="_blank" rel="noopener">open ' + handle + ' directly &rarr;</a></div>';
+
+  async function loadFeeds(){
+    // Bluesky — public API, no auth
+    const bsky = document.getElementById('netBsky');
+    try {
+      const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=argos-geo.org&limit=3&filter=posts_no_replies');
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      const posts = (d.feed || []).slice(0, 3);
+      bsky.querySelector('.feed-loading')?.remove();
+      if (!posts.length) throw 0;
+      bsky.insertAdjacentHTML('beforeend', posts.map(p => {
+        const rec = p.post.record || {};
+        const url = 'https://bsky.app/profile/' + p.post.author.handle + '/post/' + p.post.uri.split('/').pop();
+        const stats = [ago(rec.createdAt || p.post.indexedAt),
+                       (p.post.likeCount || 0) + ' likes', (p.post.repostCount || 0) + ' reposts'].join(' &middot; ');
+        return card(url, (rec.text || '').slice(0, 280), stats);
+      }).join(''));
+    } catch { bsky.querySelector('.feed-loading')?.remove();
+      bsky.insertAdjacentHTML('beforeend', fail('bsky','https://bsky.app/profile/argos-geo.org','Bluesky')); }
+
+    // Mastodon — public API, no auth
+    const masto = document.getElementById('netMasto');
+    try {
+      const lr = await fetch('https://mapstodon.space/api/v1/accounts/lookup?acct=argos_geo');
+      if (!lr.ok) throw 0;
+      const acct = await lr.json();
+      const sr = await fetch('https://mapstodon.space/api/v1/accounts/' + acct.id + '/statuses?limit=3&exclude_replies=true&exclude_reblogs=true');
+      if (!sr.ok) throw 0;
+      const sts = (await sr.json()).slice(0, 3);
+      masto.querySelector('.feed-loading')?.remove();
+      if (!sts.length) throw 0;
+      masto.insertAdjacentHTML('beforeend', sts.map(s => {
+        const tmp = document.createElement('div'); tmp.innerHTML = s.content || '';
+        const stats = [ago(s.created_at), s.favourites_count + ' favs', s.reblogs_count + ' boosts'].join(' &middot; ');
+        return card(s.url, (tmp.textContent || '').slice(0, 280), stats);
+      }).join(''));
+    } catch { masto.querySelector('.feed-loading')?.remove();
+      masto.insertAdjacentHTML('beforeend', fail('masto','https://mapstodon.space/@argos_geo','Mastodon')); }
+  }
+})();
+</script>
+</body>
+</html>
