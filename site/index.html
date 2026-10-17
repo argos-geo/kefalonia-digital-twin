@@ -200,6 +200,20 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
 .footer a{color:var(--text-muted); text-decoration:none; transition:color .2s}
 .footer a:hover{color:var(--sea)}
 .localtime{font-variant-numeric:tabular-nums; color:var(--gold-dim)}
+.fnote-line{display:block; max-width:520px; margin:0 auto 1.2rem; text-decoration:none;
+  background:rgba(255,255,255,.02); border:1px solid rgba(201,162,39,.18); border-radius:8px;
+  padding:.7rem 1.1rem; transition:border-color .25s, transform .25s}
+.fnote-line:hover{border-color:rgba(201,162,39,.45); transform:translateY(-1px)}
+.fnote-label{display:block; font-size:.65rem; text-transform:uppercase; letter-spacing:.16em;
+  color:var(--gold-dim); font-weight:700; margin-bottom:.25rem}
+.fnote-title{font-size:.82rem; color:var(--text-secondary); line-height:1.45}
+.fnote-line:hover .fnote-title{color:var(--text-primary)}
+.pulse-line{display:flex; align-items:center; justify-content:center; gap:.5rem;
+  font-size:.72rem; letter-spacing:.08em; color:var(--text-muted); margin-bottom:2rem;
+  font-variant-numeric:tabular-nums}
+.pulse-dot{width:6px; height:6px; border-radius:50%; background:var(--gold);
+  animation:pulse 2s ease-in-out infinite}
+.pulse-dot.down{background:var(--sea); animation:none; opacity:.5}
 @media (max-width:480px){
   h1{font-size:1.35rem; letter-spacing:.06em}
   .tagline{font-size:1rem}
@@ -340,6 +354,11 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
     <div class="feature"><div class="feature-label" id="i-fl3">License</div><div class="feature-value" id="i-fv3">MIT - open source forever</div></div>
     <div class="feature"><div class="feature-label" id="i-fl4">Focus</div><div class="feature-value" id="i-fv4">Wildfire &middot; Flood &middot; Accessibility &middot; Marine</div></div>
   </div>
+  <a class="fnote-line" id="fnote" href="/field-notes" target="_blank" rel="noopener">
+    <span class="fnote-label" id="i-fnlabel">From the field notes</span>
+    <span class="fnote-title" id="fnote-title"></span>
+  </a>
+  <div class="pulse-line"><span class="pulse-dot" id="pulse-dot"></span><span id="pulse-txt"></span></div>
   <div class="footer">
     <a href="https://argos-geo.org">argos-geo.org</a> &middot; Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way<br>
     <span class="localtime" id="ktime"></span>
@@ -402,6 +421,52 @@ try {
   const saved = localStorage.getItem('argos-lang');
   if (saved === 'el') setSiteLang('el');
 } catch (e) {}
+</script>
+
+<script>
+const FNOTES = [
+  ['Processing my first Sentinel-2 pass in 48 hours','https://github.com/argos-geo/kefalonia-digital-twin/discussions/1','Aug 2026 · GitHub'],
+  ['Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha','https://github.com/argos-geo/kefalonia-digital-twin/discussions/2','Aug 2026 · GitHub'],
+  ['Greek firs and the problem with NDVI on karst','https://github.com/argos-geo/kefalonia-digital-twin/discussions/3','Sep 2026 · GitHub'],
+  ['Where the water goes: drainage, slope, and the February 2025 storm','https://github.com/argos-geo/kefalonia-digital-twin/discussions/4','Sep 2026 · GitHub'],
+  ["Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)",'https://github.com/argos-geo/kefalonia-digital-twin/discussions/6','Sep 2026 · GitHub'],
+  ['Build Log #6: The Buildings the Map Missed','https://github.com/argos-geo/kefalonia-digital-twin/discussions/7','Sep 2026 · GitHub'],
+  ['The actual SQL behind "The Answer You Didn\'t Want", Rounds 4 and 5','https://github.com/argos-geo/kefalonia-digital-twin/discussions/5','Sep 2026 · GitHub'],
+  ["The Answer You Didn't Want: Fiskardo Evacuation Routing",'https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok','Sep 2026 · DEV'],
+  ['The sea looks calm when it is not: Myrtos Beach marine safety','https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m','Oct 2026 · DEV']
+];
+const FNLABEL = { en:'From the field notes', el:'Από το ημερολόγιο' };
+const PULSE = {
+  en:{ ok:'systems nominal · 46,934 buildings mapped · v0.0.7', down:'map live · data services resting' },
+  el:{ ok:'συστήματα εντάξει · 46.934 κτίρια · v0.0.7', down:'ο χάρτης live · υπηρεσίες δεδομένων σε ανάπαυση' }
+};
+let _pulseState = null;
+function siteLang(){ try { return localStorage.getItem('argos-lang') === 'el' ? 'el' : 'en'; } catch(e){ return 'en'; } }
+function renderFnote(){
+  const now = new Date();
+  const doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+  const idx = doy % FNOTES.length;
+  document.getElementById('fnote').href = FNOTES[idx][1];
+  document.getElementById('fnote-title').textContent = '№' + (idx + 1) + ' · ' + FNOTES[idx][0] + ' — ' + FNOTES[idx][2];
+  document.getElementById('i-fnlabel').textContent = FNLABEL[siteLang()];
+}
+function renderPulse(){
+  if (_pulseState === null) return;
+  const d = PULSE[siteLang()];
+  document.getElementById('pulse-txt').textContent = _pulseState ? d.ok : d.down;
+  document.getElementById('pulse-dot').classList.toggle('down', !_pulseState);
+}
+renderFnote();
+document.getElementById('sl-en').addEventListener('click', () => { renderFnote(); renderPulse(); });
+document.getElementById('sl-el').addEventListener('click', () => { renderFnote(); renderPulse(); });
+(async () => {
+  try {
+    const r = await fetch('https://api.argos-geo.org/health', { signal: AbortSignal.timeout(5000) });
+    const j = await r.json();
+    _pulseState = !!(r.ok && j.status === 'ok');
+  } catch (e) { _pulseState = false; }
+  renderPulse();
+})();
 </script>
 
 
