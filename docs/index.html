@@ -1298,7 +1298,15 @@ map.on('load', function () {
         if (Lpx > 44) Lpx = 44;
         if (Lpx < 4) Lpx = 4;
         var tl_m = Lpx * mPerPx;
-        var b = map.project([p.lon - s[0] * tl_m / (111000 * Math.max(0.2, Math.cos(p.lat * Math.PI / 180))), p.lat - s[1] * tl_m / 111000]);
+        /* Batch 4 (k): tail clip, walk the tail back onto a wet node so streaks never cross land */
+        var cosLat = Math.max(0.2, Math.cos(p.lat * Math.PI / 180));
+        var tlon = p.lon - s[0] * tl_m / (111000 * cosLat), tlat = p.lat - s[1] * tl_m / 111000;
+        for (var tc = 0; tc < 4 && !curCellWet(g, tlon, tlat); tc++) {
+          tl_m *= 0.5;
+          tlon = p.lon - s[0] * tl_m / (111000 * cosLat); tlat = p.lat - s[1] * tl_m / 111000;
+        }
+        if (!curCellWet(g, tlon, tlat)) continue;
+        var b = map.project([tlon, tlat]);
         var dx = a.x - b.x, dy = a.y - b.y;
         var L = Math.sqrt(dx * dx + dy * dy);
         if (L > 48) { var f = 48 / L; b.x = a.x - dx * f; b.y = a.y - dy * f; }
