@@ -254,6 +254,13 @@
   body.mobile #marinectl { flex-wrap:wrap; row-gap:6px; }
   body.mobile .maplibregl-popup { max-width:80vw !important; }
   body.mobile .maplibregl-popup-content { max-width:80vw; max-height:44vh; overflow-y:auto; font-size:12px; }
+
+  /* ---- T115b zoom-hint toast (18 Oct 2026) ---- */
+  #zoomtoast { position:fixed; bottom:70px; left:50%; transform:translateX(-50%) translateY(8px); z-index:40;
+    padding:8px 16px; border-radius:100px; border:1px solid #C9A227; background:rgba(15,29,51,0.95);
+    color:#F4EEE0; font-family:'Space Grotesk','Inter',sans-serif; font-size:11px; letter-spacing:0.08em;
+    opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; max-width:86vw; text-align:center; }
+  #zoomtoast.on { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -1704,6 +1711,38 @@ setInterval(tickClock, 30000);
   if (mc) new MutationObserver(function () {
     document.body.classList.toggle('marine-on', mc.style.display !== 'none' && mc.style.display !== '');
   }).observe(mc, { attributes: true, attributeFilter: ['style'] });
+})();
+</script>
+
+<script>
+/* T115b zoom-hint toast: toggling a layer while below its minzoom shows a 2s hint (marine layers excluded per Panagis) */
+(function () {
+  var MINZ = { 'tgl-buildings': 12, 'tgl-firecov': 12, 'tgl-pois': 11, 'tgl-wildfire': 10, 'tgl-flood': 10 };
+  var t = document.createElement('div');
+  t.id = 'zoomtoast';
+  document.body.appendChild(t);
+  var hideT = null;
+  function showToast(msg) {
+    t.textContent = msg;
+    t.classList.add('on');
+    if (hideT) clearTimeout(hideT);
+    hideT = setTimeout(function () { t.classList.remove('on'); }, 2000);
+  }
+  var ui = document.getElementById('ui');
+  if (!ui) return;
+  ui.addEventListener('change', function (e) {
+    var id = e.target && e.target.id;
+    if (!MINZ[id] || !e.target.checked) return;
+    var m = null;
+    try { m = (typeof map !== 'undefined') ? map : window.map; } catch (err) { return; }
+    if (!m || typeof m.getZoom !== 'function') return;
+    if (m.getZoom() >= MINZ[id]) return;
+    var row = document.getElementById('m-row-' + id.replace('tgl-', ''));
+    var name = row ? row.textContent : '';
+    var elb = document.getElementById('lang-el');
+    var gr = elb && elb.classList.contains('on');
+    showToast(gr ? ('\u039a\u03ac\u03bd\u03c4\u03b5 \u03b6\u03bf\u03c5\u03bc \u03b3\u03b9\u03b1 \u03bd\u03b1 \u03b4\u03b5\u03af\u03c4\u03b5: ' + name) : ('Zoom in to see: ' + name));
+  });
 })();
 </script>
 </body>
