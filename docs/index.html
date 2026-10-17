@@ -357,6 +357,8 @@
   <div class="rleg-g" id="rleg-firecov">
     <div class="rleg-h" id="m-leg-g3">Fire coverage</div>
     <div class="leg"><span class="sw" style="background:#FF3333"></span><span id="m-leg-firecov">beyond 15-min fire response</span></div>
+    <div class="leg"><span class="sw" style="background:#5A6A85"></span><span id="m-leg-firecov-ok">within 15-min fire response</span></div>
+    <div class="leg"><span class="sw" style="background:rgba(90,106,133,0.35); border:1px dashed #5A6A85;"></span><span id="m-leg-firecov-nd">no coverage data</span></div>
   </div>
   <div class="rleg-g" id="rleg-marine">
     <div class="rleg-h" id="m-leg-g4">Beach exposure</div>
@@ -640,6 +642,8 @@ map.on('load', function () {
       'm-leg-r1': 'wildfire: moderate', 'm-leg-r2': 'wildfire: high', 'm-leg-r3': 'wildfire: very high',
       'm-leg-f1': 'flood: moderate', 'm-leg-f2': 'flood: high', 'm-leg-f3': 'flood: very high',
       'm-leg-firecov': 'beyond 15-min fire response',
+      'm-leg-firecov-ok': 'within 15-min fire response',
+      'm-leg-firecov-nd': 'no coverage data',
       'm-leg-m1': 'exposure: low (<25)', 'm-leg-m2': 'exposure: moderate (25-50)',
       'm-leg-m3': 'exposure: high (50-75)', 'm-leg-m4': 'exposure: very high (75+)',
       'm-leg-g5': 'Sea currents', 'm-leg-cur': 'current streaks: direction = flow, length + colour = speed',
@@ -675,6 +679,8 @@ map.on('load', function () {
       'm-leg-r1': 'πυρκαγιά: μέτριος', 'm-leg-r2': 'πυρκαγιά: υψηλός', 'm-leg-r3': 'πυρκαγιά: πολύ υψηλός',
       'm-leg-f1': 'πλημμύρα: μέτριος', 'm-leg-f2': 'πλημμύρα: υψηλός', 'm-leg-f3': 'πλημμύρα: πολύ υψηλός',
       'm-leg-firecov': 'πάνω από 15 λεπτά από πυρόσβεση',
+      'm-leg-firecov-ok': 'εντός 15 λεπτών από πυρόσβεση',
+      'm-leg-firecov-nd': 'Χωρίς δεδομένα κάλυψης',
       'm-leg-m1': 'έκθεση: χαμηλή (<25)', 'm-leg-m2': 'έκθεση: μέτρια (25-50)',
       'm-leg-m3': 'έκθεση: υψηλή (50-75)', 'm-leg-m4': 'έκθεση: πολύ υψηλή (75+)',
       'm-leg-g5': 'Θαλάσσια ρεύματα', 'm-leg-cur': 'γραμμές: κατεύθυνση = φορά, μήκος και χρώμα = ταχύτητα',
@@ -1330,8 +1336,9 @@ map.on('load', function () {
   // ---- batch 2: fire coverage repaint (buildings colored by fire response) ----
   var FIRECOV_PAINT = {
     'fill-color': ['case',
-      ['all', ['has', 'fire_min'], ['!=', ['get', 'fire_min'], null], ['>', ['get', 'fire_min'], 15]],
-      '#FF3333', '#5A6A85'],
+      ['all', ['has', 'fire_min'], ['!=', ['get', 'fire_min'], null], ['>', ['get', 'fire_min'], 15]], '#FF3333',
+      ['all', ['has', 'fire_min'], ['!=', ['get', 'fire_min'], null]], '#5A6A85',
+      'rgba(90,106,133,0.22)'],  /* no-data: ghost gray, never the covered gray (T115-era collision fix) */
     'fill-opacity': 0.85,
     'fill-outline-color': 'rgba(10,22,40,0.5)'
   };
@@ -1372,12 +1379,12 @@ map.on('load', function () {
       el: '<b>Πώς το γνωρίζουμε</b><br>Χρόνος διαδρομής από κάθε κτίριο στον πλησιέστερο πυροσβεστικό σταθμό μέσω του οδικού δικτύου (μοντέλο προσβασιμότητας ARGOS T16). Κόκκινο: πέρα από το όριο των 15 λεπτών. Γκρι: εντός του ορίου. Ίδια νούμερα με τα αναδυόμενα παράθυρα των κτιρίων και το «Ρώτα τον δίδυμο» (Ερώτηση 1).<span class="vsrc">Εκτέλεση μοντέλου: 15 Αυγ 2026 · Μέθοδος και πηγές: <a href="https://argos-geo.org/data.html">Open Data</a></span>'
     },
     'v-marine': {
-      en: '<b>How do we know</b><br>Modelled offshore wave and surface-current conditions from Copernicus Marine (Mediterranean, 4 km grid, hourly), sampled at the nearest sea cell off 14 curated beaches and combined into a 0-100 exposure score (70% waves, 30% currents), refreshed twice daily. Colours: under 25 low, 25-50 moderate, 50-75 high, 75+ very high. Regional exposure, not local surf or rip currents; not a lifeguard-grade forecast.',
-      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντελοποιημένες συνθήκες κυματισμού και επιφανειακών ρευμάτων από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με δειγματοληψία στο κοντινότερο θαλάσσιο κελί για 14 επιλεγμένες παραλίες, συνδυασμένες σε δείκτη έκθεσης 0-100 (70% κύμα, 30% ρεύματα), με ανανέωση δύο φορές την ημέρα. Χρώματα: κάτω από 25 χαμηλή, 25-50 μέτρια, 50-75 υψηλή, 75+ πολύ υψηλή. Περιφερειακή έκθεση, όχι τοπικός κυματισμός ή αρπακτικά ρεύματα, ούτε πρόγνωση ναυαγοσωστικού επιπέδου.'
+      en: '<b>How do we know</b><br>Modelled offshore wave and surface-current conditions from Copernicus Marine (Mediterranean, 4 km grid, hourly), sampled at the nearest sea cell off 14 curated beaches and combined into a 0-100 exposure score (70% waves, 30% currents), refreshed twice daily. Colours: under 25 low, 25-50 moderate, 50-75 high, 75+ very high. Regional exposure, not local surf or rip currents; not a lifeguard-grade forecast. No independent wave buoy exists on Kefalonia. This layer is unvalidated; no validation run is scheduled yet.',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Μοντελοποιημένες συνθήκες κυματισμού και επιφανειακών ρευμάτων από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με δειγματοληψία στο κοντινότερο θαλάσσιο κελί για 14 επιλεγμένες παραλίες, συνδυασμένες σε δείκτη έκθεσης 0-100 (70% κύμα, 30% ρεύματα), με ανανέωση δύο φορές την ημέρα. Χρώματα: κάτω από 25 χαμηλή, 25-50 μέτρια, 50-75 υψηλή, 75+ πολύ υψηλή. Περιφερειακή έκθεση, όχι τοπικός κυματισμός ή αρπακτικά ρεύματα, ούτε πρόγνωση ναυαγοσωστικού επιπέδου. Δεν υπάρχει ανεξάρτητος σταθμός κυματισμού στην Κεφαλονιά. Το επίπεδο αυτό δεν έχει επικυρωθεί· δεν έχει προγραμματιστεί επικύρωση.'
     },
     'v-currents': {
-      en: '<b>How do we know</b><br>Animated streaks are modelled surface currents from Copernicus Marine (Mediterranean, 4 km grid, hourly), refreshed twice daily. Streak direction is the flow direction; longer streaks mean faster water, and colour follows the same scale: steel is slow, teal moderate, gold fast, orange fastest. The time scrubber below the map drives them forward up to 48 h. Modelled offshore currents, not local sea state and not for navigation.',
-      el: '<b>Πώς το γνωρίζουμε</b><br>Οι ζωντανές γραμμές είναι μοντελοποιημένα επιφανειακά ρεύματα από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με ανανέωση δύο φορές την ημέρα. Η κατεύθυνση της γραμμής είναι η φορά του ρεύματος, μεγαλύτερη γραμμή σημαίνει γρηγορότερο νερό, και το χρώμα ακολουθεί την ίδια κλίμακα: γκρι αργό, τιρκουάζ μέτριο, χρυσό γρήγορο, πορτοκαλί ταχύτερο. Η χρονομηχανή κάτω από τον χάρτη τα οδηγεί έως και 48 ώρες μπροστά. Μοντελοποιημένα ρεύματα ανοιχτής θάλασσας, όχι τοπική κατάσταση θάλασσας, ούτε για πλοήγηση.'
+      en: '<b>How do we know</b><br>Animated streaks are modelled surface currents from Copernicus Marine (Mediterranean, 4 km grid, hourly), refreshed twice daily. Streak direction is the flow direction; longer streaks mean faster water, and colour follows the same scale: steel is slow, teal moderate, gold fast, orange fastest. The time scrubber below the map drives them forward up to 48 h. Modelled offshore currents, not local sea state and not for navigation. Modelled, not observed. No independent validation source exists for Kefalonia waters.',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Οι ζωντανές γραμμές είναι μοντελοποιημένα επιφανειακά ρεύματα από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με ανανέωση δύο φορές την ημέρα. Η κατεύθυνση της γραμμής είναι η φορά του ρεύματος, μεγαλύτερη γραμμή σημαίνει γρηγορότερο νερό, και το χρώμα ακολουθεί την ίδια κλίμακα: γκρι αργό, τιρκουάζ μέτριο, χρυσό γρήγορο, πορτοκαλί ταχύτερο. Η χρονομηχανή κάτω από τον χάρτη τα οδηγεί έως και 48 ώρες μπροστά. Μοντελοποιημένα ρεύματα ανοιχτής θάλασσας, όχι τοπική κατάσταση θάλασσας, ούτε για πλοήγηση. Μοντελοποιημένα, όχι μετρημένα. Δεν υπάρχει ανεξάρτητη πηγή επικύρωσης για τα ύδατα της Κεφαλονιάς.'
     }
   };
   function renderVnotes(lang) {
