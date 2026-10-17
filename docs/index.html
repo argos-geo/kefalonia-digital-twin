@@ -1784,5 +1784,48 @@ setInterval(tickClock, 30000);
   applyTips();
 })();
 </script>
+
+<script>
+/* Batch 4 (h): deep-linking ?lat&lon&z&layers; URL refreshes on moveend so copy-paste shares the exact view */
+(function () {
+  var LAYERS = ['roads','trails','buildings','beaches','pois','muni','wildfire','flood','firecov','marine','currents'];
+  var qs = new URLSearchParams(window.location.search);
+  var m = null;
+  try { m = (typeof map !== 'undefined') ? map : window.map; } catch (err) { return; }
+  if (!m) return;
+
+  m.once('load', function () {
+    if (qs.has('layers')) {
+      var want = qs.get('layers').split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+      LAYERS.forEach(function (name) {
+        var cb = document.getElementById('tgl-' + name);
+        if (cb) {
+          var should = want.indexOf(name) !== -1;
+          if (cb.checked !== should) { cb.checked = should; cb.dispatchEvent(new Event('change', { bubbles: true })); }
+        }
+      });
+    }
+    var lat = parseFloat(qs.get('lat')), lon = parseFloat(qs.get('lon')), z = parseFloat(qs.get('z'));
+    if (!isNaN(lat) && !isNaN(lon)) {
+      m.jumpTo({ center: [lon, lat], zoom: isNaN(z) ? 13 : z });
+    }
+  });
+
+  var moveT = null;
+  m.on('moveend', function () {
+    if (moveT) clearTimeout(moveT);
+    moveT = setTimeout(function () {
+      var c = m.getCenter();
+      var p2 = new URLSearchParams(window.location.search);
+      p2.set('lat', c.lat.toFixed(5));
+      p2.set('lon', c.lng.toFixed(5));
+      p2.set('z', m.getZoom().toFixed(2));
+      var on = LAYERS.filter(function (n) { var cb = document.getElementById('tgl-' + n); return cb && cb.checked; });
+      p2.set('layers', on.join(','));
+      history.replaceState(null, '', '?' + p2.toString());
+    }, 400);
+  });
+})();
+</script>
 </body>
 </html>
