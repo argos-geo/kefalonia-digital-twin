@@ -138,7 +138,7 @@ GET /ems/activations/{code}   -- single activation detail
 
 ## 8. Deferred
 
-- **T30 ADS-B aircraft stream (OpenSky/ADSB.lol):** NOT scouted in this round. No endpoint has been probed; nothing is proven. Candidate sources per Battle Plan: OpenSky, ADSB.lol. Scouting is its own block before any build. Ships in v0.2.0 only if scouting lands clean; otherwise it slips without blocking the version.
+- **T30 ADS-B aircraft stream: SCOUTED 22 Oct, FEASIBLE.** OpenSky anonymous bbox states API (200, live) + ADSB.lol v2 radius API (200, richer schema). Dual-source, no keys, EUR 0. Ships INSIDE v0.2.0: poll 30-60s, argos.aircraft_positions plain table, map layer with freshness chip. Details in Bible T30 entry.`
 - TEE telemetry: watch item, section 1.5.
 - FIRMS supplementary feed: key in hand, value unproven for this fire class, parked.
 
