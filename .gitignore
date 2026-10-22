@@ -218,3 +218,10 @@ __marimo__/
 data/
 /tiles/
 argos_*.png
+work/
+.wrangler/
+.vscode/
+*.nc
+*.zip
+*.dump
+*.csv.gz
