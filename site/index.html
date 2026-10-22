@@ -133,7 +133,7 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
   transition:border-color .3s ease}
 .pillar img{width:22px; height:22px; object-fit:contain}
 .pillar:hover{border-color:rgba(201,162,39,.35)}
-.status{font-size:.95rem; color:var(--text-muted); margin-bottom:2.2rem; line-height:1.6}
+.status{font-size:.95rem; color:var(--text-muted); margin:0 auto 2.2rem; line-height:1.6; max-width:560px}
 .status strong{color:var(--sea); font-weight:500}
 .intro{max-width:600px; margin:0 auto 2.4rem; font-size:.9rem; line-height:1.75; color:var(--text-secondary); text-align:center}
 .sitenav{display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem; margin-bottom:2.2rem}
@@ -308,7 +308,7 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
   <div class="logo-container">
     <img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Full.png" alt="ARGOS emblem" class="logo">
   </div>
-  <h1>ARGOS : : Kefalonia Digital Twin</h1>
+  <h1 id="i-h1">ARGOS : : Kefalonia Digital Twin</h1>
   <p class="tagline" id="i-tagline">Watching over the places we call home.</p>
   <p class="tagline-gr" id="i-tagline2">Προστατεύοντας τους τόπους μας</p>
   <div class="pillars">
@@ -316,8 +316,8 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
     <div class="pillar"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/icon_watch.png" alt="ARGOS WATCH · hound mark">Watch</div>
     <div class="pillar"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/icon_commons.png" alt="ARGOS COMMONS · community mark">Commons</div>
   </div>
-  <p class="status" id="i-status"><strong>Open-source digital twin</strong> of Kefalonia, Greece.<br>
-  Building in public. <strong>v0.0.7</strong> vector map is live.</p>
+  <p class="status" id="i-status"><strong>Explore Kefalonia through its data.</strong><br>
+  ARGOS : : brings geographic information, environmental models and documented analyses together in an interactive map, offering a more complete picture of the island and supporting exploration, understanding and planning.</p>
   <div class="divider"></div>
   <div class="launch-wrap">
     <img class="map-preview" src="assets/argos_map_preview.webp" width="1200" height="675" alt="ARGOS map preview showing Kefalonia wildfire and flood risk layers" fetchpriority="high" decoding="async">
@@ -376,9 +376,10 @@ tick(); setInterval(tick, 30000);
 <script>
 const I18N = {
   en: {
+    'i-h1': 'ARGOS : : Kefalonia Digital Twin',
     'i-tagline': 'Watching over the places we call home.',
     'i-tagline2': 'Προστατεύοντας τους τόπους μας',
-    'i-status': '<strong>Open-source digital twin</strong> of Kefalonia, Greece.<br>Building in public. <strong>v0.0.7</strong> vector map is live.',
+    'i-status': '<strong>Explore Kefalonia through its data.</strong><br>ARGOS : : brings geographic information, environmental models and documented analyses together in an interactive map, offering a more complete picture of the island and supporting exploration, understanding and planning.',
     'i-live-txt': 'Live &middot; v0.0.7 vector preview',
     'i-intro': 'ARGOS is an open-source geospatial digital twin of Kefalonia, the largest island in the Ionian Sea. It combines satellite imagery from Copernicus Sentinel-2, topographic data from the Copernicus DEM, and the OpenStreetMap road and building network into a single interactive map. The project screens for wildfire risk, flash flood susceptibility, and travel-time accessibility to evacuation points. Models are challenged with independent evidence where possible. Every limitation is documented. The code is open. The data is open. The methodology is public.',
     'i-fl1': 'Data', 'i-fl2': 'Stack', 'i-fl3': 'License', 'i-fl4': 'Focus',
@@ -389,9 +390,10 @@ const I18N = {
     'i-rm3l': 'THEN', 'i-rm3t': 'Hazard outlook + history.'
   },
   el: {
+    'i-h1': 'ARGOS : : Ψηφιακός Δίδυμος Κεφαλονιάς',
     'i-tagline': 'Προστατεύοντας τους τόπους μας.',
     'i-tagline2': 'Watching over the places we call home',
-    'i-status': '<strong>Ψηφιακός δίδυμος ανοικτού κώδικα</strong> της Κεφαλονιάς.<br>Χτίζεται δημόσια. Η έκδοση <strong>v0.0.7</strong> είναι live.',
+    'i-status': '<strong>Η Κεφαλονιά μέσα από τα δεδομένα της.</strong><br>Το ARGOS : : συνδυάζει γεωγραφικές πληροφορίες, περιβαλλοντικά μοντέλα και τεκμηριωμένες αναλύσεις σε έναν διαδραστικό χάρτη, προσφέροντας μια πιο ολοκληρωμένη εικόνα του νησιού και υποστηρίζοντας την εξερεύνηση, την κατανόηση και τον σχεδιασμό.',
     'i-live-txt': 'Live &middot; Vector χάρτης v0.0.7',
     'i-intro': 'Το ARGOS είναι ένα ανοιχτού κώδικα γεωχωρικό ψηφιακό δίδυμο της Κεφαλονιάς, του μεγαλύτερου νησιού του Ιονίου. Συνδυάζει δορυφορικά δεδομένα από το Copernicus Sentinel-2, τοπογραφικά δεδομένα από το Copernicus DEM, και το οδικό και κτιριακό δίκτυο του OpenStreetMap σε έναν ενιαίο διαδραστικό χάρτη. Το έργο ελέγχει τον κίνδυνο πυρκαγιάς, την ευαισθησία σε πλημμύρες, και την προσβασιμότητα σε σημεία εκκένωσης. Κάθε μοντέλο δοκιμάζεται με ανεξάρτητα τεκμήρια όπου είναι εφικτό. Κάθε περιορισμός τεκμηριώνεται. Ο κώδικας είναι ανοιχτός. Τα δεδομένα είναι ανοιχτά. Η μεθοδολογία είναι δημόσια.',
     'i-fl1': 'Δεδομένα', 'i-fl2': 'Τεχνολογίες', 'i-fl3': 'Άδεια', 'i-fl4': 'Εστίαση',
