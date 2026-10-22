@@ -43,7 +43,7 @@ body{
     radial-gradient(1px 1px at 430px 90px, rgba(255,255,255,.3), transparent),
     radial-gradient(1.5px 1.5px at 560px 20px, rgba(255,255,255,.4), transparent),
     radial-gradient(1px 1px at 700px 60px, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 850px 90px, rgba(127,168,155,.45), transparent),
+    radial-gradient(1.5px 1.5px at 850px 90px, rgba(127,168,155,.45), transparent),
     radial-gradient(1.5px 1.5px at 1000px 30px, rgba(255,255,255,.4), transparent);
   background-repeat:repeat; background-size:1000px 120px}
 .topbar{position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between;
@@ -52,6 +52,11 @@ body{
 .brandlink img{width:34px; height:34px; object-fit:contain}
 .brandlink span{font-family:'Space Grotesk','Inter',sans-serif; font-weight:700; letter-spacing:.25em;
   color:var(--parchment); font-size:.95rem}
+.topright{display:inline-flex; align-items:center; gap:1.2rem}
+.langtoggle{font-size:.72rem; letter-spacing:.14em; color:var(--text-muted); user-select:none}
+.langtoggle span{cursor:pointer; transition:color .2s}
+.langtoggle span.on{color:var(--gold)}
+.langtoggle span:hover{color:var(--gold)}
 .homelink{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted);
   text-decoration:none; transition:color .2s}
 .homelink:hover{color:var(--gold)}
@@ -87,30 +92,85 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
 <div class="stars"></div>
 <header class="topbar">
   <a href="/" class="brandlink"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png" alt="ARGOS emblem"><span>ARGOS</span></a>
-  <a href="/" class="homelink">&larr; Home</a>
+  <div class="topright">
+    <div class="langtoggle"><span id="sl-en" class="on">EN</span> · <span id="sl-el">ΕΛ</span></div>
+    <a href="/" class="homelink" id="i-home">&larr; Home</a>
+  </div>
 </header>
 <main class="page">
-  <div class="kicker">About</div>
-  <h1>About ARGOS</h1>
-  <p class="lead">ARGOS is the map that argues back. It is an open-source geospatial digital twin of Kefalonia, Greece, built entirely on open data and open code.</p>
-  <p>Kefalonia is the largest of the Ionian Islands. ARGOS currently maps 12,217 roads and 46,934 buildings (22,013 from OpenStreetMap contributors, 24,921 machine-detected by Microsoft) across a topography that ranges from sea level to 1,628 meters at Mount Ainos. The island also has a history of wildfires, flash floods, and coastal hazards that affect both residents and visitors.</p>
-  <p>ARGOS was built to give civil protection, researchers, and citizens a single picture of the island's risks and assets. ARGOS : : is an independently developed geospatial initiative, currently focused on Kefalonia as its first implementation. Its published code and methodologies are openly available for inspection, reflecting a commitment to transparency, reproducibility and documented evidence. ARGOS : : is not an official government system and does not replace statutory procedures or authorised public services. It was built by someone who grew up on the island and knows that the data to protect it already exists. It just needed to be assembled.</p>
-  <p>The project runs on open data: OpenStreetMap for roads, places, and the original building layer; Microsoft Building Footprints for additional machine-detected buildings; Copernicus Sentinel-2 for satellite imagery and vegetation indices; the Copernicus DEM for elevation and slope; EFFIS for historical fire records; and EMODnet for bathymetry. The stack is PostGIS, GDAL, FastAPI, and MapLibre. Everything is documented. Everything is reproducible.</p>
+  <div class="kicker" id="i-kick">About</div>
+  <h1 id="i-h1">About ARGOS</h1>
+  <p class="lead" id="i-lead">ARGOS is the map that argues back. It is an open-source geospatial digital twin of Kefalonia, Greece, built entirely on open data and open code.</p>
+  <p id="i-p1">Kefalonia is the largest of the Ionian Islands. ARGOS currently maps 12,217 roads and 46,934 buildings (22,013 from OpenStreetMap contributors, 24,921 machine-detected by Microsoft) across a topography that ranges from sea level to 1,628 meters at Mount Ainos. The island also has a history of wildfires, flash floods, and coastal hazards that affect both residents and visitors.</p>
+  <p id="i-p2">ARGOS was built to give civil protection, researchers, and citizens a single picture of the island's risks and assets. ARGOS : : is an independently developed geospatial initiative, currently focused on Kefalonia as its first implementation. Its published code and methodologies are openly available for inspection, reflecting a commitment to transparency, reproducibility and documented evidence. ARGOS : : is not an official government system and does not replace statutory procedures or authorised public services. It was built by someone who grew up on the island and knows that the data to protect it already exists. It just needed to be assembled.</p>
+  <p id="i-p3">The project runs on open data: OpenStreetMap for roads, places, and the original building layer; Microsoft Building Footprints for additional machine-detected buildings; Copernicus Sentinel-2 for satellite imagery and vegetation indices; the Copernicus DEM for elevation and slope; EFFIS for historical fire records; and EMODnet for bathymetry. The stack is PostGIS, GDAL, FastAPI, and MapLibre. Everything is documented. Everything is reproducible.</p>
   <div class="builder">
-    <h2>The builder</h2>
-    <p><strong>Panagis Tzivras</strong> is a data and geospatial systems engineer from Kefalonia. He trained in Marine Sciences before moving into geospatial systems. He built ARGOS in public, publishing the code, the methodology, and every mistake along the way.</p>
+    <h2 id="i-bh2">The builder</h2>
+    <p id="i-bp"><strong>Panagis Tzivras</strong> is a data and geospatial systems engineer from Kefalonia. He trained in Marine Sciences before moving into geospatial systems. He built ARGOS in public, publishing the code, the methodology, and every mistake along the way.</p>
   </div>
-  <p class="contact">Contact: <a href="/cdn-cgi/l/email-protection#751d1019191a351407121a065812101a5b1a0712"><span class="__cf_email__" data-cfemail="bed6dbd2d2d1fedfccd9d1cd93d9dbd190d1ccd9">[email&#160;protected]</span></a></p>
+  <p class="contact"><span id="i-contact">Contact</span>: <a href="mailto:hello@argos-geo.org">hello@argos-geo.org</a></p>
 </main>
 <nav class="sitenav">
-  <a href="/map">Map</a>
-  <a href="/about" class="here">About</a>
-  <a href="/data">Open Data</a>
-  <a href="/field-notes">Field Notes</a>
+  <a href="/map" id="i-nav-map">Map</a>
+  <a href="/about" class="here" id="i-nav-about">About</a>
+  <a href="/data" id="i-nav-data">Open Data</a>
+  <a href="/field-notes" id="i-nav-notes">Field Notes</a>
 </nav>
 <footer class="foot">
-  <a href="https://argos-geo.org">argos-geo.org</a> &middot; Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way
+  <a href="https://argos-geo.org">argos-geo.org</a> &middot; <span id="i-foot">Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way</span>
 </footer>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<script>
+const I18N = {
+  en: {
+    'i-kick': 'About',
+    'i-h1': 'About ARGOS',
+    'i-lead': 'ARGOS is the map that argues back. It is an open-source geospatial digital twin of Kefalonia, Greece, built entirely on open data and open code.',
+    'i-p1': 'Kefalonia is the largest of the Ionian Islands. ARGOS currently maps 12,217 roads and 46,934 buildings (22,013 from OpenStreetMap contributors, 24,921 machine-detected by Microsoft) across a topography that ranges from sea level to 1,628 meters at Mount Ainos. The island also has a history of wildfires, flash floods, and coastal hazards that affect both residents and visitors.',
+    'i-p2': 'ARGOS was built to give civil protection, researchers, and citizens a single picture of the island\'s risks and assets. ARGOS : : is an independently developed geospatial initiative, currently focused on Kefalonia as its first implementation. Its published code and methodologies are openly available for inspection, reflecting a commitment to transparency, reproducibility and documented evidence. ARGOS : : is not an official government system and does not replace statutory procedures or authorised public services. It was built by someone who grew up on the island and knows that the data to protect it already exists. It just needed to be assembled.',
+    'i-p3': 'The project runs on open data: OpenStreetMap for roads, places, and the original building layer; Microsoft Building Footprints for additional machine-detected buildings; Copernicus Sentinel-2 for satellite imagery and vegetation indices; the Copernicus DEM for elevation and slope; EFFIS for historical fire records; and EMODnet for bathymetry. The stack is PostGIS, GDAL, FastAPI, and MapLibre. Everything is documented. Everything is reproducible.',
+    'i-bh2': 'The builder',
+    'i-bp': '<strong>Panagis Tzivras</strong> is a data and geospatial systems engineer from Kefalonia. He trained in Marine Sciences before moving into geospatial systems. He built ARGOS in public, publishing the code, the methodology, and every mistake along the way.',
+    'i-contact': 'Contact',
+    'i-home': '&larr; Home',
+    'i-nav-map': 'Map', 'i-nav-about': 'About', 'i-nav-data': 'Open Data', 'i-nav-notes': 'Field Notes',
+    'i-foot': 'Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way'
+  },
+  el: {
+    'i-kick': 'Σχετικά',
+    'i-h1': 'Σχετικά με το ARGOS',
+    'i-lead': 'Το ARGOS είναι ο χάρτης που απαντάει. Είναι ένας ανοιχτού κώδικα γεωχωρικός ψηφιακός δίδυμος της Κεφαλονιάς, χτισμένος αποκλειστικά με ανοιχτά δεδομένα και ανοιχτό κώδικα.',
+    'i-p1': 'Η Κεφαλονιά είναι το μεγαλύτερο από τα Ιόνια νησιά. Το ARGOS χαρτογραφεί σήμερα 12.217 δρόμους και 46.934 κτίρια (22.013 από συνεισφορές στο OpenStreetMap, 24.921 εντοπισμένα μηχανικά από τη Microsoft) σε μια τοπογραφία που απλώνεται από τη στάθμη της θάλασσας ως τα 1.628 μέτρα του όρους Αίνος. Το νησί έχει επίσης ιστορία δασικών πυρκαγιών, αιφνίδιων πλημμυρών και παράκτιων κινδύνων που αγγίζουν κατοίκους και επισκέπτες.',
+    'i-p2': 'Το ARGOS χτίστηκε για να δώσει στην πολιτική προστασία, στους ερευνητές και στους πολίτες μια ενιαία εικόνα των κινδύνων και των πόρων του νησιού. Το ARGOS : : είναι μια ανεξάρτητη πρωτοβουλία ανάπτυξης γεωχωρικής τεχνολογίας, με πρώτη εφαρμογή την Κεφαλονιά. Ο δημοσιευμένος κώδικας και οι μεθοδολογίες του είναι διαθέσιμα για έλεγχο, με έμφαση στη διαφάνεια, την αναπαραγωγιμότητα και την τεκμηρίωση των αποτελεσμάτων. Το ARGOS : : δεν αποτελεί επίσημο σύστημα δημόσιου φορέα και δεν υποκαθιστά θεσμοθετημένες διαδικασίες ή αρμόδιες δημόσιες υπηρεσίες. Χτίστηκε από κάποιον που μεγάλωσε στο νησί και ξέρει ότι τα δεδομένα για να το προστατέψουμε ήδη υπάρχουν. Απλώς χρειάζονταν συναρμολόγηση.',
+    'i-p3': 'Το έργο τρέχει με ανοιχτά δεδομένα: OpenStreetMap για δρόμους, οικισμούς και το αρχικό επίπεδο κτιρίων. Microsoft Building Footprints για επιπλέον μηχανικά εντοπισμένα κτίρια. Copernicus Sentinel-2 για δορυφορική απεικόνιση και δείκτες βλάστησης. Copernicus DEM για υψόμετρο και κλίση εδάφους. EFFIS για το ιστορικό πυρκαγιών. EMODnet για βαθυμετρία. Η τεχνική υποδομή είναι PostGIS, GDAL, FastAPI και MapLibre. Όλα είναι τεκμηριωμένα. Όλα είναι αναπαράξιμα.',
+    'i-bh2': 'Ο δημιουργός',
+    'i-bp': 'Ο <strong>Παναγής Τζιβράς</strong> είναι μηχανικός δεδομένων και γεωχωρικών συστημάτων από την Κεφαλονιά. Σπούδασε Θαλάσσιες Επιστήμες πριν στραφεί στα γεωχωρικά συστήματα. Έχτισε το ARGOS δημόσια, δημοσιεύοντας τον κώδικα, τη μεθοδολογία και κάθε λάθος στην πορεία.',
+    'i-contact': 'Επικοινωνία',
+    'i-home': '&larr; Αρχική',
+    'i-nav-map': 'Χάρτης', 'i-nav-about': 'Σχετικά', 'i-nav-data': 'Ανοιχτά Δεδομένα', 'i-nav-notes': 'Ημερολόγιο',
+    'i-foot': 'Kefalonia, Ionian Islands, Greece, EU, Earth, Galaxy'
+  }
+};
+function setSiteLang(l) {
+  const dict = I18N[l];
+  Object.keys(dict).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = dict[id];
+  });
+  document.getElementById('sl-en').classList.toggle('on', l === 'en');
+  document.getElementById('sl-el').classList.toggle('on', l === 'el');
+  document.documentElement.lang = l;
+  try { localStorage.setItem('argos-lang', l); } catch (e) {}
+}
+document.getElementById('sl-en').addEventListener('click', () => setSiteLang('en'));
+document.getElementById('sl-el').addEventListener('click', () => setSiteLang('el'));
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem('argos-lang'); } catch (e) {}
+  if (saved === 'el' || saved === 'en') { setSiteLang(saved); return; }
+  fetch('/geo').then(r => r.json()).then(g => {
+    if (g && g.country === 'GR') setSiteLang('el');
+  }).catch(() => {});
+})();
+</script>
+</body>
 </html>

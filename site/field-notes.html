@@ -43,7 +43,7 @@ body{
     radial-gradient(1px 1px at 430px 90px, rgba(255,255,255,.3), transparent),
     radial-gradient(1.5px 1.5px at 560px 20px, rgba(255,255,255,.4), transparent),
     radial-gradient(1px 1px at 700px 60px, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 850px 90px, rgba(127,168,155,.45), transparent),
+    radial-gradient(1.5px 1.5px at 850px 90px, rgba(127,168,155,.45), transparent),
     radial-gradient(1.5px 1.5px at 1000px 30px, rgba(255,255,255,.4), transparent);
   background-repeat:repeat; background-size:1000px 120px}
 .topbar{position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between;
@@ -52,6 +52,11 @@ body{
 .brandlink img{width:34px; height:34px; object-fit:contain}
 .brandlink span{font-family:'Space Grotesk','Inter',sans-serif; font-weight:700; letter-spacing:.25em;
   color:var(--parchment); font-size:.95rem}
+.topright{display:inline-flex; align-items:center; gap:1.2rem}
+.langtoggle{font-size:.72rem; letter-spacing:.14em; color:var(--text-muted); user-select:none}
+.langtoggle span{cursor:pointer; transition:color .2s}
+.langtoggle span.on{color:var(--gold)}
+.langtoggle span:hover{color:var(--gold)}
 .homelink{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted);
   text-decoration:none; transition:color .2s}
 .homelink:hover{color:var(--gold)}
@@ -97,89 +102,132 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
 <div class="stars"></div>
 <header class="topbar">
   <a href="/" class="brandlink"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png" alt="ARGOS emblem"><span>ARGOS</span></a>
-  <a href="/" class="homelink">&larr; Home</a>
+  <div class="topright">
+    <div class="langtoggle"><span id="sl-en" class="on">EN</span> · <span id="sl-el">ΕΛ</span></div>
+    <a href="/" class="homelink" id="i-home">&larr; Home</a>
+  </div>
 </header>
 <main class="page">
-  <div class="kicker">Field Notes</div>
-  <h1>Field Notes</h1>
-  <p class="lead">Build logs document the technical work on GitHub. Narrative investigations live on DEV. Field Notes brings both together, with the honest limitations intact.</p>
+  <div class="kicker" id="i-kick">Field Notes</div>
+  <h1 id="i-h1">Field Notes</h1>
+  <p class="lead" id="i-lead">Build logs document the technical work on GitHub. Narrative investigations live on DEV. Field Notes brings both together, with the honest limitations intact.</p>
   <div class="notes">
-    <div class="note">
-      <div class="num">1</div>
-      <div class="body">
-        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener">Processing my first Sentinel-2 pass in 48 hours</a></h2>
-        <div class="meta">Aug 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">2</div>
-      <div class="body">
-        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener">Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha</a></h2>
-        <div class="meta">Aug 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">3</div>
-      <div class="body">
-        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener">Greek firs and the problem with NDVI on karst</a></h2>
-        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">4</div>
-      <div class="body">
-        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener">Where the water goes: drainage, slope, and the February 2025 storm</a></h2>
-        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">5</div>
-      <div class="body">
-        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener">Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)</a></h2>
-        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">6</div>
-      <div class="body">
-        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener">Build Log #6: The Buildings the Map Missed</a></h2>
-        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">7</div>
-      <div class="body">
-        <h2><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener">The actual SQL behind "The Answer You Didn't Want", Rounds 4 and 5</a></h2>
-        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener">GitHub Discussion</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">8</div>
-      <div class="body">
-        <h2><a href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">The Answer You Didn't Want: Fiskardo Evacuation Routing</a></h2>
-        <div class="meta">Sep 2026 &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">DEV</a></span></div>
-      </div>
-    </div>
-    <div class="note">
-      <div class="num">9</div>
-      <div class="body">
-        <h2><a href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener">The sea looks calm when it is not: Myrtos Beach marine safety</a></h2>
-        <div class="meta">Oct 2026 &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener">DEV</a></span></div>
-      </div>
-    </div>
+    <div class="note"><div class="num">1</div><div class="body">
+      <h2><a id="n1" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener">Processing my first Sentinel-2 pass in 48 hours</a></h2>
+      <div class="meta"><span class="mdate" id="m1">Aug 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">2</div><div class="body">
+      <h2><a id="n2" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener">Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha</a></h2>
+      <div class="meta"><span class="mdate" id="m2">Aug 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">3</div><div class="body">
+      <h2><a id="n3" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener">Greek fir (Abies cephalonica) and the problem with NDVI on karst</a></h2>
+      <div class="meta"><span class="mdate" id="m3">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">4</div><div class="body">
+      <h2><a id="n4" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener">Where the water goes: drainage, slope, and the February 2025 storm</a></h2>
+      <div class="meta"><span class="mdate" id="m4">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">5</div><div class="body">
+      <h2><a id="n5" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener">Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)</a></h2>
+      <div class="meta"><span class="mdate" id="m5">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">6</div><div class="body">
+      <h2><a id="n6" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener">Build Log #6: The Buildings the Map Did Not See</a></h2>
+      <div class="meta"><span class="mdate" id="m6">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">7</div><div class="body">
+      <h2><a id="n7" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener">The actual SQL behind "The Answer You Didn't Want"</a></h2>
+      <div class="meta"><span class="mdate" id="m7">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">8</div><div class="body">
+      <h2><a id="n8" href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">The Answer You Didn't Want: Fiskardo Evacuation Routing</a></h2>
+      <div class="meta"><span class="mdate" id="m8">Sep 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">DEV</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">9</div><div class="body">
+      <h2><a id="n9" href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener">The sea looks calm when it is not: Myrtos Beach marine safety</a></h2>
+      <div class="meta"><span class="mdate" id="m9">Oct 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener">DEV</a></span></div>
+    </div></div>
   </div>
   <div class="method">
-    <p>Build logs and SQL supplements are canonical on GitHub Discussions. Narrative forensics are canonical on DEV. Each one links from here the day it publishes.</p>
+    <p id="i-mp">Build logs and SQL supplements are canonical on GitHub Discussions. Narrative forensics are canonical on DEV. Each one links from here the day it publishes.</p>
   </div>
 </main>
 <nav class="sitenav">
-  <a href="/map">Map</a>
-  <a href="/about">About</a>
-  <a href="/data">Open Data</a>
-  <a href="/field-notes" class="here">Field Notes</a>
+  <a href="/map" id="i-nav-map">Map</a>
+  <a href="/about" id="i-nav-about">About</a>
+  <a href="/data" id="i-nav-data">Open Data</a>
+  <a href="/field-notes" class="here" id="i-nav-notes">Field Notes</a>
 </nav>
 <footer class="foot">
-  <a href="https://argos-geo.org">argos-geo.org</a> &middot; Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way
+  <a href="https://argos-geo.org">argos-geo.org</a> &middot; <span id="i-foot">Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way</span>
 </footer>
+<script>
+const PLAT = { en: 'GitHub Discussion', el: 'Συζήτηση GitHub' };
+const I18N = {
+  en: {
+    'i-kick': 'Field Notes',
+    'i-h1': 'Field Notes',
+    'i-lead': 'Build logs document the technical work on GitHub. Narrative investigations live on DEV. Field Notes brings both together, with the honest limitations intact.',
+    'n1': 'Processing my first Sentinel-2 pass in 48 hours',
+    'n2': 'Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha',
+    'n3': 'Greek fir (Abies cephalonica) and the problem with NDVI on karst',
+    'n4': 'Where the water goes: drainage, slope, and the February 2025 storm',
+    'n5': "Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)",
+    'n6': 'Build Log #6: The Buildings the Map Did Not See',
+    'n7': 'The actual SQL behind "The Answer You Didn\'t Want"',
+    'n8': "The Answer You Didn't Want: Fiskardo Evacuation Routing",
+    'n9': 'The sea looks calm when it is not: Myrtos Beach marine safety',
+    'm1': 'Aug 2026', 'm2': 'Aug 2026', 'm3': 'Sep 2026', 'm4': 'Sep 2026',
+    'm5': 'Sep 2026', 'm6': 'Sep 2026', 'm7': 'Sep 2026', 'm8': 'Sep 2026', 'm9': 'Oct 2026',
+    'i-mp': 'Build logs and SQL supplements are canonical on GitHub Discussions. Narrative forensics are canonical on DEV. Each one links from here the day it publishes.',
+    'i-home': '&larr; Home',
+    'i-nav-map': 'Map', 'i-nav-about': 'About', 'i-nav-data': 'Open Data', 'i-nav-notes': 'Field Notes',
+    'i-foot': 'Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way'
+  },
+  el: {
+    'i-kick': 'Ημερολόγιο',
+    'i-h1': 'Ημερολόγιο',
+    'i-lead': 'Τα build logs τεκμηριώνουν την τεχνική δουλειά στο GitHub. Οι αφηγηματικές έρευνες ζουν στο DEV. Το Ημερολόγιο τα φέρνει και τα δύο μαζί, με τους ειλικρινείς περιορισμούς ανέπαφους.',
+    'n1': 'Η πρώτη μου επεξεργασία Sentinel-2 σε 48 ώρες',
+    'n2': 'Αποφάσεις υποδομής: γιατί PostGIS + FastAPI, και η παγίδα του Debian',
+    'n3': 'Το κεφαλονίτικο έλατο (Abies cephalonica) και το πρόβλημα του NDVI στο καρστ',
+    'n4': 'Πού πάει το νερό: απορροή, κλίση και η κακοκαιρία του Φεβρουαρίου 2025',
+    'n5': 'Build Log #5: Η απάντηση που δεν ήθελες (δρομολόγηση εκκένωσης Φισκάρδου)',
+    'n6': 'Build Log #6: Τα κτίρια που δεν είδε ο χάρτης',
+    'n7': 'Το πραγματικό SQL πίσω από την "Απάντηση που δεν ήθελες"',
+    'n8': 'Η απάντηση που δεν ήθελες: δρομολόγηση εκκένωσης Φισκάρδου',
+    'n9': 'Η θάλασσα δείχνει ήρεμη όταν δεν είναι: θαλάσσια ασφάλεια στον Μύρτο',
+    'm1': 'Αύγ 2026', 'm2': 'Αύγ 2026', 'm3': 'Σεπ 2026', 'm4': 'Σεπ 2026',
+    'm5': 'Σεπ 2026', 'm6': 'Σεπ 2026', 'm7': 'Σεπ 2026', 'm8': 'Σεπ 2026', 'm9': 'Οκτ 2026',
+    'i-mp': 'Τα build logs και τα συμπληρώματα SQL είναι κανονικά στις Συζητήσεις του GitHub. Οι αφηγηματικές ανασκοπήσεις είναι κανονικές στο DEV. Καθεμία συνδέεται από εδώ την ημέρα που δημοσιεύεται.',
+    'i-home': '&larr; Αρχική',
+    'i-nav-map': 'Χάρτης', 'i-nav-about': 'Σχετικά', 'i-nav-data': 'Ανοιχτά Δεδομένα', 'i-nav-notes': 'Ημερολόγιο',
+    'i-foot': 'Kefalonia, Ionian Islands, Greece, EU, Earth, Galaxy'
+  }
+};
+function setSiteLang(l) {
+  const dict = I18N[l];
+  Object.keys(dict).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = dict[id];
+  });
+  document.querySelectorAll('.mplat').forEach(a => { a.textContent = PLAT[l]; });
+  document.getElementById('sl-en').classList.toggle('on', l === 'en');
+  document.getElementById('sl-el').classList.toggle('on', l === 'el');
+  document.documentElement.lang = l;
+  try { localStorage.setItem('argos-lang', l); } catch (e) {}
+}
+document.getElementById('sl-en').addEventListener('click', () => setSiteLang('en'));
+document.getElementById('sl-el').addEventListener('click', () => setSiteLang('el'));
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem('argos-lang'); } catch (e) {}
+  if (saved === 'el' || saved === 'en') { setSiteLang(saved); return; }
+  fetch('/geo').then(r => r.json()).then(g => {
+    if (g && g.country === 'GR') setSiteLang('el');
+  }).catch(() => {});
+})();
+</script>
 </body>
 </html>

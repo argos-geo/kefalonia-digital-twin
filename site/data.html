@@ -43,7 +43,7 @@ body{
     radial-gradient(1px 1px at 430px 90px, rgba(255,255,255,.3), transparent),
     radial-gradient(1.5px 1.5px at 560px 20px, rgba(255,255,255,.4), transparent),
     radial-gradient(1px 1px at 700px 60px, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 850px 90px, rgba(127,168,155,.45), transparent),
+    radial-gradient(1.5px 1.5px at 850px 90px, rgba(127,168,155,.45), transparent),
     radial-gradient(1.5px 1.5px at 1000px 30px, rgba(255,255,255,.4), transparent);
   background-repeat:repeat; background-size:1000px 120px}
 .topbar{position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between;
@@ -52,6 +52,11 @@ body{
 .brandlink img{width:34px; height:34px; object-fit:contain}
 .brandlink span{font-family:'Space Grotesk','Inter',sans-serif; font-weight:700; letter-spacing:.25em;
   color:var(--parchment); font-size:.95rem}
+.topright{display:inline-flex; align-items:center; gap:1.2rem}
+.langtoggle{font-size:.72rem; letter-spacing:.14em; color:var(--text-muted); user-select:none}
+.langtoggle span{cursor:pointer; transition:color .2s}
+.langtoggle span.on{color:var(--gold)}
+.langtoggle span:hover{color:var(--gold)}
 .homelink{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted);
   text-decoration:none; transition:color .2s}
 .homelink:hover{color:var(--gold)}
@@ -95,75 +100,163 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
 <div class="stars"></div>
 <header class="topbar">
   <a href="/" class="brandlink"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/ARGOS_Emblem_v3_Icon.png" alt="ARGOS emblem"><span>ARGOS</span></a>
-  <a href="/" class="homelink">&larr; Home</a>
+  <div class="topright">
+    <div class="langtoggle"><span id="sl-en" class="on">EN</span> · <span id="sl-el">ΕΛ</span></div>
+    <a href="/" class="homelink" id="i-home">&larr; Home</a>
+  </div>
 </header>
 <main class="page">
-  <div class="kicker">Open Data</div>
-  <h1>Open Data</h1>
-  <p class="lead">ARGOS is built entirely on open data. These are the datasets that power the digital twin.</p>
+  <div class="kicker" id="i-kick">Open Data</div>
+  <h1 id="i-h1">Open Data</h1>
+  <p class="lead" id="i-lead">ARGOS is built entirely on open data. These are the datasets that power the digital twin.</p>
   <div class="cards">
     <div class="card">
       <h2>OpenStreetMap</h2>
       <div class="meta">OpenStreetMap Contributors &middot; ODbL</div>
-      <div class="lbl">What it contains</div>
-      <p>12,217 roads, 22,013 original building footprints, 1,831 POIs, beach geometries</p>
-      <div class="lbl">How ARGOS uses it</div>
-      <p>Base map, routing network, original building layer, POI and beach locations</p>
+      <div class="lbl" id="c1l1">What it contains</div>
+      <p id="c1p1">12,217 roads, 22,013 original building footprints, 1,831 POIs, beach geometries</p>
+      <div class="lbl" id="c1l2">How ARGOS uses it</div>
+      <p id="c1p2">Base map, routing network, original building layer, POI and beach locations</p>
     </div>
     <div class="card">
       <h2>Copernicus Sentinel-2</h2>
-      <div class="meta">ESA / Copernicus &middot; Free and open</div>
-      <div class="lbl">What it contains</div>
-      <p>10m multispectral imagery, red edge, SWIR</p>
-      <div class="lbl">How ARGOS uses it</div>
-      <p>NDVI, vegetation stress, burn scar detection, fuel type proxy</p>
+      <div class="meta" id="c2m">ESA / Copernicus &middot; Free and open</div>
+      <div class="lbl" id="c2l1">What it contains</div>
+      <p id="c2p1">10m multispectral imagery, red edge, SWIR</p>
+      <div class="lbl" id="c2l2">How ARGOS uses it</div>
+      <p id="c2p2">NDVI, vegetation stress, burn scar detection, fuel type proxy</p>
     </div>
     <div class="card">
       <h2>Copernicus DEM</h2>
-      <div class="meta">ESA / Copernicus &middot; Free and open</div>
-      <div class="lbl">What it contains</div>
-      <p>30m digital elevation model</p>
-      <div class="lbl">How ARGOS uses it</div>
-      <p>Slope, aspect, drainage direction, terrain analysis</p>
+      <div class="meta" id="c3m">ESA / Copernicus &middot; Free and open</div>
+      <div class="lbl" id="c3l1">What it contains</div>
+      <p id="c3p1">30m digital elevation model</p>
+      <div class="lbl" id="c3l2">How ARGOS uses it</div>
+      <p id="c3p2">Slope, aspect, drainage direction, terrain analysis</p>
     </div>
     <div class="card">
       <h2>EFFIS</h2>
-      <div class="meta">JRC / Copernicus &middot; Free and open</div>
-      <div class="lbl">What it contains</div>
-      <p>Historical fire records, burnt area shapefiles, fuel maps</p>
-      <div class="lbl">How ARGOS uses it</div>
-      <p>Model validation, fuel type comparison, burn scar overlay</p>
+      <div class="meta" id="c4m">JRC / Copernicus &middot; Free and open</div>
+      <div class="lbl" id="c4l1">What it contains</div>
+      <p id="c4p1">Historical fire records, burnt area shapefiles, fuel maps</p>
+      <div class="lbl" id="c4l2">How ARGOS uses it</div>
+      <p id="c4p2">Model validation, fuel type comparison, burn scar overlay</p>
     </div>
     <div class="card">
       <h2>EMODnet</h2>
-      <div class="meta">EU / EMODnet &middot; Free and open</div>
-      <div class="lbl">What it contains</div>
-      <p>Bathymetry, seabed habitats, human activities</p>
-      <div class="lbl">How ARGOS uses it</div>
-      <p>Marine safety layers, subsurface current risk at beaches</p>
+      <div class="meta" id="c5m">EU / EMODnet &middot; Free and open</div>
+      <div class="lbl" id="c5l1">What it contains</div>
+      <p id="c5p1">Bathymetry, seabed habitats, human activities</p>
+      <div class="lbl" id="c5l2">How ARGOS uses it</div>
+      <p id="c5p2">Marine safety layers, subsurface current risk at beaches</p>
     </div>
     <div class="card">
       <h2>Microsoft Building Footprints</h2>
       <div class="meta">Microsoft &middot; CDLA Permissive 2.0</div>
-      <div class="lbl">What it contains</div>
-      <p>Machine-detected building polygons from satellite imagery, with confidence scores and height estimates where available</p>
-      <div class="lbl">How ARGOS uses it</div>
-      <p>Adds 24,921 footprints with no OpenStreetMap partner, lifting the merged building layer from 22,013 to 46,934 after PostGIS conflation</p>
+      <div class="lbl" id="c6l1">What it contains</div>
+      <p id="c6p1">Machine-detected building polygons from satellite imagery, with confidence scores and height estimates where available</p>
+      <div class="lbl" id="c6l2">How ARGOS uses it</div>
+      <p id="c6p2">Adds 24,921 footprints with no OpenStreetMap partner, lifting the merged building layer from 22,013 to 46,934 after PostGIS conflation</p>
     </div>
   </div>
   <div class="method">
-    <h2>Note on methodology</h2>
-    <p>Every dataset is preserved in its original form before transformation. Raw data lives in <code>data/raw/</code>. Processed data lives in <code>data/processed/</code>. The pipeline is documented in the ARGOS Code Bible. No black boxes.</p>
+    <h2 id="i-mh2">Note on methodology</h2>
+    <p id="i-mp">Every dataset is preserved in its original form before transformation. Raw data lives in <code>data/raw/</code>. Processed data lives in <code>data/processed/</code>. The pipeline is documented in the ARGOS Code Bible. No black boxes.</p>
   </div>
 </main>
 <nav class="sitenav">
-  <a href="/map">Map</a>
-  <a href="/about">About</a>
-  <a href="/data" class="here">Open Data</a>
-  <a href="/field-notes">Field Notes</a>
+  <a href="/map" id="i-nav-map">Map</a>
+  <a href="/about" id="i-nav-about">About</a>
+  <a href="/data" class="here" id="i-nav-data">Open Data</a>
+  <a href="/field-notes" id="i-nav-notes">Field Notes</a>
 </nav>
 <footer class="foot">
-  <a href="https://argos-geo.org">argos-geo.org</a> &middot; Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way
+  <a href="https://argos-geo.org">argos-geo.org</a> &middot; <span id="i-foot">Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way</span>
 </footer>
+<script>
+const LBL1 = { en: 'What it contains', el: 'Τι περιέχει' };
+const LBL2 = { en: 'How ARGOS uses it', el: 'Πώς το χρησιμοποιεί το ARGOS' };
+const I18N = {
+  en: {
+    'i-kick': 'Open Data',
+    'i-h1': 'Open Data',
+    'i-lead': 'ARGOS is built entirely on open data. These are the datasets that power the digital twin.',
+    'c1p1': '12,217 roads, 22,013 original building footprints, 1,831 POIs, beach geometries',
+    'c1p2': 'Base map, routing network, original building layer, POI and beach locations',
+    'c2m': 'ESA / Copernicus &middot; Free and open',
+    'c2p1': '10m multispectral imagery, red edge, SWIR',
+    'c2p2': 'NDVI, vegetation stress, burn scar detection, fuel type proxy',
+    'c3m': 'ESA / Copernicus &middot; Free and open',
+    'c3p1': '30m digital elevation model',
+    'c3p2': 'Slope, aspect, drainage direction, terrain analysis',
+    'c4m': 'JRC / Copernicus &middot; Free and open',
+    'c4p1': 'Historical fire records, burnt area shapefiles, fuel maps',
+    'c4p2': 'Model validation, fuel type comparison, burn scar overlay',
+    'c5m': 'EU / EMODnet &middot; Free and open',
+    'c5p1': 'Bathymetry, seabed habitats, human activities',
+    'c5p2': 'Marine safety layers, subsurface current risk at beaches',
+    'c6p1': 'Machine-detected building polygons from satellite imagery, with confidence scores and height estimates where available',
+    'c6p2': 'Adds 24,921 footprints with no OpenStreetMap partner, lifting the merged building layer from 22,013 to 46,934 after PostGIS conflation',
+    'i-mh2': 'Note on methodology',
+    'i-mp': 'Every dataset is preserved in its original form before transformation. Raw data lives in <code>data/raw/</code>. Processed data lives in <code>data/processed/</code>. The pipeline is documented in the ARGOS Code Bible. No black boxes.',
+    'i-home': '&larr; Home',
+    'i-nav-map': 'Map', 'i-nav-about': 'About', 'i-nav-data': 'Open Data', 'i-nav-notes': 'Field Notes',
+    'i-foot': 'Kefalonia, Ionian Islands, Greece, EU, Earth, Milky Way'
+  },
+  el: {
+    'i-kick': 'Ανοιχτά Δεδομένα',
+    'i-h1': 'Ανοιχτά Δεδομένα',
+    'i-lead': 'Το ARGOS είναι χτισμένο αποκλειστικά με ανοιχτά δεδομένα. Αυτά είναι τα σύνολα δεδομένων που τροφοδοτούν τον ψηφιακό δίδυμο.',
+    'c1p1': '12.217 δρόμοι, 22.013 αρχικά περίγραμμα κτιρίων, 1.831 σημεία ενδιαφέροντος, γεωμετρίες παραλιών',
+    'c1p2': 'Βασικός χάρτης, δίκτυο δρομολόγησης, αρχικό επίπεδο κτιρίων, θέσεις σημείων ενδιαφέροντος και παραλιών',
+    'c2m': 'ESA / Copernicus &middot; Ελεύθερο και ανοιχτό',
+    'c2p1': 'Πολυφασματική απεικόνιση 10μ., red edge, SWIR',
+    'c2p2': 'NDVI, καταπόνηση βλάστησης, ανίχνευση καμένων εκτάσεων, δείκτης τύπου καυσίμου',
+    'c3m': 'ESA / Copernicus &middot; Ελεύθερο και ανοιχτό',
+    'c3p1': 'Ψηφιακό μοντέλο ανάγλυφου 30μ.',
+    'c3p2': 'Κλίση, έκθεση πλαγιάς, κατεύθυνση απορροής, ανάλυση ανάγλυφου',
+    'c4m': 'JRC / Copernicus &middot; Ελεύθερο και ανοιχτό',
+    'c4p1': 'Ιστορικό πυρκαγιών, περίγραμμα καμένων εκτάσεων, χάρτες καυσίμου',
+    'c4p2': 'Επικύρωση μοντέλου, σύγκριση τύπων καυσίμου, επικάλυψη καμένων εκτάσεων',
+    'c5m': 'ΕΕ / EMODnet &middot; Ελεύθερο και ανοιχτό',
+    'c5p1': 'Βαθυμετρία, οικότοποι βυθού, ανθρώπινες δραστηριότητες',
+    'c5p2': 'Επίπεδα θαλάσσιας ασφάλειας, εκτίμηση υποεπιφανειακού κινδύνου ρευμάτων στις παραλίες',
+    'c6p1': 'Μηχανικά εντοπισμένα πολύγωνα κτιρίων από δορυφορικές εικόνες, με δείκτες εμπιστοσύνης και εκτιμήσεις ύψους όπου υπάρχουν',
+    'c6p2': 'Προσθέτει 24.921 περίγραμμα χωρίς αντίστοιχο στο OpenStreetMap, ανεβάζοντας το συνδυασμένο επίπεδο κτιρίων από 22.013 σε 46.934 μετά τη συγχώνευση στο PostGIS',
+    'i-mh2': 'Σημείωση μεθοδολογίας',
+    'i-mp': 'Κάθε σύνολο δεδομένων διατηρείται στην αρχική του μορφή πριν από κάθε μετασχηματισμό. Τα ακατέργαστα δεδομένα ζουν στο <code>data/raw/</code>. Τα επεξεργασμένα στο <code>data/processed/</code>. Η διαδικασία τεκμηριώνεται στο ARGOS Code Bible. Κανένα μαύρο κουτί.',
+    'i-home': '&larr; Αρχική',
+    'i-nav-map': 'Χάρτης', 'i-nav-about': 'Σχετικά', 'i-nav-data': 'Ανοιχτά Δεδομένα', 'i-nav-notes': 'Ημερολόγιο',
+    'i-foot': 'Kefalonia, Ionian Islands, Greece, EU, Earth, Galaxy'
+  }
+};
+function setSiteLang(l) {
+  const dict = I18N[l];
+  Object.keys(dict).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = dict[id];
+  });
+  for (let n = 1; n <= 6; n++) {
+    const a = document.getElementById('c' + n + 'l1');
+    const b = document.getElementById('c' + n + 'l2');
+    if (a) a.textContent = LBL1[l];
+    if (b) b.textContent = LBL2[l];
+  }
+  document.getElementById('sl-en').classList.toggle('on', l === 'en');
+  document.getElementById('sl-el').classList.toggle('on', l === 'el');
+  document.documentElement.lang = l;
+  try { localStorage.setItem('argos-lang', l); } catch (e) {}
+}
+document.getElementById('sl-en').addEventListener('click', () => setSiteLang('en'));
+document.getElementById('sl-el').addEventListener('click', () => setSiteLang('el'));
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem('argos-lang'); } catch (e) {}
+  if (saved === 'el' || saved === 'en') { setSiteLang(saved); return; }
+  fetch('/geo').then(r => r.json()).then(g => {
+    if (g && g.country === 'GR') setSiteLang('el');
+  }).catch(() => {});
+})();
+</script>
 </body>
 </html>

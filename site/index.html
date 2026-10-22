@@ -338,10 +338,10 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
       <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</a>
     <a href="https://mapstodon.space/@argos_geo" class="link-btn" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24"><path d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-6.288.309C3.882.692 1.496 2.518.917 5.127.64 6.412.61 7.837.671 9.346c.074 1.83.088 3.657.226 5.46.118 1.51.292 3.018.566 4.474.515 2.751 3.385 4.719 6.244 4.722 1.318.001 2.603-.222 3.877-.633l.9-.244c.745-.201 1.468-.441 2.165-.72l-.084-1.882s-1.237.383-2.637.48c-1.40.097-2.872-.094-4.17-.42-.263-.068-.527-.15-.787-.232a10.965 10.965 0 0 1-.566-.195c-.208-.078-.413-.16-.615-.248a4.586 4.586 0 0 1-.579-.3c-.59-.364-1.11-.852-1.49-1.445a3.86 3.86 0 0 1-.425-.818c-.103-.272-.177-.556-.223-.844 0 0 1.125.275 2.551.382l.393.023c.872.047 1.748.07 2.63.07 1.08 0 2.064-.03 3.02-.094l.315-.021c.96-.066 1.892-.19 2.79-.37.226-.047.45-.096.67-.15 2.195-.523 4.11-1.603 4.348-2.855.372-1.952.342-4.764.342-4.764v-.012c0-1.108-.022-2.21-.065-3.316z"/></svg>Mastodon</a>
-    <a href="/cdn-cgi/l/email-protection#2d45484141426d4c5f4a425e004a484203425f4a" class="link-btn">
+    <a href="mailto:hello@argos-geo.org" class="link-btn">
       <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email</a>
   </div>
-  <p class="intro" id="i-intro">ARGOS is an open-source geospatial digital twin of Kefalonia, the largest island in the Ionian Sea. It combines satellite imagery from Copernicus Sentinel-2, topographic data from the Copernicus DEM, and the OpenStreetMap road and building network into a single interactive map. The project screens for wildfire risk, flash flood susceptibility, and travel-time accessibility to evacuation points. Models are challenged with independent evidence where possible. Every limitation is documented. The code is open. The data is open. The methodology is public.</p>
+  <p class="intro" id="i-intro">ARGOS is a geospatial digital twin of Kefalonia. It answers questions: which buildings are outside the 15-minute fire envelope, which ravines flood first, which beaches are exposed today. Built from Copernicus Sentinel-2, Copernicus DEM, and OpenStreetMap. Every model carries its evidence note: what was tested, what passed, what failed, what is unvalidated. The methodology is public. The data is open.</p>
   <div class="sitenav">
     <a href="/map">Map</a>
     <a href="/about">About</a>
@@ -364,7 +364,7 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
     <span class="localtime" id="ktime"></span>
   </div>
 </div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 function tick(){
   const t = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Athens',hour:'2-digit',minute:'2-digit'});
   const d = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Athens',timeZoneName:'short'});
@@ -381,9 +381,9 @@ const I18N = {
     'i-tagline2': 'Προστατεύοντας τους τόπους μας',
     'i-status': '<strong>Explore Kefalonia through its data.</strong><br>ARGOS : : brings geographic information, environmental models and documented analyses together in an interactive map, offering a more complete picture of the island and supporting exploration, understanding and planning.',
     'i-live-txt': 'Live &middot; v0.0.7 vector preview',
-    'i-intro': 'ARGOS is an open-source geospatial digital twin of Kefalonia, the largest island in the Ionian Sea. It combines satellite imagery from Copernicus Sentinel-2, topographic data from the Copernicus DEM, and the OpenStreetMap road and building network into a single interactive map. The project screens for wildfire risk, flash flood susceptibility, and travel-time accessibility to evacuation points. Models are challenged with independent evidence where possible. Every limitation is documented. The code is open. The data is open. The methodology is public.',
+    'i-intro': 'ARGOS is a geospatial digital twin of Kefalonia. It answers questions: which buildings are outside the 15-minute fire envelope, which ravines flood first, which beaches are exposed today. Built from Copernicus Sentinel-2, Copernicus DEM, and OpenStreetMap. Every model carries its evidence note: what was tested, what passed, what failed, what is unvalidated. The methodology is public. The data is open.',
     'i-fl1': 'Data', 'i-fl2': 'Stack', 'i-fl3': 'License', 'i-fl4': 'Focus',
-    'i-fv3': 'MIT - open source forever',
+    'i-fv3': 'MIT - public methodology, open data',
     'i-fv4': 'Wildfire &middot; Flood &middot; Accessibility &middot; Marine',
     'i-rm1l': 'NOW', 'i-rm1t': 'Static island twin.',
     'i-rm2l': 'NEXT', 'i-rm2t': 'Live environmental feeds.',
@@ -395,9 +395,9 @@ const I18N = {
     'i-tagline2': 'Watching over the places we call home',
     'i-status': '<strong>Η Κεφαλονιά μέσα από τα δεδομένα της.</strong><br>Το ARGOS : : συνδυάζει γεωγραφικές πληροφορίες, περιβαλλοντικά μοντέλα και τεκμηριωμένες αναλύσεις σε έναν διαδραστικό χάρτη, προσφέροντας μια πιο ολοκληρωμένη εικόνα του νησιού και υποστηρίζοντας την εξερεύνηση, την κατανόηση και τον σχεδιασμό.',
     'i-live-txt': 'Live &middot; Vector χάρτης v0.0.7',
-    'i-intro': 'Το ARGOS είναι ένα ανοιχτού κώδικα γεωχωρικό ψηφιακό δίδυμο της Κεφαλονιάς, του μεγαλύτερου νησιού του Ιονίου. Συνδυάζει δορυφορικά δεδομένα από το Copernicus Sentinel-2, τοπογραφικά δεδομένα από το Copernicus DEM, και το οδικό και κτιριακό δίκτυο του OpenStreetMap σε έναν ενιαίο διαδραστικό χάρτη. Το έργο ελέγχει τον κίνδυνο πυρκαγιάς, την ευαισθησία σε πλημμύρες, και την προσβασιμότητα σε σημεία εκκένωσης. Κάθε μοντέλο δοκιμάζεται με ανεξάρτητα τεκμήρια όπου είναι εφικτό. Κάθε περιορισμός τεκμηριώνεται. Ο κώδικας είναι ανοιχτός. Τα δεδομένα είναι ανοιχτά. Η μεθοδολογία είναι δημόσια.',
+    'i-intro': 'Το ARGOS είναι ένας γεωχωρικός ψηφιακός δίδυμος της Κεφαλονιάς. Απαντάει σε ερωτήματα: ποια κτίρια απέχουν πάνω από 15 λεπτά από την πυροσβεστική, ποια ρέματα πλημμυρίζουν πρώτα, ποιες παραλίες εκτίθενται σήμερα. Χτίστηκε από δεδομένα Copernicus Sentinel-2, Copernicus DEM και OpenStreetMap. Κάθε μοντέλο φέρει το αποδεικτικό του: τι επαληθεύτηκε, τι πέτυχε, τι απέτυχε, τι είναι ανεπικύρωτο. Η μεθοδολογία είναι δημόσια. Τα δεδομένα είναι ανοιχτά.',
     'i-fl1': 'Δεδομένα', 'i-fl2': 'Τεχνολογίες', 'i-fl3': 'Άδεια', 'i-fl4': 'Εστίαση',
-    'i-fv3': 'MIT - ανοικτός κώδικας για πάντα',
+    'i-fv3': 'MIT - δημόσια μεθοδολογία, ανοιχτά δεδομένα',
     'i-fv4': 'Πυρκαγιά &middot; Πλημμύρα &middot; Προσβασιμότητα &middot; Θάλασσα',
     'i-rm1l': 'ΤΩΡΑ', 'i-rm1t': 'Στατικός ψηφιακός δίδυμος.',
     'i-rm2l': 'ΕΠΟΜΕΝΟ', 'i-rm2t': 'Ζωντανά περιβαλλοντικά δεδομένα.',
@@ -422,6 +422,11 @@ document.getElementById('sl-el').addEventListener('click', () => setSiteLang('el
 try {
   const saved = localStorage.getItem('argos-lang');
   if (saved === 'el') setSiteLang('el');
+  else if (!saved) {
+    fetch('/geo').then(r => r.json()).then(g => {
+      if (g && g.country === 'GR') setSiteLang('el');
+    }).catch(() => {});
+  }
 } catch (e) {}
 </script>
 
@@ -429,11 +434,11 @@ try {
 const FNOTES = [
   ['Processing my first Sentinel-2 pass in 48 hours','https://github.com/argos-geo/kefalonia-digital-twin/discussions/1','Aug 2026 · GitHub'],
   ['Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha','https://github.com/argos-geo/kefalonia-digital-twin/discussions/2','Aug 2026 · GitHub'],
-  ['Greek firs and the problem with NDVI on karst','https://github.com/argos-geo/kefalonia-digital-twin/discussions/3','Sep 2026 · GitHub'],
+  ['Greek fir (Abies cephalonica) and the problem with NDVI on karst','https://github.com/argos-geo/kefalonia-digital-twin/discussions/3','Sep 2026 · GitHub'],
   ['Where the water goes: drainage, slope, and the February 2025 storm','https://github.com/argos-geo/kefalonia-digital-twin/discussions/4','Sep 2026 · GitHub'],
   ["Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)",'https://github.com/argos-geo/kefalonia-digital-twin/discussions/6','Sep 2026 · GitHub'],
-  ['Build Log #6: The Buildings the Map Missed','https://github.com/argos-geo/kefalonia-digital-twin/discussions/7','Sep 2026 · GitHub'],
-  ['The actual SQL behind "The Answer You Didn\'t Want", Rounds 4 and 5','https://github.com/argos-geo/kefalonia-digital-twin/discussions/5','Sep 2026 · GitHub'],
+  ['Build Log #6: The Buildings the Map Did Not See','https://github.com/argos-geo/kefalonia-digital-twin/discussions/7','Sep 2026 · GitHub'],
+  ['The actual SQL behind "The Answer You Didn\'t Want"','https://github.com/argos-geo/kefalonia-digital-twin/discussions/5','Sep 2026 · GitHub'],
   ["The Answer You Didn't Want: Fiskardo Evacuation Routing",'https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok','Sep 2026 · DEV'],
   ['The sea looks calm when it is not: Myrtos Beach marine safety','https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m','Oct 2026 · DEV']
 ];
