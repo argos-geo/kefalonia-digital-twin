@@ -195,3 +195,68 @@ def marine_grid(hour: int = Query(0, ge=0)):
             "order": "lat-major (index = iy * nx + ix), null = land",
             "u": u, "v": v,
             "disclaimer": "Modelled surface currents (CMEMS Mediterranean 4 km grid). Not for navigation."}
+
+@app.get("/weather/points")
+def weather_points():
+    with get_pool().connection() as conn:
+        rows = conn.execute(
+            "SELECT point_id, name_en, name_el, lat, lon, elevation_m FROM argos.weather_points ORDER BY point_id;").fetchall()
+    return {"count": len(rows), "points": rows}
+
+@app.get("/weather/now")
+def weather_now():
+    sql = """
+    SELECT DISTINCT ON (w.point_id) w.point_id, p.name_en, p.name_el, w.ts,
+           w.temp_c, w.rh_pct, w.precip_mm, w.wind_ms, w.wind_dir, w.gust_ms,
+           w.cloud_pct, w.pressure_hpa, w.cape, w.fetched_at
+    FROM argos.weather_hourly w JOIN argos.weather_points p USING (point_id)
+    WHERE w.ts <= now()
+    ORDER BY w.point_id, w.ts DESC;"""
+    with get_pool().connection() as conn:
+        rows = conn.execute(sql).fetchall()
+    return {"category": "forecast_model", "source": "Open-Meteo (CC BY 4.0)",
+            "attribution": "Weather data by Open-Meteo.com",
+            "count": len(rows), "points": rows}
+
+@app.get("/weather/series")
+def weather_series(point_id: int = Query(...), hours: int = Query(48)):
+    if not (1 <= hours <= 384):
+        raise HTTPException(400, "hours must be 1..384")
+    sql = """
+    SELECT w.ts, w.temp_c, w.rh_pct, w.precip_mm, w.wind_ms, w.wind_dir, w.gust_ms,
+           w.cloud_pct, w.pressure_hpa, w.cape, w.fetched_at
+    FROM argos.weather_hourly w
+    WHERE w.point_id = %s AND w.ts >= date_trunc('hour', now())
+    ORDER BY w.ts LIMIT %s;"""
+    with get_pool().connection() as conn:
+        rows = conn.execute(sql, (point_id, hours)).fetchall()
+    if not rows:
+        raise HTTPException(404, "no data for point_id (valid ids: 1-5)")
+    return {"category": "forecast_model", "source": "Open-Meteo (CC BY 4.0)",
+            "attribution": "Weather data by Open-Meteo.com",
+            "point_id": point_id, "hours": len(rows), "series": rows}
+
+@app.get("/fwi/latest")
+def fwi_latest():
+    day_sql = "SELECT max(fwi_date) AS d FROM argos.fwi_daily;"
+    pt_sql = """
+    SELECT p.point_id, p.name_en, p.name_el,
+           round(ST_Value(u.rast, ST_SetSRID(ST_MakePoint(p.lon, p.lat), 4326))::numeric, 2) AS fwi
+    FROM argos.weather_points p,
+         (SELECT ST_Union(rast) AS rast FROM argos.fwi_daily WHERE fwi_date = %s) u
+    ORDER BY p.point_id;"""
+    st_sql = """
+    SELECT round((ST_SummaryStats(ST_Union(rast))).mean::numeric, 2) AS island_mean,
+           round((ST_SummaryStats(ST_Union(rast))).max::numeric, 2) AS island_max
+    FROM argos.fwi_daily WHERE fwi_date = %s;"""
+    with get_pool().connection() as conn:
+        d = conn.execute(day_sql).fetchone()["d"]
+        if d is None:
+            raise HTTPException(404, "no FWI rasters loaded")
+        pts = conn.execute(pt_sql, (d,)).fetchall()
+        stats = conn.execute(st_sql, (d,)).fetchone()
+    return {"category": "analytical_assessment",
+            "source": "Copernicus EMS / EFFIS (mf010, Meteo-France FWI)",
+            "fwi_date": str(d), "island_mean": stats["island_mean"], "island_max": stats["island_max"],
+            "note": "Fire-weather indicator at ~10 km model-grid resolution. Not an ignition probability, not building-level risk.",
+            "points": pts}
