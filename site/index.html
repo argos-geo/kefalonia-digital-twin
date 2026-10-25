@@ -301,15 +301,6 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
 .latest-panel .lp-t{font-size:.82rem; color:var(--text-primary); line-height:1.45}
 .latest-panel .lp-a{font-size:.68rem; color:var(--text-muted); margin-top:.4rem}
 @media (max-width:480px){.latest-panel{display:none !important}}
-.latest-panel{position:fixed; left:1.4rem; bottom:5.9rem; z-index:9; width:min(320px, calc(100vw - 2.4rem));
-  background:rgba(15,29,51,.92); border:1px solid rgba(201,162,39,.35); border-radius:12px;
-  padding:.8rem 1rem; text-decoration:none; display:none; backdrop-filter:blur(6px);
-  transition:border-color .25s, transform .25s}
-.latest-panel:hover{border-color:rgba(201,162,39,.6); transform:translateY(-1px)}
-.latest-panel .lp-h{font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-dim); font-weight:600; margin-bottom:.35rem}
-.latest-panel .lp-t{font-size:.82rem; color:var(--text-primary); line-height:1.45}
-.latest-panel .lp-a{font-size:.68rem; color:var(--text-muted); margin-top:.4rem}
-@media (max-width:480px){.latest-panel{display:none !important}}
 @media (max-width:480px){.social-fab{left:1rem; bottom:1rem}}
 </style>
 </head>
@@ -496,7 +487,6 @@ document.getElementById('sl-el').addEventListener('click', () => { renderFnote()
 
 
 <a class="latest-panel" id="latestPanel" href="https://bsky.app/profile/argos-geo.org" target="_blank" rel="noopener"><div class="lp-h">Latest &middot; Bluesky</div><div class="lp-t"></div><div class="lp-a"></div></a>
-<a class="latest-panel" id="latestPanel" href="https://bsky.app/profile/argos-geo.org" target="_blank" rel="noopener"><div class="lp-h">Latest &middot; Bluesky</div><div class="lp-t"></div><div class="lp-a"></div></a>
 <button class="social-fab" id="socialFab" aria-label="Latest news"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="2" fill="var(--gold)" stroke="none"/><path d="M3 11a10 10 0 0 1 10 10"/><path d="M3 4a17 17 0 0 1 17 17"/></svg><span>NEWS</span></button>
 <div class="feed-overlay" id="feedOverlay" role="dialog" aria-modal="true" aria-label="Latest ARGOS posts">
   <div class="feed-wrap">
@@ -638,25 +628,6 @@ document.addEventListener('click', e=>{ if(!modal.contains(e.target)) modal.clas
     } catch { masto.querySelector('.feed-loading')?.remove();
       masto.insertAdjacentHTML('beforeend', fail('masto','https://mapstodon.space/@argos_geo','Mastodon')); }
   }
-
-  // latest-post teaser panel above the NEWS button (public API, no auth)
-  const panel = document.getElementById('latestPanel');
-  async function loadLatest(){
-    try {
-      const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=argos-geo.org&limit=1&filter=posts_no_replies');
-      if (!r.ok) throw 0;
-      const d = await r.json();
-      const fp = (d.feed || [])[0];
-      if (!fp) throw 0;
-      const rec = fp.post.record || {};
-      panel.href = 'https://bsky.app/profile/' + fp.post.author.handle + '/post/' + fp.post.uri.split('/').pop();
-      panel.querySelector('.lp-t').textContent = (rec.text || '').slice(0, 160);
-      panel.querySelector('.lp-a').textContent = ago(rec.createdAt || fp.post.indexedAt) + ' \u00b7 @argos-geo.org';
-      panel.style.display = 'block';
-    } catch { panel.style.display = 'none'; }
-  }
-  loadLatest();
-  setInterval(loadLatest, 600000);
 
   // latest-post teaser panel above the NEWS button (public API, no auth)
   const panel = document.getElementById('latestPanel');
