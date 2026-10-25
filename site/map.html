@@ -328,6 +328,8 @@
   <div class="vnote" id="v-wxfield"></div>
   <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-fwifield"> <span id="m-row-fwifield">FWI field (EFFIS grid)</span></label><button class="pinfo" type="button" data-v="v-fwifield" aria-label="How do we know">i</button></div>
   <div class="vnote" id="v-fwifield"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-quakes"> <span id="m-row-quakes">Earthquakes (30 days)</span></label><button class="pinfo" type="button" data-v="v-quakes" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-quakes"></div>
   <div class="sect" id="m-sect-legend">Legend</div>
   <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
   <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
@@ -415,6 +417,11 @@
     <div class="rleg-h" id="m-leg-g9">FWI field</div>
     <div class="leg"><span class="sw" style="background:linear-gradient(90deg,#7FA89B,#A9C46B,#C9A227,#D4762C,#B03A2E,#7B2D8E); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-fwif1">official EFFIS classes, ~10 km cells</span></div>
     <div class="leg"><span id="m-leg-fresh-fwif" style="font-style:italic; opacity:0.8;">--</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-quakes">
+    <div class="rleg-h" id="m-leg-g10">Earthquakes</div>
+    <div class="leg"><span class="sw" style="background:#E0452E; border-radius:50%; width:9px; height:9px;"></span><span id="m-leg-qk1">M2.5+ last 30 days, size = magnitude</span></div>
+    <div class="leg"><span id="m-leg-fresh-qk" style="font-style:italic; opacity:0.8;">--</span></div>
   </div>
 </div>
 <div id="marinectl" style="display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:25; background:rgba(10,22,40,0.88); border:1px solid rgba(201,162,39,0.55); border-radius:9px; padding:8px 12px; color:#F4EEE0; font-size:11px; align-items:center; gap:10px; max-width:92vw;">
@@ -701,6 +708,7 @@ map.on('load', function () {
       'm-row-wxfield': 'Temperature field (island)', 'm-row-fwifield': 'FWI field (EFFIS grid)',
       'm-leg-g8': 'Temperature field', 'm-leg-wxf1': 'colour = model temperature, ~2 km cells',
       'm-leg-g9': 'FWI field', 'm-leg-fwif1': 'official EFFIS classes, ~10 km cells',
+      'm-row-quakes': 'Earthquakes (30 days)', 'm-leg-g10': 'Earthquakes', 'm-leg-qk1': 'M2.5+ last 30 days, size = magnitude',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
@@ -744,6 +752,7 @@ map.on('load', function () {
       'm-row-wxfield': 'Πεδίο θερμοκρασίας (νησί)', 'm-row-fwifield': 'Πεδίο FWI (πλέγμα EFFIS)',
       'm-leg-g8': 'Πεδίο θερμοκρασίας', 'm-leg-wxf1': 'χρώμα = θερμοκρασία μοντέλου, κελιά ~2 χλμ',
       'm-leg-g9': 'Πεδίο FWI', 'm-leg-fwif1': 'επίσημες κλάσεις EFFIS, κελιά ~10 χλμ',
+      'm-row-quakes': 'Σεισμοί (30 ημέρες)', 'm-leg-g10': 'Σεισμοί', 'm-leg-qk1': 'M2.5+ τελευταίες 30 ημέρες, μέγεθος = μέγεθος σεισμού',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
@@ -794,7 +803,8 @@ map.on('load', function () {
       ts: 'Model time', fetched_at: 'Data fetched',
       fwi: 'FWI', fwi_date: 'FWI day', island_mean: 'Island mean', island_max: 'Island max',
       source: 'Source',
-      peak_at: 'Peak at', vhm0_now: 'Wave height now', run_ts: 'Model data age'
+      peak_at: 'Peak at', vhm0_now: 'Wave height now', run_ts: 'Model data age',
+      qtime: 'Origin time', mag: 'Magnitude', depth_km: 'Depth', region: 'Region', auth: 'Reported by'
     },
     el: {
       name: 'Όνομα', road_class: 'Κατηγορία δρόμου', osm_highway: 'Τύπος OSM',
@@ -810,7 +820,8 @@ map.on('load', function () {
       ts: 'Ώρα μοντέλου', fetched_at: 'Λήψη δεδομένων',
       fwi: 'Δείκτης FWI', fwi_date: 'Ημέρα FWI', island_mean: 'Μέσος νησιού', island_max: 'Μέγιστο νησιού',
       source: 'Πηγή',
-      peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα', run_ts: 'Ηλικία δεδομένων'
+      peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα', run_ts: 'Ηλικία δεδομένων',
+      qtime: 'Χρόνος', mag: 'Μέγεθος', depth_km: 'Βάθος', region: 'Περιοχή', auth: 'Αναφορά από'
     }
   };
 
@@ -820,7 +831,8 @@ map.on('load', function () {
     pois:      { en: 'POI',      el: 'Σημείο ενδιαφέροντος' },
     buildings: { en: 'building', el: 'Κτίριο' },
     beaches:   { en: 'beach',    el: 'Παραλία' },
-    marine:    { en: 'beach exposure', el: 'θαλάσσιες συνθήκες' }
+    marine:    { en: 'beach exposure', el: 'θαλάσσιες συνθήκες' },
+    quakes:    { en: 'earthquake', el: 'σεισμός' }
   };
 
   // Greek translations for OSM enum values (draft - Panagis corrects). Fallback: raw value.
@@ -919,6 +931,7 @@ map.on('load', function () {
     if (typeof fwiFresh === 'function') fwiFresh();
     if (typeof wxFieldFresh === 'function') wxFieldFresh();
     if (typeof fwiFieldFresh === 'function') fwiFieldFresh();
+    if (typeof quakeFresh === 'function') quakeFresh();
     if (typeof liveRelabel === 'function') liveRelabel();
     if (typeof demoState !== 'undefined' && demoState.q) renderAnswer();
   }
@@ -950,6 +963,12 @@ map.on('load', function () {
       return el ? ('πριν ' + ah + ' ώ') : (ah + ' h ago');
     }
     if (key === 'fwi' || key === 'island_mean' || key === 'island_max') return Math.round(val * 10) / 10;
+    if (key === 'mag') return 'M ' + (Math.round(val * 10) / 10);
+    if (key === 'depth_km') return Math.round(val) + (el ? ' χλμ' : ' km');
+    if (key === 'qtime') {
+      var qd = new Date(val);
+      return isNaN(qd) ? String(val) : qd.toLocaleString(el ? 'el-GR' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
     if (key === 'maxspeed') return val + (el ? ' χλμ/ώρα' : ' km/h');
     var s = String(val);
     if (el) {
@@ -972,9 +991,10 @@ map.on('load', function () {
   }
   var CLICKABLE = ['pois-circle', 'beaches-circle', 'beaches-fill',
                    'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track',
-                   'weather-circle', 'fwi-circle', 'marine-circle', 'marine-beach-fill'];
+                   'weather-circle', 'fwi-circle', 'marine-circle', 'marine-beach-fill',
+                   'quakes-circle'];
   // most specific / demo-relevant first when several layers stack at one point
-  var CLICK_PRIORITY = ['weather-circle', 'fwi-circle', 'marine-circle', 'pois-circle',
+  var CLICK_PRIORITY = ['quakes-circle', 'weather-circle', 'fwi-circle', 'marine-circle', 'pois-circle',
                         'beaches-circle', 'marine-beach-fill', 'beaches-fill',
                         'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track'];
   CLICKABLE.forEach(function (lid) {
@@ -1337,7 +1357,7 @@ map.on('load', function () {
   var FWIF = { meta: null };
   var WXF_COORDS = [[20.28, 38.58], [20.88, 38.58], [20.88, 38.03], [20.28, 38.03]];
   var FWIF_COORDS = [[20.28, 38.55], [20.88, 38.55], [20.88, 38.03], [20.28, 38.03]];
-  function fieldShow(srcId, layerId, pngUrl, coords, opacity) {
+  function fieldShow(srcId, layerId, pngUrl, coords, opacity, resampling) {
     function add() {
       var url = pngUrl + '?t=' + Date.now(); // bypass CDN cache; server sends no-store
       var s = map.getSource(srcId);
@@ -1346,7 +1366,7 @@ map.on('load', function () {
       if (!map.getLayer(layerId)) {
         var before = map.getLayer('roads-main') ? 'roads-main' : undefined;
         map.addLayer({ id: layerId, type: 'raster', source: srcId,
-          paint: { 'raster-opacity': opacity, 'raster-resampling': 'linear', 'raster-fade-duration': 0 } }, before);
+          paint: { 'raster-opacity': opacity, 'raster-resampling': resampling || 'linear', 'raster-fade-duration': 0 } }, before);
       }
       map.setLayoutProperty(layerId, 'visibility', 'visible');
     }
@@ -1371,7 +1391,7 @@ map.on('load', function () {
     if (ev.target.checked) {
       fetch(FIELD_API + '/weather_field.json').then(function (r) { return r.json(); }).then(function (m) {
         WXF.stamp = m.generated_at; wxFieldFresh();
-        fieldShow('wxfield', 'wxfield-img', FIELD_API + '/weather_field.png', WXF_COORDS, 0.55);
+        fieldShow('wxfield', 'wxfield-img', FIELD_API + '/weather_field.png', WXF_COORDS, 0.7);
       }).catch(function (e) { console.error('wxfield meta failed:', e); wxFieldFresh(); });
     } else if (map.getLayer('wxfield-img')) {
       map.setLayoutProperty('wxfield-img', 'visibility', 'none');
@@ -1382,11 +1402,48 @@ map.on('load', function () {
     if (ev.target.checked) {
       fetch(FIELD_API + '/fwi_field.json').then(function (r) { return r.json(); }).then(function (m) {
         FWIF.meta = m; fwiFieldFresh();
-        fieldShow('fwifield', 'fwifield-img', FIELD_API + '/fwi_field_fwi.png', FWIF_COORDS, 0.6);
+        fieldShow('fwifield', 'fwifield-img', FIELD_API + '/fwi_field_fwi.png', FWIF_COORDS, 0.75, 'nearest');
       }).catch(function (e) { console.error('fwifield meta failed:', e); fwiFieldFresh(); });
     } else if (map.getLayer('fwifield-img')) {
       map.setLayoutProperty('fwifield-img', 'visibility', 'none');
     }
+    riskLegSync();
+  });
+
+  // ---- v0.3.0: earthquakes (EMSC-CSEM SeismicPortal via /field/quakes.json) ----
+  var QK = { loaded: false, stamp: null };
+  function quakeFresh() {
+    var el = document.getElementById('m-leg-fresh-qk');
+    if (!el) return;
+    if (!QK.stamp) { el.textContent = CUR_LANG === 'el' ? 'Ενημέρωση: --' : 'updated: --'; return; }
+    el.textContent = (CUR_LANG === 'el' ? 'Ενημερώθηκε ' : 'Updated ') + liveAgo(QK.stamp) + ' · EMSC-CSEM';
+  }
+  function loadQuakes() {
+    if (QK.loaded) return; QK.loaded = true;
+    fetch(FIELD_API + '/quakes.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
+      QK.stamp = d.generated_at;
+      var fc = { type: 'FeatureCollection', features: (d.events || []).map(function (e) {
+        return { type: 'Feature', geometry: { type: 'Point', coordinates: [e.lon, e.lat] },
+          properties: { name: 'M ' + e.mag + ' · ' + (e.region || ''), qtime: e.time, mag: e.mag,
+            depth_km: e.depth_km, region: e.region, auth: e.auth,
+            source: 'EMSC-CSEM SeismicPortal (CC BY 4.0)' } };
+      }) };
+      function add() {
+        map.addSource('quakes-live', { type: 'geojson', data: fc });
+        map.addLayer({ id: 'quakes-circle', type: 'circle', source: 'quakes-live',
+          paint: { 'circle-radius': ['interpolate', ['linear'], ['coalesce', ['get', 'mag'], 2.5], 2.5, 4, 3.5, 6, 4.5, 9, 5.5, 13],
+            'circle-color': '#E0452E', 'circle-opacity': 0.85,
+            'circle-stroke-width': 1.2, 'circle-stroke-color': 'rgba(255,240,220,0.75)' } });
+        map.on('mouseenter', 'quakes-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', 'quakes-circle', function () { map.getCanvas().style.cursor = ''; });
+      }
+      try { add(); } catch (e) { console.error('quakes layer defer:', e); map.once('load', add); }
+      quakeFresh();
+    }).catch(function (e) { QK.loaded = false; console.error('quakes load failed:', e); quakeFresh(); });
+  }
+  document.getElementById('tgl-quakes').addEventListener('change', function (ev) {
+    if (ev.target.checked) loadQuakes();
+    if (map.getLayer('quakes-circle')) map.setLayoutProperty('quakes-circle', 'visibility', ev.target.checked ? 'visible' : 'none');
     riskLegSync();
   });
 
@@ -1627,7 +1684,7 @@ map.on('load', function () {
   });
 
   // ---- T106: risk legend panel follows the risk toggles ----
-  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'], ['tgl-wxfield', 'rleg-wxfield'], ['tgl-fwifield', 'rleg-fwifield'] ];
+  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'], ['tgl-wxfield', 'rleg-wxfield'], ['tgl-fwifield', 'rleg-fwifield'], ['tgl-quakes', 'rleg-quakes'] ];
   function riskLegSync() {
     var any = false;
     RLEGS.forEach(function (p) {
@@ -1710,6 +1767,10 @@ map.on('load', function () {
     'v-fwifield': {
       en: '<b>How do we know</b><br>The real EFFIS Fire Weather Index grid (Copernicus EMS, Meteo-France, about 10 km cells), fetched daily and shown exactly as published: blocky is honest. Each cell carries the official EFFIS class colours from very low (green) to extreme (purple). The FWI describes fire-weather conditions: it is not an ignition probability, not building-level risk and not a confirmed local emergency. We also archive the ISI (spread speed) and DC (deep dryness) sub-indices daily for later analysis.<span class="vsrc">Source: Copernicus EMS / EFFIS &middot; Category: analytical assessment, refreshed daily</span>',
       el: '<b>Πώς το γνωρίζουμε</b><br>Το πραγματικό πλέγμα FWI της EFFIS (Copernicus EMS, Meteo-France, κελιά περίπου 10 χλμ), με ημερήσια λήψη και απεικόνιση ακριβώς όπως δημοσιεύεται: τα τετράγωνα είναι η ειλικρινής ανάλυση. Κάθε κελί φέρει τα επίσημα χρώματα κλάσεων EFFIS από πολύ χαμηλή (πράσινο) έως ακραία (μοβ). Ο FWI περιγράφει καιρικές συνθήκες καύσης: δεν είναι πιθανότητα ανάφλεξης, ούτε κίνδυνος σε επίπεδο κτιρίου, ούτε επιβεβαιωμένη τοπική έκτακτη κατάσταση. Αρχειοθετούμε επίσης καθημερινά τους υποδείκτες ISI (ταχύτητα εξάπλωσης) και DC (βάθος ξηρασίας) για μελλοντική ανάλυση.<span class="vsrc">Πηγή: Copernicus EMS / EFFIS &middot; Κατηγορία: αναλυτική εκτίμηση, ημερήσια ανανέωση</span>'
+    },
+    'v-quakes': {
+      en: '<b>How do we know</b><br>Earthquakes of magnitude 2.5 and above in the wider Ionian area over the last 30 days, from the EMSC-CSEM SeismicPortal real-time feed, refreshed every 10 minutes. Circle size scales with magnitude; popups show origin time, depth, region and the reporting seismological agency (NOA, THE, EMSC and others). Automatic locations can be revised by the agencies after review. This layer is informational, not an official warning: for critical decisions refer to the National Observatory of Athens / Institute of Geodynamics.<span class="vsrc">Source: EMSC-CSEM SeismicPortal, seismicportal.eu (CC BY 4.0) &middot; Category: observed events (agency reports), refreshed every 10 min</span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Σεισμοί μεγέθους 2,5 και άνω στην ευρύτερη περιοχή του Ιονίου τις τελευταίες 30 ημέρες, από τη ροή πραγματικού χρόνου EMSC-CSEM SeismicPortal, με ανανέωση κάθε 10 λεπτά. Το μέγεθος του κύκλου ακολουθεί το μέγεθος του σεισμού· τα αναδυόμενα δείχνουν χρόνο, βάθος, περιοχή και τον φορέα αναφοράς (ΕΑΑ, ΑΠΘ, EMSC και άλλοι). Οι αυτόματες επίλυσεις μπορεί να αναθεωρηθούν από τους φορείς. Το στρώμα είναι πληροφοριακού χαρακτήρα, όχι επίσημη προειδοποίηση: για κρίσιμες αποφάσεις απευθυνθείτε στο Εθνικό Αστεροσκοπείο Αθηνών / Ινστιτούτο Γεωδυναμικής.<span class="vsrc">Πηγή: EMSC-CSEM SeismicPortal, seismicportal.eu (CC BY 4.0) &middot; Κατηγορία: παρατηρημένα γεγονότα (αναφορές φορέων), ανανέωση κάθε 10 λεπτά</span>'
     }
   };
   function renderVnotes(lang) {
@@ -2105,7 +2166,8 @@ setInterval(tickClock, 30000);
     'tgl-weather': ['What is the weather doing right now?', '\u03a4\u03b9 \u03ba\u03b1\u03b9\u03c1\u03cc \u03ba\u03ac\u03bd\u03b5\u03b9 \u03c4\u03ce\u03c1\u03b1;'],
     'tgl-fwi': ['How fire-prone is today\'s weather?', '\u03a0\u03cc\u03c3\u03bf \u03b5\u03c5\u03bd\u03bf\u03b5\u03af \u03c6\u03c9\u03c4\u03b9\u03ac \u03bf \u03c3\u03b7\u03bc\u03b5\u03c1\u03b9\u03bd\u03cc\u03c2 \u03ba\u03b1\u03b9\u03c1\u03cc\u03c2;'],
     'tgl-wxfield': ['Temperature across the whole island, not just towns', '\u0398\u03b5\u03c1\u03bc\u03bf\u03ba\u03c1\u03b1\u03c3\u03af\u03b1 \u03c3\u03b5 \u03cc\u03bb\u03bf \u03c4\u03bf \u03bd\u03b7\u03c3\u03af, \u03cc\u03c7\u03b9 \u03bc\u03cc\u03bd\u03bf \u03c3\u03c4\u03b9\u03c2 \u03c0\u03cc\u03bb\u03b5\u03b9\u03c2'],
-    'tgl-fwifield': ['The real EFFIS fire-weather grid, exactly as published', '\u03a4\u03bf \u03c0\u03c1\u03b1\u03b3\u03bc\u03b1\u03c4\u03b9\u03ba\u03cc \u03c0\u03bb\u03ad\u03b3\u03bc\u03b1 \u03ba\u03b1\u03b9\u03c1\u03bf\u03c0\u03c5\u03c1\u03b9\u03ba\u03ae\u03c2 \u03ba\u03b1\u03c4\u03ac\u03c3\u03c4\u03b1\u03c3\u03b7\u03c2 \u03c4\u03b7\u03c2 EFFIS, \u03cc\u03c0\u03c9\u03c2 \u03b4\u03b7\u03bc\u03bf\u03c3\u03b9\u03b5\u03cd\u03b5\u03c4\u03b1\u03b9']
+    'tgl-fwifield': ['The real EFFIS fire-weather grid, exactly as published', '\u03a4\u03bf \u03c0\u03c1\u03b1\u03b3\u03bc\u03b1\u03c4\u03b9\u03ba\u03cc \u03c0\u03bb\u03ad\u03b3\u03bc\u03b1 \u03ba\u03b1\u03b9\u03c1\u03bf\u03c0\u03c5\u03c1\u03b9\u03ba\u03ae\u03c2 \u03ba\u03b1\u03c4\u03ac\u03c3\u03c4\u03b1\u03c3\u03b7\u03c2 \u03c4\u03b7\u03c2 EFFIS, \u03cc\u03c0\u03c9\u03c2 \u03b4\u03b7\u03bc\u03bf\u03c3\u03b9\u03b5\u03cd\u03b5\u03c4\u03b1\u03b9'],
+    'tgl-quakes': ['Recent earthquakes near Kefalonia, informational only', '\u03a0\u03c1\u03cc\u03c3\u03c6\u03b1\u03c4\u03bf\u03b9 \u03c3\u03b5\u03b9\u03c3\u03bc\u03bf\u03af \u03ba\u03bf\u03bd\u03c4\u03ac \u03c3\u03c4\u03b7\u03bd \u039a\u03b5\u03c6\u03b1\u03bb\u03bf\u03bd\u03b9\u03ac, \u03bc\u03cc\u03bd\u03bf \u03c0\u03bb\u03b7\u03c1\u03bf\u03c6\u03bf\u03c1\u03b9\u03b1\u03ba\u03ac']
   };
   function applyTips() {
     var roads = document.getElementById('m-row-roads');
