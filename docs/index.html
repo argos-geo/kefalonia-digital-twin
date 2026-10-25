@@ -294,7 +294,7 @@
     <img src="./assets/icon_commons.png" alt="ARGOS COMMONS" title="ARGOS COMMONS">
   </div>
   <div class="motto" id="m-motto">Watching over the places we call home.</div>
-  <div class="sub" id="m-sub">v0.0.7 vector preview</div>
+  <div class="sub" id="m-sub">v0.2.0 live data</div>
   <div class="langrow">
     <button class="langbtn on" id="lang-en">EN</button>
     <button class="langbtn" id="lang-el">ΕΛ</button>
@@ -317,6 +317,11 @@
   <div class="vnote" id="v-marine"></div>
   <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-currents"> <span id="m-row-currents">Sea currents (animated)</span></label><button class="pinfo" type="button" data-v="v-currents" aria-label="How do we know">i</button></div>
   <div class="vnote" id="v-currents"></div>
+  <div class="sect" id="m-sect-live">Live</div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-weather"> <span id="m-row-weather">Weather now (model)</span></label><button class="pinfo" type="button" data-v="v-weather" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-weather"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-fwi"> <span id="m-row-fwi">Fire weather index (FWI)</span></label><button class="pinfo" type="button" data-v="v-fwi" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-fwi"></div>
   <div class="sect" id="m-sect-legend">Legend</div>
   <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
   <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
@@ -347,7 +352,7 @@
 </div>
 <details id="aboutmap">
   <summary id="aboutmap-sum">About this map</summary>
-  <div id="aboutmap-body"><p>The ARGOS digital twin of Kefalonia in one interactive map. Toggle layers from the panel:</p><ul><li><strong>Base map:</strong> roads, trails, buildings, beaches, municipalities and points of interest from OpenStreetMap.</li><li><strong>Wildfire risk:</strong> screening index from slope, fuel, aspect, road proximity and historical burns, weighted into a 0-100 score, checked against 24 EFFIS fire perimeters (2017 to 2026); displayed as moderate, high, very high.</li><li><strong>Flash flood risk:</strong> drainage convergence, receiving slope, upstream burn scar and topographic wetness, checked against the February 2025 storm.</li><li><strong>Fire coverage:</strong> buildings coloured by drive time to the nearest fire station over the OSM road network (pgRouting); evacuation-port times sit in the same popups.</li><li><strong>Sea conditions:</strong> wave height, period and direction from the Copernicus Marine MEDWAM4 model at 14 beaches, refreshed twice daily, 48 hours forward.</li><li><strong>Sea currents:</strong> animated surface-current streaks from Copernicus Marine on the same run cycle, driven by the map time scrubber.</li><li><strong>Bathymetry:</strong> EMODnet depth contours to -3500 m.</li></ul><p><strong>Limitations:</strong> risk layers are screening baselines, not operational forecasts. Flood risk omits drainage infrastructure. Travel time assumes clear roads and no traffic. Sea conditions are regional, not local surf. Known gaps per layer are documented in the methodology on GitHub.</p><p><strong>Data sources:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet.</p></div>
+  <div id="aboutmap-body"><p>The ARGOS digital twin of Kefalonia in one interactive map. Toggle layers from the panel:</p><ul><li><strong>Base map:</strong> roads, trails, buildings, beaches, municipalities and points of interest from OpenStreetMap.</li><li><strong>Wildfire risk:</strong> screening index from slope, fuel, aspect, road proximity and historical burns, weighted into a 0-100 score, checked against 24 EFFIS fire perimeters (2017 to 2026); displayed as moderate, high, very high.</li><li><strong>Flash flood risk:</strong> drainage convergence, receiving slope, upstream burn scar and topographic wetness, checked against the February 2025 storm.</li><li><strong>Fire coverage:</strong> buildings coloured by drive time to the nearest fire station over the OSM road network (pgRouting); evacuation-port times sit in the same popups.</li><li><strong>Live weather:</strong> hourly Open-Meteo forecast-model values at 5 points including the Ainos summit, with sync freshness shown.</li><li><strong>Fire weather index:</strong> daily Copernicus EFFIS FWI at the same points, plus island mean and maximum. Fire-weather indicator, not an ignition probability.</li><li><strong>Sea conditions:</strong> wave height, period and direction from the Copernicus Marine MEDWAM4 model at 14 beaches, refreshed twice daily, 48 hours forward.</li><li><strong>Sea currents:</strong> animated surface-current streaks from Copernicus Marine on the same run cycle, driven by the map time scrubber.</li><li><strong>Bathymetry:</strong> EMODnet depth contours to -3500 m.</li></ul><p><strong>Limitations:</strong> risk layers are screening baselines, not operational forecasts. Flood risk omits drainage infrastructure. Travel time assumes clear roads and no traffic. Sea conditions are regional, not local surf. Known gaps per layer are documented in the methodology on GitHub.</p><p><strong>Data sources:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet, Open-Meteo.</p></div>
 </details>
 </div>
 <button id="btn-layers" aria-label="Layers">&#9776;</button>
@@ -384,6 +389,16 @@
     <div class="rleg-h" id="m-leg-g5">Sea currents</div>
     <div class="leg"><span class="sw" style="background:linear-gradient(90deg, #5A6A80, #7FA89B, #C9A227, #D4762C); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-cur">current streaks: direction = flow, length + colour = speed</span></div>
     <div class="leg"><span id="m-leg-fresh-cur" style="font-style:italic; opacity:0.8;">--</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-weather">
+    <div class="rleg-h" id="m-leg-g6">Live weather</div>
+    <div class="leg"><span class="sw" style="background:linear-gradient(90deg,#5A6A85,#7FA89B,#C9A227,#D4762C,#B03A2E); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-wx1">5 points, colour = temperature</span></div>
+    <div class="leg"><span id="m-leg-fresh-wx" style="font-style:italic; opacity:0.8;">--</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-fwi">
+    <div class="rleg-h" id="m-leg-g7">Fire weather index</div>
+    <div class="leg"><span class="sw" style="background:linear-gradient(90deg,#7FA89B,#A9C46B,#C9A227,#D4762C,#B03A2E,#7B2D8E); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-fwi1">FWI: low to extreme (EFFIS scale)</span></div>
+    <div class="leg"><span id="m-leg-fresh-fwi" style="font-style:italic; opacity:0.8;">--</span></div>
   </div>
 </div>
 <div id="marinectl" style="display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:25; background:rgba(10,22,40,0.88); border:1px solid rgba(201,162,39,0.55); border-radius:9px; padding:8px 12px; color:#F4EEE0; font-size:11px; align-items:center; gap:10px; max-width:92vw;">
@@ -663,7 +678,10 @@ map.on('load', function () {
     en: {
       'm-motto': 'Watching over the places we call home.',
       'm-tag': 'The map that argues back',
-      'm-sub': 'v0.0.7 vector preview',
+      'm-sub': 'v0.2.0 live data',
+      'm-sect-live': 'Live', 'm-row-weather': 'Weather now (model)', 'm-row-fwi': 'Fire weather index (FWI)',
+      'm-leg-g6': 'Live weather', 'm-leg-wx1': '5 points, colour = temperature',
+      'm-leg-g7': 'Fire weather index', 'm-leg-fwi1': 'FWI: low to extreme (EFFIS scale)',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
@@ -671,7 +689,7 @@ map.on('load', function () {
       'm-row-wildfire': 'Wildfire risk', 'm-row-flood': 'Flood risk', 'm-row-firecov': 'Fire coverage', 'm-row-marine': 'Beach exposure (marine)',
       'm-row-currents': 'Sea currents (animated)',
       'aboutmap-sum': 'About this map',
-      'aboutmap-body': '<p>The ARGOS digital twin of Kefalonia in one interactive map. Toggle layers from the panel:</p><ul><li><strong>Base map:</strong> roads, trails, buildings, beaches, municipalities and points of interest from OpenStreetMap.</li><li><strong>Wildfire risk:</strong> screening index from slope, fuel, aspect, road proximity and historical burns, weighted into a 0-100 score, checked against 24 EFFIS fire perimeters (2017 to 2026); displayed as moderate, high, very high.</li><li><strong>Flash flood risk:</strong> drainage convergence, receiving slope, upstream burn scar and topographic wetness, checked against the February 2025 storm.</li><li><strong>Fire coverage:</strong> buildings coloured by drive time to the nearest fire station over the OSM road network (pgRouting); evacuation-port times sit in the same popups.</li><li><strong>Sea conditions:</strong> wave height, period and direction from the Copernicus Marine MEDWAM4 model at 14 beaches, refreshed twice daily, 48 hours forward.</li><li><strong>Sea currents:</strong> animated surface-current streaks from Copernicus Marine on the same run cycle, driven by the map time scrubber.</li><li><strong>Bathymetry:</strong> EMODnet depth contours to -3500 m.</li></ul><p><strong>Limitations:</strong> risk layers are screening baselines, not operational forecasts. Flood risk omits drainage infrastructure. Travel time assumes clear roads and no traffic. Sea conditions are regional, not local surf. Known gaps per layer are documented in the methodology on GitHub.</p><p><strong>Data sources:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet.</p>',
+      'aboutmap-body': '<p>The ARGOS digital twin of Kefalonia in one interactive map. Toggle layers from the panel:</p><ul><li><strong>Base map:</strong> roads, trails, buildings, beaches, municipalities and points of interest from OpenStreetMap.</li><li><strong>Wildfire risk:</strong> screening index from slope, fuel, aspect, road proximity and historical burns, weighted into a 0-100 score, checked against 24 EFFIS fire perimeters (2017 to 2026); displayed as moderate, high, very high.</li><li><strong>Flash flood risk:</strong> drainage convergence, receiving slope, upstream burn scar and topographic wetness, checked against the February 2025 storm.</li><li><strong>Fire coverage:</strong> buildings coloured by drive time to the nearest fire station over the OSM road network (pgRouting); evacuation-port times sit in the same popups.</li><li><strong>Live weather:</strong> hourly Open-Meteo forecast-model values at 5 points including the Ainos summit, with sync freshness shown.</li><li><strong>Fire weather index:</strong> daily Copernicus EFFIS FWI at the same points, plus island mean and maximum. Fire-weather indicator, not an ignition probability.</li><li><strong>Sea conditions:</strong> wave height, period and direction from the Copernicus Marine MEDWAM4 model at 14 beaches, refreshed twice daily, 48 hours forward.</li><li><strong>Sea currents:</strong> animated surface-current streaks from Copernicus Marine on the same run cycle, driven by the map time scrubber.</li><li><strong>Bathymetry:</strong> EMODnet depth contours to -3500 m.</li></ul><p><strong>Limitations:</strong> risk layers are screening baselines, not operational forecasts. Flood risk omits drainage infrastructure. Travel time assumes clear roads and no traffic. Sea conditions are regional, not local surf. Known gaps per layer are documented in the methodology on GitHub.</p><p><strong>Data sources:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet, Open-Meteo.</p>',
       'm-leg-1': 'primary / secondary', 'm-leg-2': 'tertiary', 'm-leg-3': 'local / service',
       'm-leg-4': 'track / path &middot; trail', 'm-leg-5': 'beach', 'm-leg-6': 'POI',
       'm-leg-7': 'buildings (zoom 12+)',
@@ -700,7 +718,10 @@ map.on('load', function () {
     el: {
       'm-motto': 'Προστατεύοντας τους τόπους μας.',
       'm-tag': 'Ο χάρτης που απαντάει',
-      'm-sub': 'Vector χάρτης v0.0.7',
+      'm-sub': 'v0.2.0 ζωντανά δεδομένα',
+      'm-sect-live': 'Ζωντανά', 'm-row-weather': 'Καιρός τώρα (μοντέλο)', 'm-row-fwi': 'Δείκτης καιρικών συνθηκών πυρκαγιάς (FWI)',
+      'm-leg-g6': 'Καιρός (ζωντανά)', 'm-leg-wx1': '5 σημεία, χρώμα = θερμοκρασία',
+      'm-leg-g7': 'Δείκτης FWI', 'm-leg-fwi1': 'FWI: χαμηλός έως ακραίος (κλίμακα EFFIS)',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
@@ -708,7 +729,7 @@ map.on('load', function () {
       'm-row-wildfire': 'Κίνδυνος πυρκαγιάς', 'm-row-flood': 'Κίνδυνος πλημμύρας', 'm-row-firecov': 'Πυροσβεστική κάλυψη', 'm-row-marine': 'Θαλάσσιες συνθήκες',
       'm-row-currents': 'Θαλάσσια ρεύματα',
       'aboutmap-sum': 'Σχετικά με τον χάρτη',
-      'aboutmap-body': '<p>Ο ψηφιακός δίδυμος της Κεφαλονιάς σε έναν διαδραστικό χάρτη. Ενεργοποιήστε επίπεδα από τον πίνακα:</p><ul><li><strong>Βασικός χάρτης:</strong> δρόμοι, μονοπάτια, κτίρια, παραλίες, δήμοι και σημεία ενδιαφέροντος από το OpenStreetMap.</li><li><strong>Κίνδυνος πυρκαγιάς:</strong> δείκτης ελέγχου από κλίση, καύσιμη ύλη, προσανατολισμό, εγγύτητα σε δρόμους και ιστορικές καύσεις, σε σκορ 0-100, με έλεγχο έναντι 24 περιμέτρων πυρκαγιάς EFFIS (2017 έως 2026), σε κλάσεις μέτριος, υψηλός, πολύ υψηλός.</li><li><strong>Κίνδυνος πλημμύρας:</strong> σύγκλιση απορροής, κλίση υποδοχής, καύση ανάντη και τοπογραφική υγρασία, με έλεγχο στην κακοκαιρία Φεβρουαρίου 2025.</li><li><strong>Πυροσβεστική κάλυψη:</strong> κτίρια χρωματισμένα κατά χρόνο διαδρομής στον πλησιέστερο πυροσβεστικό σταθμό στο οδικό δίκτυο OSM (pgRouting), με τους χρόνους προς τον λιμένα εκκένωσης στα ίδια αναδυόμενα.</li><li><strong>Θαλάσσιες συνθήκες:</strong> ύψος, περίοδος και κατεύθυνση κυματισμού από το μοντέλο MEDWAM4 του Copernicus Marine για 14 παραλίες, με ανανέωση δύο φορές την ημέρα, 48 ώρες μπροστά.</li><li><strong>Θαλάσσια ρεύματα:</strong> κινούμενες γραμμές επιφανειακών ρευμάτων από το Copernicus Marine στον ίδιο κύκλο εκτέλεσης, με την χρονομηχανή του χάρτη.</li><li><strong>Βυθομετρία:</strong> ισοβαθείς EMODnet έως -3500 μ.</li></ul><p><strong>Περιορισμοί:</strong> τα επίπεδα κινδύνου είναι γραμμές βάσης ελέγχου, όχι επιχειρησιακές προβλέψεις. Ο κίνδυνος πλημμύρας δεν περιλαμβάνει υποδομές απορροής. Ο χρόνος διαδρομής προϋποθέτει ελεύθερους δρόμους χωρίς κυκλοφορία. Οι θαλάσσιες συνθήκες είναι περιφερειακές, όχι τοπικός κυματισμός. Τα γνωστά κενά ανά επίπεδο τεκμηριώνονται στη μεθοδολογία στο GitHub.</p><p><strong>Πηγές δεδομένων:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet.</p>',
+      'aboutmap-body': '<p>Ο ψηφιακός δίδυμος της Κεφαλονιάς σε έναν διαδραστικό χάρτη. Ενεργοποιήστε επίπεδα από τον πίνακα:</p><ul><li><strong>Βασικός χάρτης:</strong> δρόμοι, μονοπάτια, κτίρια, παραλίες, δήμοι και σημεία ενδιαφέροντος από το OpenStreetMap.</li><li><strong>Κίνδυνος πυρκαγιάς:</strong> δείκτης ελέγχου από κλίση, καύσιμη ύλη, προσανατολισμό, εγγύτητα σε δρόμους και ιστορικές καύσεις, σε σκορ 0-100, με έλεγχο έναντι 24 περιμέτρων πυρκαγιάς EFFIS (2017 έως 2026), σε κλάσεις μέτριος, υψηλός, πολύ υψηλός.</li><li><strong>Κίνδυνος πλημμύρας:</strong> σύγκλιση απορροής, κλίση υποδοχής, καύση ανάντη και τοπογραφική υγρασία, με έλεγχο στην κακοκαιρία Φεβρουαρίου 2025.</li><li><strong>Πυροσβεστική κάλυψη:</strong> κτίρια χρωματισμένα κατά χρόνο διαδρομής στον πλησιέστερο πυροσβεστικό σταθμό στο οδικό δίκτυο OSM (pgRouting), με τους χρόνους προς τον λιμένα εκκένωσης στα ίδια αναδυόμενα.</li><li><strong>Ζωντανός καιρός:</strong> ωριαίες τιμές μοντέλου πρόγνωσης Open-Meteo σε 5 σημεία, μεταξύ των οποίων η κορυφή του Αίνου, με εμφάνιση της ηλικίας συγχρονισμού.</li><li><strong>Δείκτης FWI:</strong> ημερήσιος FWI Copernicus EFFIS στα ίδια σημεία, συν μέσος όρος και μέγιστο του νησιού. Δείκτης καιρικών συνθηκών πυρκαγιάς, όχι πιθανότητα ανάφλεξης.</li><li><strong>Θαλάσσιες συνθήκες:</strong> ύψος, περίοδος και κατεύθυνση κυματισμού από το μοντέλο MEDWAM4 του Copernicus Marine για 14 παραλίες, με ανανέωση δύο φορές την ημέρα, 48 ώρες μπροστά.</li><li><strong>Θαλάσσια ρεύματα:</strong> κινούμενες γραμμές επιφανειακών ρευμάτων από το Copernicus Marine στον ίδιο κύκλο εκτέλεσης, με την χρονομηχανή του χάρτη.</li><li><strong>Βυθομετρία:</strong> ισοβαθείς EMODnet έως -3500 μ.</li></ul><p><strong>Περιορισμοί:</strong> τα επίπεδα κινδύνου είναι γραμμές βάσης ελέγχου, όχι επιχειρησιακές προβλέψεις. Ο κίνδυνος πλημμύρας δεν περιλαμβάνει υποδομές απορροής. Ο χρόνος διαδρομής προϋποθέτει ελεύθερους δρόμους χωρίς κυκλοφορία. Οι θαλάσσιες συνθήκες είναι περιφερειακές, όχι τοπικός κυματισμός. Τα γνωστά κενά ανά επίπεδο τεκμηριώνονται στη μεθοδολογία στο GitHub.</p><p><strong>Πηγές δεδομένων:</strong> OpenStreetMap, Copernicus Sentinel-2, Copernicus DEM, Copernicus Marine, EFFIS, EMODnet, Open-Meteo.</p>',
       'm-leg-1': 'Κεντρικοί / δευτερεύοντες', 'm-leg-2': 'Τριτοβάθμιοι', 'm-leg-3': 'Τοπικοί / εξυπηρέτησης',
       'm-leg-4': 'Χωματόδρομος / μονοπάτι &middot; πεζοπορία', 'm-leg-5': 'Παραλία', 'm-leg-6': 'Σημείο ενδιαφέροντος',
       'm-leg-7': 'Κτίρια (zoom 12+)',
@@ -745,6 +766,12 @@ map.on('load', function () {
       area_m2: 'Area', levels: 'Levels', street: 'Street', sac_scale: 'SAC scale',
       route_type: 'Route type', curated: 'Curated',
       exposure_now: 'Exposure now', max48: 'Max next 48 h',
+      temp_c: 'Temperature', rh_pct: 'Humidity', precip_mm: 'Precipitation',
+      wind_ms: 'Wind', wind_dir: 'Wind direction', gust_ms: 'Gusts',
+      cloud_pct: 'Cloud cover', pressure_hpa: 'Pressure',
+      ts: 'Model time', fetched_at: 'Data fetched',
+      fwi: 'FWI', fwi_date: 'FWI day', island_mean: 'Island mean', island_max: 'Island max',
+      source: 'Source',
       peak_at: 'Peak at', vhm0_now: 'Wave height now', run_ts: 'Model data age'
     },
     el: {
@@ -755,6 +782,12 @@ map.on('load', function () {
       area_m2: 'Εμβαδόν', levels: 'Όροφοι', street: 'Οδός', sac_scale: 'Κλίμακα SAC',
       route_type: 'Τύπος διαδρομής', curated: 'Επιμελημένο',
       exposure_now: 'Έκθεση τώρα', max48: 'Μέγιστο επόμενων 48 ωρών',
+      temp_c: 'Θερμοκρασία', rh_pct: 'Υγρασία', precip_mm: 'Βροχόπτωση',
+      wind_ms: 'Άνεμος', wind_dir: 'Διεύθυνση ανέμου', gust_ms: 'Ριπές',
+      cloud_pct: 'Νέφωση', pressure_hpa: 'Πίεση',
+      ts: 'Ώρα μοντέλου', fetched_at: 'Λήψη δεδομένων',
+      fwi: 'Δείκτης FWI', fwi_date: 'Ημέρα FWI', island_mean: 'Μέσος νησιού', island_max: 'Μέγιστο νησιού',
+      source: 'Πηγή',
       peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα', run_ts: 'Ηλικία δεδομένων'
     }
   };
@@ -860,6 +893,9 @@ map.on('load', function () {
     document.documentElement.lang = lang;
     try { localStorage.setItem('argos-lang', lang); } catch (e) {}
     if (typeof marineFresh === 'function') marineFresh();
+    if (typeof wxFresh === 'function') wxFresh();
+    if (typeof fwiFresh === 'function') fwiFresh();
+    if (typeof liveRelabel === 'function') liveRelabel();
     if (typeof demoState !== 'undefined' && demoState.q) renderAnswer();
   }
   document.getElementById('lang-en').addEventListener('click', function () { setLang('en'); });
@@ -878,6 +914,18 @@ map.on('load', function () {
       return el ? ('πριν ' + ageH + ' ώ') : (ageH + ' h ago');
     }
     if (key === 'vhm0_now') return (Math.round(val * 10) / 10) + ' m';
+    if (key === 'temp_c') return (Math.round(val * 10) / 10) + ' °C';
+    if (key === 'rh_pct' || key === 'cloud_pct') return Math.round(val) + ' %';
+    if (key === 'precip_mm') return (Math.round(val * 10) / 10) + ' mm';
+    if (key === 'wind_ms' || key === 'gust_ms') return (Math.round(val * 10) / 10) + (el ? ' μ/δ' : ' m/s');
+    if (key === 'pressure_hpa') return Math.round(val) + ' hPa';
+    if (key === 'wind_dir') return Math.round(val) + '°';
+    if (key === 'ts') return new Date(val).toLocaleString(el ? 'el-GR' : 'en-GB', { weekday: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+    if (key === 'fetched_at') {
+      var ah = Math.max(0, Math.round((Date.now() - new Date(val).getTime()) / 3600000));
+      return el ? ('πριν ' + ah + ' ώ') : (ah + ' h ago');
+    }
+    if (key === 'fwi' || key === 'island_mean' || key === 'island_max') return Math.round(val * 10) / 10;
     if (key === 'maxspeed') return val + (el ? ' χλμ/ώρα' : ' km/h');
     var s = String(val);
     if (el) {
@@ -1125,6 +1173,123 @@ map.on('load', function () {
       marineApplyHour();
     }, 700);
   });
+  // ---- v0.2.0: live weather + FWI (Open-Meteo + EFFIS via ARGOS API, lazy load) ----
+  var LIVE_API = 'https://api.argos-geo.org';
+  var WX = { loaded: false, stamp: null };
+  var FWIX = { loaded: false, meta: null };
+  function fwiClass(v) { return v < 5.2 ? 'vlow' : (v < 11.2 ? 'low' : (v < 21.3 ? 'mod' : (v < 38 ? 'high' : (v < 50 ? 'vhigh' : 'ext')))); }
+  var FWICOL = { vlow: '#7FA89B', low: '#A9C46B', mod: '#C9A227', high: '#D4762C', vhigh: '#B03A2E', ext: '#7B2D8E' };
+  function liveAgo(stamp) {
+    var h = (Date.now() - new Date(stamp).getTime()) / 3600000;
+    if (h < 1) return CUR_LANG === 'el' ? '\u03c0\u03c1\u03b9\u03bd <1 \u03ce' : '<1 h ago';
+    if (h < 48) return CUR_LANG === 'el' ? '\u03c0\u03c1\u03b9\u03bd ' + Math.round(h) + ' \u03ce' : Math.round(h) + ' h ago';
+    return CUR_LANG === 'el' ? '\u03c0\u03c1\u03b9\u03bd ' + Math.round(h / 24) + ' \u03b7\u03bc' : Math.round(h / 24) + ' d ago';
+  }
+  function wxFresh() {
+    var el = document.getElementById('m-leg-fresh-wx');
+    if (!el) return;
+    if (!WX.stamp) { el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03ad\u03c1\u03c9\u03c3\u03b7: --' : 'updated: --'; return; }
+    el.textContent = (CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03b5\u03c1\u03ce\u03b8\u03b7\u03ba\u03b5 ' : 'Updated ') + liveAgo(WX.stamp) + ' \u00b7 Open-Meteo';
+  }
+  function fwiFresh() {
+    var el = document.getElementById('m-leg-fresh-fwi');
+    if (!el) return;
+    if (!FWIX.meta) { el.textContent = CUR_LANG === 'el' ? '\u0395\u03bd\u03b7\u03bc\u03ad\u03c1\u03c9\u03c3\u03b7: --' : 'updated: --'; return; }
+    el.textContent = (CUR_LANG === 'el' ? '\u0397\u03bc\u03ad\u03c1\u03b1 \u03bc\u03bf\u03bd\u03c4\u03ad\u03bb\u03bf\u03c5 ' : 'Model day ') + FWIX.meta.fwi_date +
+      (CUR_LANG === 'el' ? ' \u00b7 \u03b7\u03bc\u03b5\u03c1\u03ae\u03c3\u03b9\u03b1 \u03b5\u03bd\u03b7\u03bc\u03ad\u03c1\u03c9\u03c3\u03b7 EFFIS' : ' \u00b7 daily EFFIS update');
+  }
+  function wxNameExpr() { return CUR_LANG === 'el' ? ['get', 'name_el'] : ['get', 'name_en']; }
+  function liveRelabel() {
+    if (map.getLayer('weather-label')) map.setLayoutProperty('weather-label', 'text-field',
+      ['concat', wxNameExpr(), '  ', ['concat', ['to-string', ['round', ['coalesce', ['get', 'temp_c'], 0]]], '\u00b0']]);
+    if (map.getLayer('fwi-label')) map.setLayoutProperty('fwi-label', 'text-field',
+      ['concat', wxNameExpr(), '  FWI ', ['to-string', ['round', ['coalesce', ['get', 'fwi'], 0]]]]);
+  }
+  function fetchLivePoints() {
+    return fetch(LIVE_API + '/weather/points').then(function (r) { return r.json(); }).then(function (d) {
+      var pts = {};
+      (d.points || []).forEach(function (p) { pts[p.point_id] = p; });
+      return pts;
+    });
+  }
+  function liveAddLayers(srcId, circleId, labelId, colorExpr, labelExpr, fc) {
+    function add() {
+      map.addSource(srcId, { type: 'geojson', data: fc });
+      map.addLayer({ id: circleId, type: 'circle', source: srcId,
+        paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 7, 13, 11],
+          'circle-color': colorExpr, 'circle-opacity': 0.95,
+          'circle-stroke-width': 1.5, 'circle-stroke-color': 'rgba(10,22,40,0.6)' } });
+      map.addLayer({ id: labelId, type: 'symbol', source: srcId, minzoom: 8,
+        layout: { 'text-field': labelExpr,
+          'text-size': ['interpolate', ['linear'], ['zoom'], 8, 9.5, 11, 11, 14, 12.5],
+          'text-font': ['Noto Sans Regular'],
+          'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-optional': true },
+        paint: { 'text-color': '#F4EEE0', 'text-halo-color': 'rgba(10,22,40,0.85)', 'text-halo-width': 1.2 } });
+      map.on('click', circleId, function (e) {
+        new maplibregl.Popup({ closeButton: true }).setLngLat(e.lngLat)
+          .setHTML(popupHTML(e.features[0].properties, circleId)).addTo(map);
+      });
+      map.on('mouseenter', circleId, function () { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', circleId, function () { map.getCanvas().style.cursor = ''; });
+    }
+    try { add(); } catch (e) { console.error('live layer defer:', e); map.once('load', add); }
+  }
+  function loadWeather() {
+    if (WX.loaded) return; WX.loaded = true;
+    Promise.all([fetchLivePoints(),
+      fetch(LIVE_API + '/weather/now').then(function (r) { return r.json(); })
+    ]).then(function (res) {
+      var pts = res[0], d = res[1];
+      WX.stamp = (d.points && d.points.length) ? d.points[0].fetched_at : null;
+      var fc = { type: 'FeatureCollection', features: (d.points || []).filter(function (w) { return pts[w.point_id]; }).map(function (w) {
+        var p = pts[w.point_id];
+        return { type: 'Feature', geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
+          properties: { name: p.name_en, name_en: p.name_en, name_el: p.name_el,
+            temp_c: w.temp_c, rh_pct: w.rh_pct, precip_mm: w.precip_mm, wind_ms: w.wind_ms,
+            wind_dir: w.wind_dir, gust_ms: w.gust_ms, cloud_pct: w.cloud_pct, pressure_hpa: w.pressure_hpa,
+            ts: w.ts, fetched_at: w.fetched_at, source: 'Open-Meteo (CC BY 4.0)' } };
+      }) };
+      liveAddLayers('wx-live', 'weather-circle', 'weather-label',
+        ['interpolate', ['linear'], ['coalesce', ['get', 'temp_c'], 15], 0, '#5A6A85', 10, '#7FA89B', 20, '#C9A227', 30, '#D4762C', 38, '#B03A2E'],
+        ['concat', wxNameExpr(), '  ', ['concat', ['to-string', ['round', ['coalesce', ['get', 'temp_c'], 0]]], '\u00b0']], fc);
+      wxFresh();
+    }).catch(function (e) { WX.loaded = false; console.error('weather load failed:', e); wxFresh(); });
+  }
+  function loadFwi() {
+    if (FWIX.loaded) return; FWIX.loaded = true;
+    Promise.all([fetchLivePoints(),
+      fetch(LIVE_API + '/fwi/latest').then(function (r) { return r.json(); })
+    ]).then(function (res) {
+      var pts = res[0], d = res[1];
+      FWIX.meta = { fwi_date: d.fwi_date };
+      var fc = { type: 'FeatureCollection', features: (d.points || []).filter(function (w) { return pts[w.point_id]; }).map(function (w) {
+        var p = pts[w.point_id];
+        return { type: 'Feature', geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
+          properties: { name: p.name_en, name_en: p.name_en, name_el: p.name_el,
+            fwi: w.fwi, fwi_date: d.fwi_date, island_mean: d.island_mean, island_max: d.island_max,
+            source: 'Copernicus EMS / EFFIS', cls: fwiClass(w.fwi || 0) } };
+      }) };
+      liveAddLayers('fwi-live', 'fwi-circle', 'fwi-label',
+        ['match', ['get', 'cls'], 'vlow', FWICOL.vlow, 'low', FWICOL.low, 'mod', FWICOL.mod, 'high', FWICOL.high, 'vhigh', FWICOL.vhigh, FWICOL.ext],
+        ['concat', wxNameExpr(), '  FWI ', ['to-string', ['round', ['coalesce', ['get', 'fwi'], 0]]]], fc);
+      fwiFresh();
+    }).catch(function (e) { FWIX.loaded = false; console.error('fwi load failed:', e); fwiFresh(); });
+  }
+  document.getElementById('tgl-weather').addEventListener('change', function (ev) {
+    if (ev.target.checked) loadWeather();
+    ['weather-circle', 'weather-label'].forEach(function (lid) {
+      if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
+    });
+    riskLegSync();
+  });
+  document.getElementById('tgl-fwi').addEventListener('change', function (ev) {
+    if (ev.target.checked) loadFwi();
+    ['fwi-circle', 'fwi-label'].forEach(function (lid) {
+      if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
+    });
+    riskLegSync();
+  });
+
   // ---- v0.0.7: animated sea-current particles (CMEMS grid via ARGOS API, canvas overlay) ----
   var CUR = { on: false, grids: {}, raw: {}, hours: 48, parts: [], raf: null, canvas: null, ctx: null, loading: false, last: 0, speed: 2400 };
   function curInit() {
@@ -1362,7 +1527,7 @@ map.on('load', function () {
   });
 
   // ---- T106: risk legend panel follows the risk toggles ----
-  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'] ];
+  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'] ];
   function riskLegSync() {
     var any = false;
     RLEGS.forEach(function (p) {
@@ -1429,6 +1594,14 @@ map.on('load', function () {
     'v-currents': {
       en: '<b>How do we know</b><br>Animated streaks are modelled surface currents from Copernicus Marine (Mediterranean, 4 km grid, hourly), refreshed twice daily. Streak direction is the flow direction; longer streaks mean faster water, and colour follows the same scale: steel is slow, teal moderate, gold fast, orange fastest. The time scrubber below the map drives them forward up to 48 h. Modelled offshore currents, not local sea state and not for navigation. Modelled, not observed. No independent validation source exists for Kefalonia waters.',
       el: '<b>Πώς το γνωρίζουμε</b><br>Οι ζωντανές γραμμές είναι μοντελοποιημένα επιφανειακά ρεύματα από την Copernicus Marine (Μεσόγειος, πλέγμα 4 χλμ, ωριαία), με ανανέωση δύο φορές την ημέρα. Η κατεύθυνση της γραμμής είναι η φορά του ρεύματος, μεγαλύτερη γραμμή σημαίνει γρηγορότερο νερό, και το χρώμα ακολουθεί την ίδια κλίμακα: γκρι αργό, τιρκουάζ μέτριο, χρυσό γρήγορο, πορτοκαλί ταχύτερο. Η χρονομηχανή κάτω από τον χάρτη τα οδηγεί έως και 48 ώρες μπροστά. Μοντελοποιημένα ρεύματα ανοιχτής θάλασσας, όχι τοπική κατάσταση θάλασσας, ούτε για πλοήγηση. Μοντελοποιημένα, όχι μετρημένα. Δεν υπάρχει ανεξάρτητη πηγή επικύρωσης για τα ύδατα της Κεφαλονιάς.'
+    },
+    'v-weather': {
+      en: '<b>How do we know</b><br>Hourly modelled weather at 5 points (Argostoli, Sami, Fiskardo, Lixouri and the Ainos summit) from the Open-Meteo forecast API, refreshed hourly at :10 UTC with a rolling 16-day horizon. These are forecast-model values at point locations, not weather-station observations; Ainos shows the altitude effect clearly (it sits at 1,628 m). Popups carry the model timestamp and the last successful sync, and the legend chip shows the data age.<span class="vsrc">Source: Open-Meteo.com (CC BY 4.0) &middot; Category: forecast model, refreshed hourly</span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Ωριαίες μοντελοποιημένες τιμές καιρού σε 5 σημεία (Αργοστόλι, Σάμη, Φισκάρδο, Ληξούρι και η κορυφή του Αίνου) από το μοντέλο πρόγνωσης Open-Meteo, με ανανέωση κάθε ώρα στις :10 UTC και κυλιόμενο ορίζοντα 16 ημερών. Είναι τιμές μοντέλου πρόγνωσης σε σημεία, όχι μετρήσεις μετεωρολογικών σταθμών· ο Αίνος δείχνει καθαρά την επίδραση του υψομέτρου (βρίσκεται στα 1.628 μ.). Τα αναδυόμενα φέρουν την ώρα του μοντέλου και τον τελευταίο επιτυχή συγχρονισμό, και το υπόμνημα δείχνει την ηλικία των δεδομένων.<span class="vsrc">Πηγή: Open-Meteo.com (CC BY 4.0) &middot; Κατηγορία: μοντέλο πρόγνωσης, ωριαία ανανέωση</span>'
+    },
+    'v-fwi': {
+      en: '<b>How do we know</b><br>Daily Fire Weather Index from Copernicus EFFIS (Meteo-France FWI, about 10 km model grid), ingested daily at 03:30 UTC and sampled at the 5 weather points; the island mean and maximum come from the full grid over Kefalonia. The FWI describes fire-weather conditions: it is not an ignition probability, not building-level risk and not a confirmed local emergency. The historical archive is accumulating for later seasonal analysis; seasonal separation seen so far is encouraging but is not independent validation of local predictive accuracy.<span class="vsrc">Source: Copernicus EMS / EFFIS &middot; Category: analytical assessment, refreshed daily</span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Ημερήσιος δείκτης καιρικών συνθηκών πυρκαγιάς FWI από την Copernicus EFFIS (Meteo-France, πλέγμα μοντέλου περίπου 10 χλμ), με λήψη κάθε μέρα στις 03:30 UTC και δειγματοληψία στα 5 σημεία καιρού· ο μέσος όρος και το μέγιστο του νησιού προέρχονται από ολόκληρο το πλέγμα πάνω από την Κεφαλονιά. Ο FWI περιγράφει καιρικές συνθήκες καύσης: δεν είναι πιθανότητα ανάφλεξης, ούτε κίνδυνος σε επίπεδο κτιρίου, ούτε επιβεβαιωμένη τοπική έκτακτη κατάσταση. Το ιστορικό αρχείο συσσωρεύεται για μελλοντική εποχική ανάλυση· η εποχική διαφοροποίηση που έχει παρατηρηθεί είναι ενθαρρυντική αλλά δεν αποτελεί ανεξάρτητη επικύρωση τοπικής προγνωστικής ακρίβειας.<span class="vsrc">Πηγή: Copernicus EMS / EFFIS &middot; Κατηγορία: αναλυτική εκτίμηση, ημερήσια ανανέωση</span>'
     }
   };
   function renderVnotes(lang) {
@@ -1697,8 +1870,17 @@ map.on('load', function () {
 
   // language: remember choice (shared 'argos-lang' key with the landing page)
   var savedLang = 'en';
-  try { savedLang = localStorage.getItem('argos-lang') || 'en'; } catch (e) {}
-  if (savedLang !== 'en') setLang(savedLang);
+  try { savedLang = localStorage.getItem('argos-lang') || ''; } catch (e) {}
+  if (savedLang) { if (savedLang !== 'en') setLang(savedLang); }
+  else if (window.fetch) {
+    // T117-style geo default for direct /map visits: no saved choice -> ask the CF edge; GR opens in Greek.
+    // On the github.io door /geo does not exist; the catch keeps English, fail-quiet.
+    fetch('/geo').then(function (r) { return r.json(); }).then(function (g) {
+      var kept = null;
+      try { kept = localStorage.getItem('argos-lang'); } catch (e) {}
+      if (!kept && g && g.country === 'GR') setLang('el');
+    }).catch(function () {});
+  }
 
   // basemap: remember choice
   var savedBase = 'argos';
@@ -1811,7 +1993,9 @@ setInterval(tickClock, 30000);
     'tgl-flood':    ['Where does heavy rain turn dangerous?', '\u03a0\u03bf\u03cd \u03b7 \u03ad\u03bd\u03c4\u03bf\u03bd\u03b7 \u03b2\u03c1\u03bf\u03c7\u03ae \u03b3\u03af\u03bd\u03b5\u03c4\u03b1\u03b9 \u03b5\u03c0\u03b9\u03ba\u03af\u03bd\u03b4\u03c5\u03bd\u03b7;'],
     'tgl-firecov':  ['Which buildings are beyond 15-minute fire response?', '\u03a0\u03bf\u03b9\u03b1 \u03ba\u03c4\u03af\u03c1\u03b9\u03b1 \u03b5\u03af\u03bd\u03b1\u03b9 \u03c0\u03ad\u03c1\u03b1 \u03b1\u03c0\u03cc 15 \u03bb\u03b5\u03c0\u03c4\u03ac \u03c0\u03c5\u03c1\u03bf\u03c3\u03b2\u03b5\u03c3\u03c4\u03b9\u03ba\u03ae\u03c2 \u03ba\u03ac\u03bb\u03c5\u03c8\u03b7\u03c2;'],
     'tgl-marine':   ['Which beaches face rough seas today?', '\u03a0\u03bf\u03b9\u03b5\u03c2 \u03c0\u03b1\u03c1\u03b1\u03bb\u03af\u03b5\u03c2 \u03b5\u03af\u03bd\u03b1\u03b9 \u03b5\u03ba\u03c4\u03b5\u03b8\u03b5\u03b9\u03bc\u03ad\u03bd\u03b5\u03c2 \u03c3\u03b5 \u03b4\u03c5\u03bd\u03b1\u03c4\u03cc \u03ba\u03cd\u03bc\u03b1 \u03c3\u03ae\u03bc\u03b5\u03c1\u03b1;'],
-    'tgl-currents': ['Where is the water moving, and how fast?', '\u03a0\u03bf\u03cd \u03ba\u03b9\u03bd\u03b5\u03af\u03c4\u03b1\u03b9 \u03c4\u03bf \u03bd\u03b5\u03c1\u03cc \u03ba\u03b1\u03b9 \u03c0\u03cc\u03c3\u03bf \u03b3\u03c1\u03ae\u03b3\u03bf\u03c1\u03b1;']
+    'tgl-currents': ['Where is the water moving, and how fast?', '\u03a0\u03bf\u03cd \u03ba\u03b9\u03bd\u03b5\u03af\u03c4\u03b1\u03b9 \u03c4\u03bf \u03bd\u03b5\u03c1\u03cc \u03ba\u03b1\u03b9 \u03c0\u03cc\u03c3\u03bf \u03b3\u03c1\u03ae\u03b3\u03bf\u03c1\u03b1;'],
+    'tgl-weather': ['What is the weather doing right now?', '\u03a4\u03b9 \u03ba\u03b1\u03b9\u03c1\u03cc \u03ba\u03ac\u03bd\u03b5\u03b9 \u03c4\u03ce\u03c1\u03b1;'],
+    'tgl-fwi': ['How fire-prone is today\'s weather?', '\u03a0\u03cc\u03c3\u03bf \u03b5\u03c5\u03bd\u03bf\u03b5\u03af \u03c6\u03c9\u03c4\u03b9\u03ac \u03bf \u03c3\u03b7\u03bc\u03b5\u03c1\u03b9\u03bd\u03cc\u03c2 \u03ba\u03b1\u03b9\u03c1\u03cc\u03c2;']
   };
   function applyTips() {
     var roads = document.getElementById('m-row-roads');
