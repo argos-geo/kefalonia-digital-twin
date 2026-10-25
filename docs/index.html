@@ -1411,39 +1411,83 @@ map.on('load', function () {
   });
 
   // ---- v0.3.0: earthquakes (EMSC-CSEM SeismicPortal via /field/quakes.json) ----
-  var QK = { loaded: false, stamp: null };
+  var QK = { loaded: false, stamp: null, timer: null, raf: null };
+  var QK_REFRESH_MS = 120000; // map refetches every 2 min; VM cron repolls EMSC every 2 min
   function quakeFresh() {
     var el = document.getElementById('m-leg-fresh-qk');
     if (!el) return;
     if (!QK.stamp) { el.textContent = CUR_LANG === 'el' ? 'Ενημέρωση: --' : 'updated: --'; return; }
     el.textContent = (CUR_LANG === 'el' ? 'Ενημερώθηκε ' : 'Updated ') + liveAgo(QK.stamp) + ' · EMSC-CSEM';
   }
+  function quakeFC(d) {
+    var nowMs = Date.now();
+    return { type: 'FeatureCollection', features: (d.events || []).map(function (e) {
+      return { type: 'Feature', geometry: { type: 'Point', coordinates: [e.lon, e.lat] },
+        properties: { name: 'M ' + e.mag + ' · ' + (e.region || ''), qtime: e.time, mag: e.mag,
+          depth_km: e.depth_km, region: e.region, auth: e.auth,
+          age_h: Math.max(0, (nowMs - new Date(e.time).getTime()) / 3600000),
+          source: 'EMSC-CSEM SeismicPortal (CC BY 4.0)' } };
+    }) };
+  }
+  function quakePulseStart() {
+    if (QK.raf || !map.getLayer('quakes-pulse')) return;
+    var raf = window.requestAnimationFrame || function (f) { return setTimeout(f, 50); };
+    var step = function () {
+      QK.raf = null;
+      if (!map.getLayer('quakes-pulse') || !document.getElementById('tgl-quakes').checked) return;
+      if (!document.hidden) {
+        var ph = (Date.now() % 1800) / 1800;
+        try {
+          map.setPaintProperty('quakes-pulse', 'circle-opacity', 0.75 * (1 - ph));
+          map.setPaintProperty('quakes-pulse', 'circle-radius',
+            ['interpolate', ['linear'], ['coalesce', ['get', 'mag'], 3], 3, 7 + ph * 11, 4, 9 + ph * 13, 5, 12 + ph * 15]);
+        } catch (e) {}
+      }
+      QK.raf = raf(step);
+    };
+    QK.raf = raf(step);
+  }
+  function quakePulseStop() {
+    if (QK.raf) { (window.cancelAnimationFrame || clearTimeout)(QK.raf); QK.raf = null; }
+  }
+  function quakePaint() {
+    return { 'circle-radius': ['interpolate', ['linear'], ['coalesce', ['get', 'mag'], 2.5], 2.5, 4, 3.5, 6, 4.5, 9, 5.5, 13],
+      'circle-color': '#E0452E', 'circle-opacity': 0.85,
+      'circle-stroke-width': 1.2, 'circle-stroke-color': 'rgba(255,240,220,0.75)' };
+  }
   function loadQuakes() {
-    if (QK.loaded) return; QK.loaded = true;
     fetch(FIELD_API + '/quakes.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
       QK.stamp = d.generated_at;
-      var fc = { type: 'FeatureCollection', features: (d.events || []).map(function (e) {
-        return { type: 'Feature', geometry: { type: 'Point', coordinates: [e.lon, e.lat] },
-          properties: { name: 'M ' + e.mag + ' · ' + (e.region || ''), qtime: e.time, mag: e.mag,
-            depth_km: e.depth_km, region: e.region, auth: e.auth,
-            source: 'EMSC-CSEM SeismicPortal (CC BY 4.0)' } };
-      }) };
+      var fc = quakeFC(d);
+      var src = map.getSource('quakes-live');
+      if (src && src.setData) { src.setData(fc); quakeFresh(); return; }
       function add() {
         map.addSource('quakes-live', { type: 'geojson', data: fc });
-        map.addLayer({ id: 'quakes-circle', type: 'circle', source: 'quakes-live',
-          paint: { 'circle-radius': ['interpolate', ['linear'], ['coalesce', ['get', 'mag'], 2.5], 2.5, 4, 3.5, 6, 4.5, 9, 5.5, 13],
-            'circle-color': '#E0452E', 'circle-opacity': 0.85,
-            'circle-stroke-width': 1.2, 'circle-stroke-color': 'rgba(255,240,220,0.75)' } });
+        // pulsing halo: only M>=3 and younger than 48 h
+        map.addLayer({ id: 'quakes-pulse', type: 'circle', source: 'quakes-live',
+          filter: ['all', ['>=', ['coalesce', ['get', 'mag'], 0], 3], ['<=', ['coalesce', ['get', 'age_h'], 999], 48]],
+          paint: { 'circle-radius': 10, 'circle-color': '#FF5A3C', 'circle-opacity': 0.4 } });
+        map.addLayer({ id: 'quakes-circle', type: 'circle', source: 'quakes-live', paint: quakePaint() });
         map.on('mouseenter', 'quakes-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', 'quakes-circle', function () { map.getCanvas().style.cursor = ''; });
       }
       try { add(); } catch (e) { console.error('quakes layer defer:', e); map.once('load', add); }
       quakeFresh();
-    }).catch(function (e) { QK.loaded = false; console.error('quakes load failed:', e); quakeFresh(); });
+      quakePulseStart();
+    }).catch(function (e) { console.error('quakes load failed:', e); quakeFresh(); });
   }
   document.getElementById('tgl-quakes').addEventListener('change', function (ev) {
-    if (ev.target.checked) loadQuakes();
-    if (map.getLayer('quakes-circle')) map.setLayoutProperty('quakes-circle', 'visibility', ev.target.checked ? 'visible' : 'none');
+    if (ev.target.checked) {
+      loadQuakes();
+      if (!QK.timer) QK.timer = setInterval(loadQuakes, QK_REFRESH_MS);
+      quakePulseStart();
+    } else {
+      if (QK.timer) { clearInterval(QK.timer); QK.timer = null; }
+      quakePulseStop();
+    }
+    ['quakes-circle', 'quakes-pulse'].forEach(function (lid) {
+      if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
+    });
     riskLegSync();
   });
 
