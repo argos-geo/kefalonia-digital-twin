@@ -87,6 +87,8 @@
   .ptitle { font-family:'Space Grotesk','Inter',sans-serif; color:#C9A227; font-size:12px; margin-bottom:6px; letter-spacing:0.08em; }
   .ptable td { padding:1px 6px 1px 0; vertical-align:top; }
   .ptable td.k { color:#8A9AB0; }
+  .psep { border-top:1px solid rgba(201,162,39,0.35); margin:8px 0 2px; }
+  .pmore { margin-top:6px; font-size:10px; color:#8A9AB0; }
   #ask {
     position:relative; width:auto; flex:0 0 auto; max-height:46%; overflow-y:auto;
     background:rgba(15,29,51,0.93); border:1px solid #8A7A3A; border-radius:10px;
@@ -322,6 +324,10 @@
   <div class="vnote" id="v-weather"></div>
   <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-fwi"> <span id="m-row-fwi">Fire weather index (FWI)</span></label><button class="pinfo" type="button" data-v="v-fwi" aria-label="How do we know">i</button></div>
   <div class="vnote" id="v-fwi"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-wxfield"> <span id="m-row-wxfield">Temperature field (island)</span></label><button class="pinfo" type="button" data-v="v-wxfield" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-wxfield"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-fwifield"> <span id="m-row-fwifield">FWI field (EFFIS grid)</span></label><button class="pinfo" type="button" data-v="v-fwifield" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-fwifield"></div>
   <div class="sect" id="m-sect-legend">Legend</div>
   <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
   <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
@@ -399,6 +405,16 @@
     <div class="rleg-h" id="m-leg-g7">Fire weather index</div>
     <div class="leg"><span class="sw" style="background:linear-gradient(90deg,#7FA89B,#A9C46B,#C9A227,#D4762C,#B03A2E,#7B2D8E); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-fwi1">FWI: low to extreme (EFFIS scale)</span></div>
     <div class="leg"><span id="m-leg-fresh-fwi" style="font-style:italic; opacity:0.8;">--</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-wxfield">
+    <div class="rleg-h" id="m-leg-g8">Temperature field</div>
+    <div class="leg"><span class="sw" style="background:linear-gradient(90deg,#5AA0D2,#8CC8A0,#E6E682,#F5BE50,#DC5A32,#8C143C); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-wxf1">colour = model temperature, ~2 km cells</span></div>
+    <div class="leg"><span id="m-leg-fresh-wxf" style="font-style:italic; opacity:0.8;">--</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-fwifield">
+    <div class="rleg-h" id="m-leg-g9">FWI field</div>
+    <div class="leg"><span class="sw" style="background:linear-gradient(90deg,#7FA89B,#A9C46B,#C9A227,#D4762C,#B03A2E,#7B2D8E); height:3px; border-radius:2px; margin-top:6px;"></span><span id="m-leg-fwif1">official EFFIS classes, ~10 km cells</span></div>
+    <div class="leg"><span id="m-leg-fresh-fwif" style="font-style:italic; opacity:0.8;">--</span></div>
   </div>
 </div>
 <div id="marinectl" style="display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:25; background:rgba(10,22,40,0.88); border:1px solid rgba(201,162,39,0.55); border-radius:9px; padding:8px 12px; color:#F4EEE0; font-size:11px; align-items:center; gap:10px; max-width:92vw;">
@@ -682,6 +698,9 @@ map.on('load', function () {
       'm-sect-live': 'Live', 'm-row-weather': 'Weather now (model)', 'm-row-fwi': 'Fire weather index (FWI)',
       'm-leg-g6': 'Live weather', 'm-leg-wx1': '5 points, colour = temperature',
       'm-leg-g7': 'Fire weather index', 'm-leg-fwi1': 'FWI: low to extreme (EFFIS scale)',
+      'm-row-wxfield': 'Temperature field (island)', 'm-row-fwifield': 'FWI field (EFFIS grid)',
+      'm-leg-g8': 'Temperature field', 'm-leg-wxf1': 'colour = model temperature, ~2 km cells',
+      'm-leg-g9': 'FWI field', 'm-leg-fwif1': 'official EFFIS classes, ~10 km cells',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
@@ -722,6 +741,9 @@ map.on('load', function () {
       'm-sect-live': 'Ζωντανά', 'm-row-weather': 'Καιρός τώρα (μοντέλο)', 'm-row-fwi': 'Δείκτης καιρικών συνθηκών πυρκαγιάς (FWI)',
       'm-leg-g6': 'Καιρός (ζωντανά)', 'm-leg-wx1': '5 σημεία, χρώμα = θερμοκρασία',
       'm-leg-g7': 'Δείκτης FWI', 'm-leg-fwi1': 'FWI: χαμηλός έως ακραίος (κλίμακα EFFIS)',
+      'm-row-wxfield': 'Πεδίο θερμοκρασίας (νησί)', 'm-row-fwifield': 'Πεδίο FWI (πλέγμα EFFIS)',
+      'm-leg-g8': 'Πεδίο θερμοκρασίας', 'm-leg-wxf1': 'χρώμα = θερμοκρασία μοντέλου, κελιά ~2 χλμ',
+      'm-leg-g9': 'Πεδίο FWI', 'm-leg-fwif1': 'επίσημες κλάσεις EFFIS, κελιά ~10 χλμ',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
@@ -895,6 +917,8 @@ map.on('load', function () {
     if (typeof marineFresh === 'function') marineFresh();
     if (typeof wxFresh === 'function') wxFresh();
     if (typeof fwiFresh === 'function') fwiFresh();
+    if (typeof wxFieldFresh === 'function') wxFieldFresh();
+    if (typeof fwiFieldFresh === 'function') fwiFieldFresh();
     if (typeof liveRelabel === 'function') liveRelabel();
     if (typeof demoState !== 'undefined' && demoState.q) renderAnswer();
   }
@@ -947,16 +971,57 @@ map.on('load', function () {
     return '<div class="ptitle">' + title + '</div><table class="ptable">' + rows + '</table>';
   }
   var CLICKABLE = ['pois-circle', 'beaches-circle', 'beaches-fill',
-                   'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track'];
+                   'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track',
+                   'weather-circle', 'fwi-circle', 'marine-circle', 'marine-beach-fill'];
+  // most specific / demo-relevant first when several layers stack at one point
+  var CLICK_PRIORITY = ['weather-circle', 'fwi-circle', 'marine-circle', 'pois-circle',
+                        'beaches-circle', 'marine-beach-fill', 'beaches-fill',
+                        'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track'];
   CLICKABLE.forEach(function (lid) {
-    map.on('click', lid, function (e) {
-      new maplibregl.Popup({ closeButton: true })
-        .setLngLat(e.lngLat)
-        .setHTML(popupHTML(e.features[0].properties, lid))
-        .addTo(map);
-    });
+    if (!map.getLayer(lid)) return; // live/marine layers register their own cursor handlers
     map.on('mouseenter', lid, function () { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', lid, function () { map.getCanvas().style.cursor = ''; });
+  });
+  // single shared click coordinator: one popup per click, all hit layers as sections
+  function marinePropsFor(osmId) {
+    if (typeof marineData === 'undefined' || !marineData.length) return null;
+    var d = null;
+    for (var i = 0; i < marineData.length; i++) { if (marineData[i].osm_id === osmId) d = marineData[i]; }
+    if (!d) return null;
+    var now = d.hrs[Math.min(marineHour, d.hrs.length - 1)];
+    return { name: d.name, name_en: d.name, name_el: d.local_name || d.name,
+      exposure_now: now.exposure, max48: d.peak.exposure,
+      peak_at: new Date(d.peak.valid_time).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
+      vhm0_now: now.vhm0, run_ts: d.cmems_run, cls: marineClass(now.exposure || 0) };
+  }
+  map.on('click', function (e) {
+    var present = CLICKABLE.filter(function (lid) { return map.getLayer(lid); });
+    if (!present.length) return;
+    var feats = map.queryRenderedFeatures(e.point, { layers: present });
+    if (!feats || !feats.length) return;
+    feats.sort(function (a, b) {
+      return CLICK_PRIORITY.indexOf(a.layer.id) - CLICK_PRIORITY.indexOf(b.layer.id);
+    });
+    var seen = {}, sections = [];
+    feats.forEach(function (f) {
+      var lid = f.layer.id, props = f.properties;
+      if (lid === 'marine-beach-fill') {
+        props = marinePropsFor(props.osm_id);
+        if (!props) return;
+        lid = 'marine-circle';
+      }
+      var key = lid + '|' + (props[nameProp()] || props.name || '');
+      if (seen[key]) return;
+      seen[key] = 1;
+      sections.push(popupHTML(props, lid));
+    });
+    if (!sections.length) return;
+    var html = sections.slice(0, 3).join('<div class="psep"></div>');
+    if (sections.length > 3) html += '<div class="pmore">' + (CUR_LANG === 'el'
+      ? '+ ' + (sections.length - 3) + ' ακόμη στοιχεία σε αυτό το σημείο'
+      : '+ ' + (sections.length - 3) + ' more features at this spot') + '</div>';
+    new maplibregl.Popup({ closeButton: true, maxWidth: '320px' })
+      .setLngLat(e.lngLat).setHTML(html).addTo(map);
   });
 
   var TOGGLES = {
@@ -1114,29 +1179,9 @@ map.on('load', function () {
           },
           paint: { 'text-color': '#F4EEE0', 'text-halo-color': 'rgba(10,22,40,0.85)', 'text-halo-width': 1.2 }
         });
-        map.on('click', 'marine-circle', function (e) {
-          new maplibregl.Popup({ closeButton: true })
-            .setLngLat(e.lngLat)
-            .setHTML(popupHTML(e.features[0].properties, 'marine-circle'))
-            .addTo(map);
-        });
         map.on('mouseenter', 'marine-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', 'marine-circle', function () { map.getCanvas().style.cursor = ''; });
         map.setPaintProperty('marine-beach-fill', 'fill-color', marineFillExpr());
-        map.on('click', 'marine-beach-fill', function (e) {
-          var oid = e.features[0].properties.osm_id;
-          var d = null;
-          for (var i = 0; i < marineData.length; i++) { if (marineData[i].osm_id === oid) d = marineData[i]; }
-          if (!d) return;
-          var now = d.hrs[Math.min(marineHour, d.hrs.length - 1)];
-          new maplibregl.Popup({ closeButton: true })
-            .setLngLat(e.lngLat)
-            .setHTML(popupHTML({ name: d.name, name_en: d.name, name_el: d.local_name || d.name,
-              exposure_now: now.exposure, max48: d.peak.exposure,
-              peak_at: new Date(d.peak.valid_time).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
-              vhm0_now: now.vhm0, run_ts: d.cmems_run, cls: marineClass(now.exposure || 0) }, 'marine-circle'))
-            .addTo(map);
-        });
         marineUpdateTime();
         marineFresh();
         if (document.getElementById('tgl-marine').checked) document.getElementById('marinectl').style.display = 'flex';
@@ -1225,10 +1270,6 @@ map.on('load', function () {
           'text-font': ['Noto Sans Regular'],
           'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-optional': true },
         paint: { 'text-color': '#F4EEE0', 'text-halo-color': 'rgba(10,22,40,0.85)', 'text-halo-width': 1.2 } });
-      map.on('click', circleId, function (e) {
-        new maplibregl.Popup({ closeButton: true }).setLngLat(e.lngLat)
-          .setHTML(popupHTML(e.features[0].properties, circleId)).addTo(map);
-      });
       map.on('mouseenter', circleId, function () { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', circleId, function () { map.getCanvas().style.cursor = ''; });
     }
@@ -1287,6 +1328,65 @@ map.on('load', function () {
     ['fwi-circle', 'fwi-label'].forEach(function (lid) {
       if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
     });
+    riskLegSync();
+  });
+
+  // ---- v0.3.0: continuous field overlays (server-rendered rasters via /field/) ----
+  var FIELD_API = LIVE_API + '/field';
+  var WXF = { stamp: null };
+  var FWIF = { meta: null };
+  var WXF_COORDS = [[20.28, 38.58], [20.88, 38.58], [20.88, 38.03], [20.28, 38.03]];
+  var FWIF_COORDS = [[20.28, 38.55], [20.88, 38.55], [20.88, 38.03], [20.28, 38.03]];
+  function fieldShow(srcId, layerId, pngUrl, coords, opacity) {
+    function add() {
+      var url = pngUrl + '?t=' + Date.now(); // bypass CDN cache; server sends no-store
+      var s = map.getSource(srcId);
+      if (s && s.updateImage) { s.updateImage({ url: url, coordinates: coords }); }
+      else if (!s) { map.addSource(srcId, { type: 'image', url: url, coordinates: coords }); }
+      if (!map.getLayer(layerId)) {
+        var before = map.getLayer('roads-main') ? 'roads-main' : undefined;
+        map.addLayer({ id: layerId, type: 'raster', source: srcId,
+          paint: { 'raster-opacity': opacity, 'raster-resampling': 'linear', 'raster-fade-duration': 0 } }, before);
+      }
+      map.setLayoutProperty(layerId, 'visibility', 'visible');
+    }
+    try { add(); } catch (e) { console.error('field layer defer:', e); map.once('load', add); }
+  }
+  function wxFieldFresh() {
+    var el = document.getElementById('m-leg-fresh-wxf');
+    if (!el) return;
+    if (!WXF.stamp) { el.textContent = CUR_LANG === 'el' ? 'Ενημέρωση: --' : 'updated: --'; return; }
+    el.textContent = (CUR_LANG === 'el' ? 'Ενημερώθηκε ' : 'Updated ') + liveAgo(WXF.stamp) +
+      (CUR_LANG === 'el' ? ' · Open-Meteo, κελιά ~2 χλμ' : ' · Open-Meteo, ~2 km cells');
+  }
+  function fwiFieldFresh() {
+    var el = document.getElementById('m-leg-fresh-fwif');
+    if (!el) return;
+    if (!FWIF.meta) { el.textContent = CUR_LANG === 'el' ? 'Ενημέρωση: --' : 'updated: --'; return; }
+    el.textContent = (CUR_LANG === 'el' ? 'Ημέρα μοντέλου ' : 'Model day ') + FWIF.meta.fwi_date +
+      (CUR_LANG === 'el' ? ' · EFFIS, κελιά ~10 χλμ' : ' · EFFIS, ~10 km cells') +
+      (FWIF.meta.fallback_to_yesterday ? (CUR_LANG === 'el' ? ' (χθεσινή)' : ' (yesterday)') : '');
+  }
+  document.getElementById('tgl-wxfield').addEventListener('change', function (ev) {
+    if (ev.target.checked) {
+      fetch(FIELD_API + '/weather_field.json').then(function (r) { return r.json(); }).then(function (m) {
+        WXF.stamp = m.generated_at; wxFieldFresh();
+        fieldShow('wxfield', 'wxfield-img', FIELD_API + '/weather_field.png', WXF_COORDS, 0.55);
+      }).catch(function (e) { console.error('wxfield meta failed:', e); wxFieldFresh(); });
+    } else if (map.getLayer('wxfield-img')) {
+      map.setLayoutProperty('wxfield-img', 'visibility', 'none');
+    }
+    riskLegSync();
+  });
+  document.getElementById('tgl-fwifield').addEventListener('change', function (ev) {
+    if (ev.target.checked) {
+      fetch(FIELD_API + '/fwi_field.json').then(function (r) { return r.json(); }).then(function (m) {
+        FWIF.meta = m; fwiFieldFresh();
+        fieldShow('fwifield', 'fwifield-img', FIELD_API + '/fwi_field_fwi.png', FWIF_COORDS, 0.6);
+      }).catch(function (e) { console.error('fwifield meta failed:', e); fwiFieldFresh(); });
+    } else if (map.getLayer('fwifield-img')) {
+      map.setLayoutProperty('fwifield-img', 'visibility', 'none');
+    }
     riskLegSync();
   });
 
@@ -1527,7 +1627,7 @@ map.on('load', function () {
   });
 
   // ---- T106: risk legend panel follows the risk toggles ----
-  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'] ];
+  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'], ['tgl-wxfield', 'rleg-wxfield'], ['tgl-fwifield', 'rleg-fwifield'] ];
   function riskLegSync() {
     var any = false;
     RLEGS.forEach(function (p) {
@@ -1602,6 +1702,14 @@ map.on('load', function () {
     'v-fwi': {
       en: '<b>How do we know</b><br>Daily Fire Weather Index from Copernicus EFFIS (Meteo-France FWI, about 10 km model grid), ingested daily at 03:30 UTC and sampled at the 5 weather points; the island mean and maximum come from the full grid over Kefalonia. The FWI describes fire-weather conditions: it is not an ignition probability, not building-level risk and not a confirmed local emergency. The historical archive is accumulating for later seasonal analysis; seasonal separation seen so far is encouraging but is not independent validation of local predictive accuracy.<span class="vsrc">Source: Copernicus EMS / EFFIS &middot; Category: analytical assessment, refreshed daily</span>',
       el: '<b>Πώς το γνωρίζουμε</b><br>Ημερήσιος δείκτης καιρικών συνθηκών πυρκαγιάς FWI από την Copernicus EFFIS (Meteo-France, πλέγμα μοντέλου περίπου 10 χλμ), με λήψη κάθε μέρα στις 03:30 UTC και δειγματοληψία στα 5 σημεία καιρού· ο μέσος όρος και το μέγιστο του νησιού προέρχονται από ολόκληρο το πλέγμα πάνω από την Κεφαλονιά. Ο FWI περιγράφει καιρικές συνθήκες καύσης: δεν είναι πιθανότητα ανάφλεξης, ούτε κίνδυνος σε επίπεδο κτιρίου, ούτε επιβεβαιωμένη τοπική έκτακτη κατάσταση. Το ιστορικό αρχείο συσσωρεύεται για μελλοντική εποχική ανάλυση· η εποχική διαφοροποίηση που έχει παρατηρηθεί είναι ενθαρρυντική αλλά δεν αποτελεί ανεξάρτητη επικύρωση τοπικής προγνωστικής ακρίβειας.<span class="vsrc">Πηγή: Copernicus EMS / EFFIS &middot; Κατηγορία: αναλυτική εκτίμηση, ημερήσια ανανέωση</span>'
+    },
+    'v-wxfield': {
+      en: '<b>How do we know</b><br>A continuous temperature surface for the whole island, rendered hourly on our server from the Open-Meteo forecast model at its native downscaled resolution of about 2 km (575 cells over Kefalonia). The colours follow the same ramp as the 5 weather points. This is a model field, not a network of thermometers: values between towns come from the model itself, not from interpolation between stations. The smooth colour changes are real model gradients (altitude, sea breeze), but detail finer than about 2 km does not exist in the data.<span class="vsrc">Source: Open-Meteo.com (CC BY 4.0) &middot; Category: forecast model, refreshed hourly</span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Συνεχής επιφάνεια θερμοκρασίας για όλο το νησί, αποτυπωμένη κάθε ώρα στον διακομιστή μας από το μοντέλο πρόγνωσης Open-Meteo στην εγγενή ανάλυσή του περίπου 2 χλμ (575 κελιά πάνω από την Κεφαλονιά). Τα χρώματα ακολουθούν την ίδια κλίμακα με τα 5 σημεία καιρού. Είναι πεδίο μοντέλου, όχι δίκτυο θερμομέτρων: οι τιμές ανάμεσα στις πόλεις προέρχονται από το ίδιο το μοντέλο, όχι από παρεμβολή μεταξύ σταθμών. Οι ομαλές αλλαγές χρώματος είναι πραγματικές κλίσεις του μοντέλου (υψόμετρο, θαλάσσια αύρα), αλλά λεπτομέρεια μικρότερη από περίπου 2 χλμ δεν υπάρχει στα δεδομένα.<span class="vsrc">Πηγή: Open-Meteo.com (CC BY 4.0) &middot; Κατηγορία: μοντέλο πρόγνωσης, ωριαία ανανέωση</span>'
+    },
+    'v-fwifield': {
+      en: '<b>How do we know</b><br>The real EFFIS Fire Weather Index grid (Copernicus EMS, Meteo-France, about 10 km cells), fetched daily and shown exactly as published: blocky is honest. Each cell carries the official EFFIS class colours from very low (green) to extreme (purple). The FWI describes fire-weather conditions: it is not an ignition probability, not building-level risk and not a confirmed local emergency. We also archive the ISI (spread speed) and DC (deep dryness) sub-indices daily for later analysis.<span class="vsrc">Source: Copernicus EMS / EFFIS &middot; Category: analytical assessment, refreshed daily</span>',
+      el: '<b>Πώς το γνωρίζουμε</b><br>Το πραγματικό πλέγμα FWI της EFFIS (Copernicus EMS, Meteo-France, κελιά περίπου 10 χλμ), με ημερήσια λήψη και απεικόνιση ακριβώς όπως δημοσιεύεται: τα τετράγωνα είναι η ειλικρινής ανάλυση. Κάθε κελί φέρει τα επίσημα χρώματα κλάσεων EFFIS από πολύ χαμηλή (πράσινο) έως ακραία (μοβ). Ο FWI περιγράφει καιρικές συνθήκες καύσης: δεν είναι πιθανότητα ανάφλεξης, ούτε κίνδυνος σε επίπεδο κτιρίου, ούτε επιβεβαιωμένη τοπική έκτακτη κατάσταση. Αρχειοθετούμε επίσης καθημερινά τους υποδείκτες ISI (ταχύτητα εξάπλωσης) και DC (βάθος ξηρασίας) για μελλοντική ανάλυση.<span class="vsrc">Πηγή: Copernicus EMS / EFFIS &middot; Κατηγορία: αναλυτική εκτίμηση, ημερήσια ανανέωση</span>'
     }
   };
   function renderVnotes(lang) {
@@ -1995,7 +2103,9 @@ setInterval(tickClock, 30000);
     'tgl-marine':   ['Which beaches face rough seas today?', '\u03a0\u03bf\u03b9\u03b5\u03c2 \u03c0\u03b1\u03c1\u03b1\u03bb\u03af\u03b5\u03c2 \u03b5\u03af\u03bd\u03b1\u03b9 \u03b5\u03ba\u03c4\u03b5\u03b8\u03b5\u03b9\u03bc\u03ad\u03bd\u03b5\u03c2 \u03c3\u03b5 \u03b4\u03c5\u03bd\u03b1\u03c4\u03cc \u03ba\u03cd\u03bc\u03b1 \u03c3\u03ae\u03bc\u03b5\u03c1\u03b1;'],
     'tgl-currents': ['Where is the water moving, and how fast?', '\u03a0\u03bf\u03cd \u03ba\u03b9\u03bd\u03b5\u03af\u03c4\u03b1\u03b9 \u03c4\u03bf \u03bd\u03b5\u03c1\u03cc \u03ba\u03b1\u03b9 \u03c0\u03cc\u03c3\u03bf \u03b3\u03c1\u03ae\u03b3\u03bf\u03c1\u03b1;'],
     'tgl-weather': ['What is the weather doing right now?', '\u03a4\u03b9 \u03ba\u03b1\u03b9\u03c1\u03cc \u03ba\u03ac\u03bd\u03b5\u03b9 \u03c4\u03ce\u03c1\u03b1;'],
-    'tgl-fwi': ['How fire-prone is today\'s weather?', '\u03a0\u03cc\u03c3\u03bf \u03b5\u03c5\u03bd\u03bf\u03b5\u03af \u03c6\u03c9\u03c4\u03b9\u03ac \u03bf \u03c3\u03b7\u03bc\u03b5\u03c1\u03b9\u03bd\u03cc\u03c2 \u03ba\u03b1\u03b9\u03c1\u03cc\u03c2;']
+    'tgl-fwi': ['How fire-prone is today\'s weather?', '\u03a0\u03cc\u03c3\u03bf \u03b5\u03c5\u03bd\u03bf\u03b5\u03af \u03c6\u03c9\u03c4\u03b9\u03ac \u03bf \u03c3\u03b7\u03bc\u03b5\u03c1\u03b9\u03bd\u03cc\u03c2 \u03ba\u03b1\u03b9\u03c1\u03cc\u03c2;'],
+    'tgl-wxfield': ['Temperature across the whole island, not just towns', '\u0398\u03b5\u03c1\u03bc\u03bf\u03ba\u03c1\u03b1\u03c3\u03af\u03b1 \u03c3\u03b5 \u03cc\u03bb\u03bf \u03c4\u03bf \u03bd\u03b7\u03c3\u03af, \u03cc\u03c7\u03b9 \u03bc\u03cc\u03bd\u03bf \u03c3\u03c4\u03b9\u03c2 \u03c0\u03cc\u03bb\u03b5\u03b9\u03c2'],
+    'tgl-fwifield': ['The real EFFIS fire-weather grid, exactly as published', '\u03a4\u03bf \u03c0\u03c1\u03b1\u03b3\u03bc\u03b1\u03c4\u03b9\u03ba\u03cc \u03c0\u03bb\u03ad\u03b3\u03bc\u03b1 \u03ba\u03b1\u03b9\u03c1\u03bf\u03c0\u03c5\u03c1\u03b9\u03ba\u03ae\u03c2 \u03ba\u03b1\u03c4\u03ac\u03c3\u03c4\u03b1\u03c3\u03b7\u03c2 \u03c4\u03b7\u03c2 EFFIS, \u03cc\u03c0\u03c9\u03c2 \u03b4\u03b7\u03bc\u03bf\u03c3\u03b9\u03b5\u03cd\u03b5\u03c4\u03b1\u03b9']
   };
   function applyTips() {
     var roads = document.getElementById('m-row-roads');
