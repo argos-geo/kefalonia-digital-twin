@@ -847,7 +847,8 @@ map.on('load', function () {
       source: 'Source',
       peak_at: 'Peak at', vhm0_now: 'Wave height now', run_ts: 'Model data age',
       qtime: 'Origin time', mag: 'Magnitude', depth_km: 'Depth', region: 'Region', auth: 'Reported by',
-      ems_code: 'Activation', ems_status: 'Status', act_time: 'Activated', products: 'Map products'
+      ems_code: 'Activation', ems_status: 'Status', act_time: 'Activated', products: 'Map products',
+      aoi_name: 'Area of interest', notation: 'Classification', obj_desc: 'Object', area_ha: 'Area', event_type: 'Event type'
     },
     el: {
       name: 'Όνομα', road_class: 'Κατηγορία δρόμου', osm_highway: 'Τύπος OSM',
@@ -865,7 +866,8 @@ map.on('load', function () {
       source: 'Πηγή',
       peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα', run_ts: 'Ηλικία δεδομένων',
       qtime: 'Χρόνος', mag: 'Μέγεθος', depth_km: 'Βάθος', region: 'Περιοχή', auth: 'Αναφορά από',
-      ems_code: 'Ενεργοποίηση', ems_status: 'Κατάσταση', act_time: 'Ενεργοποιήθηκε', products: 'Χαρτογραφικά προϊόντα'
+      ems_code: 'Ενεργοποίηση', ems_status: 'Κατάσταση', act_time: 'Ενεργοποιήθηκε', products: 'Χαρτογραφικά προϊόντα',
+      aoi_name: 'Περιοχή ενδιαφέροντος', notation: 'Ταξινόμηση', obj_desc: 'Αντικείμενο', area_ha: 'Έκταση', event_type: 'Τύπος συμβάντος'
     }
   };
 
@@ -1013,6 +1015,8 @@ map.on('load', function () {
       return el ? ('πριν ' + ah + ' ώ') : (ah + ' h ago');
     }
     if (key === 'fwi' || key === 'island_mean' || key === 'island_max') return Math.round(val * 10) / 10;
+    if (key === 'area_ha') return (Math.round(val * 10) / 10).toLocaleString(el ? 'el-GR' : 'en-GB') + ' ha';
+    if (key === 'event_type') { var s = String(val); var di = s.indexOf('-'); return di > 0 ? s.slice(di + 1) : s; }
     if (key === 'mag') return 'M ' + (Math.round(val * 10) / 10);
     if (key === 'depth_km') return Math.round(val) + (el ? ' χλμ' : ' km');
     if (key === 'qtime') {
@@ -1047,9 +1051,9 @@ map.on('load', function () {
   var CLICKABLE = ['pois-circle', 'beaches-circle', 'beaches-fill',
                    'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track',
                    'weather-circle', 'fwi-circle', 'marine-circle', 'marine-beach-fill',
-                   'quakes-circle', 'ems-circle'];
+                   'quakes-circle', 'ems-circle', 'ems-aoi-fill'];
   // most specific / demo-relevant first when several layers stack at one point
-  var CLICK_PRIORITY = ['quakes-circle', 'ems-circle', 'weather-circle', 'fwi-circle', 'marine-circle', 'pois-circle',
+  var CLICK_PRIORITY = ['quakes-circle', 'ems-circle', 'ems-aoi-fill', 'weather-circle', 'fwi-circle', 'marine-circle', 'pois-circle',
                         'beaches-circle', 'marine-beach-fill', 'beaches-fill',
                         'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track'];
   CLICKABLE.forEach(function (lid) {
@@ -1623,13 +1627,48 @@ map.on('load', function () {
   document.getElementById('tgl-ems').addEventListener('change', function (ev) {
     if (ev.target.checked) {
       loadEMS();
+      loadEMSAois();
       if (!EMS.timer) EMS.timer = setInterval(loadEMS, EMS_REFRESH_MS);
     } else {
       if (EMS.timer) { clearInterval(EMS.timer); EMS.timer = null; }
     }
     if (map.getLayer('ems-circle')) map.setLayoutProperty('ems-circle', 'visibility', ev.target.checked ? 'visible' : 'none');
+    ['ems-aoi-fill', 'ems-aoi-line'].forEach(function (lid) {
+      if (map.getLayer(lid)) map.setLayoutProperty(lid, 'visibility', ev.target.checked ? 'visible' : 'none');
+    });
     riskLegSync();
   });
+
+  // ---- v0.5.1: EMS AOI perimeters + observed-event footprints (Greek activations) ----
+  var EMSAOI = { loaded: false };
+  function emsCatColorExpr(prop) {
+    return ['match', ['get', prop || 'cat_slug'],
+      'wildfire', EMS_COLORS.wildfire, 'flood', EMS_COLORS.flood, 'earthquake', EMS_COLORS.earthquake,
+      'storm', EMS_COLORS.storm, 'landslide', EMS_COLORS.landslide, 'volcano', EMS_COLORS.volcano,
+      EMS_COLORS.other];
+  }
+  function loadEMSAois() {
+    fetch(FIELD_API + '/ems_aois.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
+      var fc = d.geometry || { type: 'FeatureCollection', features: [] };
+      var src = map.getSource('ems-aois');
+      if (src && src.setData) { src.setData(fc); return; }
+      function add() {
+        map.addSource('ems-aois', { type: 'geojson', data: fc });
+        map.addLayer({ id: 'ems-aoi-fill', type: 'fill', source: 'ems-aois',
+          paint: { 'fill-color': emsCatColorExpr(),
+            'fill-opacity': ['match', ['get', 'detailed'], 1, 0.22, 0.06] } }, 'ems-circle');
+        map.addLayer({ id: 'ems-aoi-line', type: 'line', source: 'ems-aois',
+          paint: { 'line-color': emsCatColorExpr(),
+            'line-width': ['match', ['get', 'detailed'], 1, 1.2, 0.6],
+            'line-opacity': ['match', ['get', 'detailed'], 1, 0.75, 0.4],
+            'line-dasharray': ['match', ['get', 'detailed'], 1, ['literal', [1, 0]], ['literal', [3, 2]]] } }, 'ems-circle');
+        map.on('mouseenter', 'ems-aoi-fill', function () { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', 'ems-aoi-fill', function () { map.getCanvas().style.cursor = ''; });
+      }
+      try { add(); } catch (e) { console.error('ems aoi layer defer:', e); map.once('load', add); }
+      EMSAOI.loaded = true;
+    }).catch(function (e) { console.error('ems aois load failed:', e); });
+  }
 
   // ---- v0.0.7: animated sea-current particles (CMEMS grid via ARGOS API, canvas overlay) ----
   var CUR = { on: false, grids: {}, raw: {}, hours: 48, parts: [], raf: null, canvas: null, ctx: null, loading: false, last: 0, speed: 2400 };
