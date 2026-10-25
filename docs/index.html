@@ -601,7 +601,7 @@ map.on('load', function () {
   map.addLayer({ id: 'land-fill', type: 'fill', source: 'land',
     paint: { 'fill-color': '#0F1D33' } });
   map.addLayer({ id: 'land-line', type: 'line', source: 'land',
-    paint: { 'line-color': '#8A7A3A', 'line-width': 1.1, 'line-opacity': 0.9 } });
+    paint: { 'line-color': '#C9A227', 'line-width': 1.3, 'line-opacity': 0.95 } });
 
   map.addSource('hill', { type: 'raster', url: HILL, tileSize: 256 });
   map.addLayer({ id: 'hillshade', type: 'raster', source: 'hill',
@@ -623,8 +623,8 @@ map.on('load', function () {
   // Coastline context: Zakynthos, Lefkada, western mainland + Peloponnese (EMODnet DTM 0 m contour, served via GitHub Pages). Eye candy, non-interactive.
   map.addSource('neighbors', { type: 'geojson', data: 'https://argos-geo.github.io/kefalonia-digital-twin/ionian_coastline.geojson' });
   map.addLayer({ id: 'neighbors-line', type: 'line', source: 'neighbors',
-    paint: { 'line-color': '#C9A227', 'line-opacity': 0.35,
-      'line-width': ['interpolate', ['linear'], ['zoom'], 8, 1.0, 12, 1.8] } });
+    paint: { 'line-color': '#C9A227', 'line-opacity': 0.2,
+      'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 1.4] } });
 
   map.addSource('vectors', { type: 'vector', url: TILES,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors (ODbL)' });
