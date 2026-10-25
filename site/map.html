@@ -599,8 +599,8 @@ map.on('load', function () {
     paint: { 'text-color': '#5E8DB5', 'text-opacity': 0.85,
       'text-halo-color': '#0A1628', 'text-halo-width': 1 } });
 
-  // Zakynthos + Lefkada outlines (OSM via Nominatim, served from /field/): eye-candy context, non-interactive
-  map.addSource('neighbors', { type: 'geojson', data: 'https://api.argos-geo.org/field/ionian_neighbors.geojson' });
+  // Coastline context: Zakynthos, Lefkada, western mainland + Peloponnese (EMODnet DTM 0 m contour, served via GitHub Pages). Eye candy, non-interactive.
+  map.addSource('neighbors', { type: 'geojson', data: 'https://argos-geo.github.io/kefalonia-digital-twin/ionian_coastline.geojson' });
   map.addLayer({ id: 'neighbors-line', type: 'line', source: 'neighbors',
     paint: { 'line-color': '#C9A227', 'line-opacity': 0.35,
       'line-width': ['interpolate', ['linear'], ['zoom'], 8, 1.0, 12, 1.8] } });
