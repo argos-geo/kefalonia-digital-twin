@@ -77,17 +77,6 @@
     font-family:Inter,sans-serif; font-size:11px; color:#5A6A80;
     background:rgba(15,29,51,0.8); padding:4px 10px; border-radius:6px;
   }
-  #bskycard {
-    display:none; position:fixed; left:12px; bottom:14px; z-index:25; max-width:300px;
-    background:rgba(10,22,40,0.9); border:1px solid rgba(201,162,39,0.55); border-radius:9px;
-    padding:10px 12px; color:#F4EEE0; text-decoration:none; font-family:Inter,sans-serif;
-  }
-  #bskycard:hover { border-color:#C9A227; }
-  #bskycard .bh { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:#C9A227; margin-bottom:4px; }
-  #bskycard .bt { font-size:12px; line-height:1.4; color:#F4EEE0; }
-  #bskycard img { display:none; margin-top:6px; max-width:100%; border-radius:6px; }
-  #bskycard .ba { font-size:10px; color:#8A94A6; margin-top:5px; }
-  body.mobile #bskycard { display:none !important; }
   .maplibregl-popup-content {
     background:#0F1D33; color:#E8E4DC; border:1px solid #8A7A3A;
     border-radius:8px; font-family:Inter,sans-serif; font-size:11px;
@@ -469,12 +458,6 @@
   <span id="marine-time">--</span>
 </div>
 <button id="btn-legend"><span id="m-btn-legend">Legend</span></button>
-<a id="bskycard" href="https://bsky.app/profile/argos-geo.org" target="_blank" rel="noopener">
-  <div class="bh"><span id="m-bsky-h">Latest post &middot; Bluesky</span></div>
-  <div class="bt" id="bsky-txt"></div>
-  <img id="bsky-img" alt="">
-  <div class="ba" id="bsky-age"></div>
-</a>
 <a id="home-pill" href="/" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg><span id="m-home">Home</span></a>
 <div id="clock"><span id="m-clock">Pota_Irtes local time</span> · <span id="pt">--:--</span></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
@@ -763,7 +746,6 @@ map.on('load', function () {
       'm-row-ems': 'EMS activations (Copernicus)', 'm-leg-g11': 'Copernicus EMS', 'm-leg-ems1': 'mapping activations in Greece, colour = event type',
       'm-row-sstfield': 'Sea temperature (satellite)', 'm-leg-g12': 'Sea temperature', 'm-leg-sst1': 'daily satellite SST, ~1 km cells',
       'm-row-waves': 'Wave field (animated)', 'm-leg-g13': 'Wave field', 'm-leg-wv1': 'wave streaks: direction = travel, colour = height',
-      'm-bsky-h': 'Latest post · Bluesky',
       'm-row-curheat': 'Current speed (wash)', 'm-leg-g14': 'Current speed', 'm-leg-ch1': 'colour wash = modelled surface current speed',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
@@ -812,7 +794,6 @@ map.on('load', function () {
       'm-row-ems': 'Ενεργοποιήσεις EMS (Copernicus)', 'm-leg-g11': 'Copernicus EMS', 'm-leg-ems1': 'ενεργοποιήσεις χαρτογράφησης στην Ελλάδα, χρώμα = τύπος συμβάντος',
       'm-row-sstfield': 'Θερμοκρασία θάλασσας (δορυφόρος)', 'm-leg-g12': 'Θερμοκρασία θάλασσας', 'm-leg-sst1': 'ημερήσια δορυφορική SST, κελιά ~1 χλμ',
       'm-row-waves': 'Πεδίο κυματισμού (ζωντανό)', 'm-leg-g13': 'Πεδίο κυματισμού', 'm-leg-wv1': 'γραμμές κύματος: κατεύθυνση = πορεία, χρώμα = ύψος',
-      'm-bsky-h': 'Τελευταία ανάρτηση · Bluesky',
       'm-row-curheat': 'Ταχύτητα ρεύματος (ένταση)', 'm-leg-g14': 'Ταχύτητα ρεύματος', 'm-leg-ch1': 'χρωματική ένταση = μοντελοποιημένη ταχύτητα επιφανειακού ρεύματος',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
@@ -2197,43 +2178,6 @@ map.on('load', function () {
     }
     riskLegSync();
   });
-
-  // ---- v0.6.0: Bluesky latest-post card (public read-only API, no secrets) ----
-  var BSKY = { timer: null, last: null };
-  var BSKY_API = 'https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=argos-geo.org&limit=1&filter=posts_no_replies';
-  function bskyEsc(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-  function bskyRender() {
-    var card = document.getElementById('bskycard');
-    if (!card || !BSKY.last) return;
-    var p = BSKY.last;
-    var txt = bskyEsc(p.record && p.record.text || '');
-    if (txt.length > 220) txt = txt.slice(0, 217) + '...';
-    document.getElementById('bsky-txt').innerHTML = txt.replace(/\n/g, '<br>');
-    var img = document.getElementById('bsky-img');
-    var thumb = p.embed && p.embed.images && p.embed.images[0] && p.embed.images[0].thumb;
-    if (thumb) { img.src = thumb; img.style.display = 'block'; img.alt = bskyEsc(p.embed.images[0].alt || ''); }
-    else { img.style.display = 'none'; img.removeAttribute('src'); }
-    var uri = p.uri || '';
-    var m = uri.match(/^at:\/\/[^/]+\/app\.bsky\.feed\.post\/(.+)$/);
-    card.href = m ? ('https://bsky.app/profile/argos-geo.org/post/' + m[1]) : 'https://bsky.app/profile/argos-geo.org';
-    var age = document.getElementById('bsky-age');
-    var t = p.record && p.record.createdAt;
-    age.textContent = t ? (liveAgo(t) + ' · @argos-geo.org') : '@argos-geo.org';
-    card.style.display = 'block';
-  }
-  function bskyLatest() {
-    fetch(BSKY_API).then(function (r) { if (!r.ok) throw new Error('bsky http ' + r.status); return r.json(); })
-      .then(function (d) {
-        var feed = d.feed || [];
-        if (!feed.length) return;
-        BSKY.last = feed[0].post;
-        bskyRender();
-      }).catch(function (e) { console.error('bsky card:', e); });
-  }
-  bskyLatest();
-  BSKY.timer = setInterval(bskyLatest, 600000);
 
   // ---- T106: risk legend panel follows the risk toggles ----
   var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-waves', 'rleg-waves'], ['tgl-curheat', 'rleg-curheat'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'], ['tgl-wxfield', 'rleg-wxfield'], ['tgl-fwifield', 'rleg-fwifield'], ['tgl-sstfield', 'rleg-sstfield'], ['tgl-quakes', 'rleg-quakes'], ['tgl-ems', 'rleg-ems'] ];
