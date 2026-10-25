@@ -330,6 +330,8 @@
   <div class="vnote" id="v-fwifield"></div>
   <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-quakes"> <span id="m-row-quakes">Earthquakes (30 days)</span></label><button class="pinfo" type="button" data-v="v-quakes" aria-label="How do we know">i</button></div>
   <div class="vnote" id="v-quakes"></div>
+  <div class="rowwrap"><label class="row"><input type="checkbox" id="tgl-ems"> <span id="m-row-ems">EMS activations (Copernicus)</span></label><button class="pinfo" type="button" data-v="v-ems" aria-label="How do we know">i</button></div>
+  <div class="vnote" id="v-ems"></div>
   <div class="sect" id="m-sect-legend">Legend</div>
   <div class="leg"><span class="sw" style="background:#F4EEE0"></span><span id="m-leg-1">primary / secondary</span></div>
   <div class="leg"><span class="sw" style="background:#C9BFA8"></span><span id="m-leg-2">tertiary</span></div>
@@ -422,6 +424,11 @@
     <div class="rleg-h" id="m-leg-g10">Earthquakes</div>
     <div class="leg"><span class="sw" style="background:#E0452E; border-radius:50%; width:9px; height:9px;"></span><span id="m-leg-qk1">M2.5+ last 30 days, size = magnitude</span></div>
     <div class="leg"><span id="m-leg-fresh-qk" style="font-style:italic; opacity:0.8;">--</span></div>
+  </div>
+  <div class="rleg-g" id="rleg-ems">
+    <div class="rleg-h" id="m-leg-g11">Copernicus EMS</div>
+    <div class="leg"><span class="sw" style="background:#C9A227; border-radius:50%; width:9px; height:9px;"></span><span id="m-leg-ems1">mapping activations in Greece, colour = event type</span></div>
+    <div class="leg"><span id="m-leg-fresh-ems" style="font-style:italic; opacity:0.8;">--</span></div>
   </div>
 </div>
 <div id="marinectl" style="display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:25; background:rgba(10,22,40,0.88); border:1px solid rgba(201,162,39,0.55); border-radius:9px; padding:8px 12px; color:#F4EEE0; font-size:11px; align-items:center; gap:10px; max-width:92vw;">
@@ -582,15 +589,21 @@ map.on('load', function () {
   map.addSource('bathy', { type: 'geojson', data: 'https://argos-geo.github.io/kefalonia-digital-twin/bathymetry_contours.geojson' });
   map.addLayer({ id: 'bathy-line', type: 'line', source: 'bathy',
     paint: { 'line-color': '#4A7CA6',
-      'line-width': ['interpolate', ['linear'], ['zoom'], 9, 0.35, 14, 1.0],
-      'line-opacity': ['match', ['get', 'depth_m'], 25, 0.16, 50, 0.2, 100, 0.26, 200, 0.32, 400, 0.36, 0.4] } });
-  map.addLayer({ id: 'bathy-label', type: 'symbol', source: 'bathy', minzoom: 11,
+      'line-width': ['interpolate', ['linear'], ['zoom'], 9, 0.5, 14, 1.3],
+      'line-opacity': ['match', ['get', 'depth_m'], 25, 0.3, 50, 0.36, 100, 0.42, 200, 0.48, 400, 0.52, 0.56] } });
+  map.addLayer({ id: 'bathy-label', type: 'symbol', source: 'bathy', minzoom: 10,
     filter: ['>=', ['get', 'depth_m'], 200],
     layout: { 'symbol-placement': 'line',
       'text-field': ['concat', ['to-string', ['get', 'depth_m']], ' m'],
       'text-font': ['Noto Sans Regular'], 'text-size': 9, 'text-optional': true },
     paint: { 'text-color': '#5E8DB5', 'text-opacity': 0.85,
       'text-halo-color': '#0A1628', 'text-halo-width': 1 } });
+
+  // Zakynthos + Lefkada outlines (OSM via Nominatim, served from /field/): eye-candy context, non-interactive
+  map.addSource('neighbors', { type: 'geojson', data: 'https://api.argos-geo.org/field/ionian_neighbors.geojson' });
+  map.addLayer({ id: 'neighbors-line', type: 'line', source: 'neighbors',
+    paint: { 'line-color': '#C9A227', 'line-opacity': 0.35,
+      'line-width': ['interpolate', ['linear'], ['zoom'], 8, 1.0, 12, 1.8] } });
 
   map.addSource('vectors', { type: 'vector', url: TILES,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors (ODbL)' });
@@ -709,6 +722,7 @@ map.on('load', function () {
       'm-leg-g8': 'Temperature field', 'm-leg-wxf1': 'colour = model temperature, ~2 km cells',
       'm-leg-g9': 'FWI field', 'm-leg-fwif1': 'official EFFIS classes, ~10 km cells',
       'm-row-quakes': 'Earthquakes (30 days)', 'm-leg-g10': 'Earthquakes', 'm-leg-qk1': 'M2.5+ last 30 days, size = magnitude',
+      'm-row-ems': 'EMS activations (Copernicus)', 'm-leg-g11': 'Copernicus EMS', 'm-leg-ems1': 'mapping activations in Greece, colour = event type',
       'm-sect-layers': 'Layers', 'm-sect-legend': 'Legend',
       'm-row-roads': 'Roads', 'm-row-trails': 'Trails', 'm-row-buildings': 'Buildings',
       'm-row-beaches': 'Beaches', 'm-row-pois': 'POIs', 'm-row-muni': 'Municipalities',
@@ -753,6 +767,7 @@ map.on('load', function () {
       'm-leg-g8': 'Πεδίο θερμοκρασίας', 'm-leg-wxf1': 'χρώμα = θερμοκρασία μοντέλου, κελιά ~2 χλμ',
       'm-leg-g9': 'Πεδίο FWI', 'm-leg-fwif1': 'επίσημες κλάσεις EFFIS, κελιά ~10 χλμ',
       'm-row-quakes': 'Σεισμοί (30 ημέρες)', 'm-leg-g10': 'Σεισμοί', 'm-leg-qk1': 'M2.5+ τελευταίες 30 ημέρες, μέγεθος = μέγεθος σεισμού',
+      'm-row-ems': 'Ενεργοποιήσεις EMS (Copernicus)', 'm-leg-g11': 'Copernicus EMS', 'm-leg-ems1': 'ενεργοποιήσεις χαρτογράφησης στην Ελλάδα, χρώμα = τύπος συμβάντος',
       'm-sect-layers': 'Επίπεδα', 'm-sect-legend': 'Υπόμνημα',
       'm-row-roads': 'Δρόμοι', 'm-row-trails': 'Μονοπάτια', 'm-row-buildings': 'Κτίρια',
       'm-row-beaches': 'Παραλίες', 'm-row-pois': 'Σημεία ενδιαφέροντος', 'm-row-muni': 'Δήμοι',
@@ -804,7 +819,8 @@ map.on('load', function () {
       fwi: 'FWI', fwi_date: 'FWI day', island_mean: 'Island mean', island_max: 'Island max',
       source: 'Source',
       peak_at: 'Peak at', vhm0_now: 'Wave height now', run_ts: 'Model data age',
-      qtime: 'Origin time', mag: 'Magnitude', depth_km: 'Depth', region: 'Region', auth: 'Reported by'
+      qtime: 'Origin time', mag: 'Magnitude', depth_km: 'Depth', region: 'Region', auth: 'Reported by',
+      ems_code: 'Activation', ems_status: 'Status', act_time: 'Activated', products: 'Map products'
     },
     el: {
       name: 'Όνομα', road_class: 'Κατηγορία δρόμου', osm_highway: 'Τύπος OSM',
@@ -821,7 +837,8 @@ map.on('load', function () {
       fwi: 'Δείκτης FWI', fwi_date: 'Ημέρα FWI', island_mean: 'Μέσος νησιού', island_max: 'Μέγιστο νησιού',
       source: 'Πηγή',
       peak_at: 'Κορύφωση στις', vhm0_now: 'Ύψος κύματος τώρα', run_ts: 'Ηλικία δεδομένων',
-      qtime: 'Χρόνος', mag: 'Μέγεθος', depth_km: 'Βάθος', region: 'Περιοχή', auth: 'Αναφορά από'
+      qtime: 'Χρόνος', mag: 'Μέγεθος', depth_km: 'Βάθος', region: 'Περιοχή', auth: 'Αναφορά από',
+      ems_code: 'Ενεργοποίηση', ems_status: 'Κατάσταση', act_time: 'Ενεργοποιήθηκε', products: 'Χαρτογραφικά προϊόντα'
     }
   };
 
@@ -832,11 +849,13 @@ map.on('load', function () {
     buildings: { en: 'building', el: 'Κτίριο' },
     beaches:   { en: 'beach',    el: 'Παραλία' },
     marine:    { en: 'beach exposure', el: 'θαλάσσιες συνθήκες' },
-    quakes:    { en: 'earthquake', el: 'σεισμός' }
+    quakes:    { en: 'earthquake', el: 'σεισμός' },
+    ems:       { en: 'EMS activation', el: 'ενεργοποίηση EMS' }
   };
 
   // Greek translations for OSM enum values (draft - Panagis corrects). Fallback: raw value.
   var VALS = {
+    ems_status: { open: 'Ανοιχτή', closed: 'Κλειστή' },
     road_class: { primary:'Κεντρικός', secondary:'Δευτερεύων', tertiary:'Τριτοβάθμιος', 'local':'Τοπικός',
       service:'Εξυπηρέτησης', track:'Χωματόδρομος', path:'Μονοπάτι', other:'Άλλος' },
     osm_highway: { construction:'Υπό κατασκευή', footway:'Πεζοδρόμιο', living_street:'Οδός ήπιας κυκλοφορίας',
@@ -932,6 +951,7 @@ map.on('load', function () {
     if (typeof wxFieldFresh === 'function') wxFieldFresh();
     if (typeof fwiFieldFresh === 'function') fwiFieldFresh();
     if (typeof quakeFresh === 'function') quakeFresh();
+    if (typeof emsFresh === 'function') emsFresh();
     if (typeof liveRelabel === 'function') liveRelabel();
     if (typeof demoState !== 'undefined' && demoState.q) renderAnswer();
   }
@@ -970,6 +990,11 @@ map.on('load', function () {
       return isNaN(qd) ? String(val) : qd.toLocaleString(el ? 'el-GR' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
     }
     if (key === 'maxspeed') return val + (el ? ' χλμ/ώρα' : ' km/h');
+    if (key === 'act_time') {
+      var ad = new Date(val);
+      return isNaN(ad) ? String(val) : ad.toLocaleString(el ? 'el-GR' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    if (key === 'products') return String(Math.round(val));
     var s = String(val);
     if (el) {
       if (VALS[key] && VALS[key][s]) return VALS[key][s];
@@ -992,9 +1017,9 @@ map.on('load', function () {
   var CLICKABLE = ['pois-circle', 'beaches-circle', 'beaches-fill',
                    'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track',
                    'weather-circle', 'fwi-circle', 'marine-circle', 'marine-beach-fill',
-                   'quakes-circle'];
+                   'quakes-circle', 'ems-circle'];
   // most specific / demo-relevant first when several layers stack at one point
-  var CLICK_PRIORITY = ['quakes-circle', 'weather-circle', 'fwi-circle', 'marine-circle', 'pois-circle',
+  var CLICK_PRIORITY = ['quakes-circle', 'ems-circle', 'weather-circle', 'fwi-circle', 'marine-circle', 'pois-circle',
                         'beaches-circle', 'marine-beach-fill', 'beaches-fill',
                         'buildings-fill', 'trails', 'roads-main', 'roads-local', 'roads-track'];
   CLICKABLE.forEach(function (lid) {
@@ -1491,6 +1516,66 @@ map.on('load', function () {
     riskLegSync();
   });
 
+  // ---- v0.4.0: Copernicus EMS Rapid Mapping awareness feed (via /field/ems.json) ----
+  var EMS = { stamp: null, timer: null };
+  var EMS_REFRESH_MS = 1800000; // VM cron refreshes twice daily; map refetches every 30 min while on
+  var EMS_COLORS = { 'wildfire': '#E0762C', 'flood': '#4A90D9', 'earthquake': '#B03A2E',
+    'storm': '#7B8CDE', 'landslide': '#A0784A', 'volcano': '#C0392B', 'other': '#C9A227' };
+  function emsFresh() {
+    var el = document.getElementById('m-leg-fresh-ems');
+    if (!el) return;
+    if (!EMS.stamp) { el.textContent = CUR_LANG === 'el' ? 'Ενημέρωση: --' : 'updated: --'; return; }
+    el.textContent = (CUR_LANG === 'el' ? 'Ενημερώθηκε ' : 'Updated ') + liveAgo(EMS.stamp) + ' · Copernicus EMS';
+  }
+  function emsFC(d) {
+    return { type: 'FeatureCollection', features: (d.activations || []).filter(function (a) {
+      return a.lon !== null && a.lat !== null;
+    }).map(function (a) {
+      return { type: 'Feature', geometry: { type: 'Point', coordinates: [a.lon, a.lat] },
+        properties: { name: (a.code || '') + ' · ' + (a.name || ''), ems_code: a.code,
+          category: a.category, ems_status: a.closed ? 'closed' : 'open',
+          act_time: a.activation_time, products: a.n_products,
+          cat_slug: a.category_slug || 'other', is_open: a.closed ? 0 : 1,
+          source: 'Copernicus EMS Rapid Mapping' } };
+    }) };
+  }
+  function emsPaint() {
+    return { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, 4, 9, 7, 13, 10],
+      'circle-color': ['match', ['get', 'cat_slug'],
+        'wildfire', EMS_COLORS.wildfire, 'flood', EMS_COLORS.flood, 'earthquake', EMS_COLORS.earthquake,
+        'storm', EMS_COLORS.storm, 'landslide', EMS_COLORS.landslide, 'volcano', EMS_COLORS.volcano,
+        EMS_COLORS.other],
+      'circle-opacity': 0.85,
+      'circle-stroke-width': ['match', ['get', 'is_open'], 1, 2.2, 1.1],
+      'circle-stroke-color': ['match', ['get', 'is_open'], 1, 'rgba(255,255,255,0.95)', 'rgba(244,238,224,0.45)'] };
+  }
+  function loadEMS() {
+    fetch(FIELD_API + '/ems.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
+      EMS.stamp = d.generated_at;
+      var fc = emsFC(d);
+      var src = map.getSource('ems-live');
+      if (src && src.setData) { src.setData(fc); emsFresh(); return; }
+      function add() {
+        map.addSource('ems-live', { type: 'geojson', data: fc });
+        map.addLayer({ id: 'ems-circle', type: 'circle', source: 'ems-live', paint: emsPaint() });
+        map.on('mouseenter', 'ems-circle', function () { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', 'ems-circle', function () { map.getCanvas().style.cursor = ''; });
+      }
+      try { add(); } catch (e) { console.error('ems layer defer:', e); map.once('load', add); }
+      emsFresh();
+    }).catch(function (e) { console.error('ems load failed:', e); emsFresh(); });
+  }
+  document.getElementById('tgl-ems').addEventListener('change', function (ev) {
+    if (ev.target.checked) {
+      loadEMS();
+      if (!EMS.timer) EMS.timer = setInterval(loadEMS, EMS_REFRESH_MS);
+    } else {
+      if (EMS.timer) { clearInterval(EMS.timer); EMS.timer = null; }
+    }
+    if (map.getLayer('ems-circle')) map.setLayoutProperty('ems-circle', 'visibility', ev.target.checked ? 'visible' : 'none');
+    riskLegSync();
+  });
+
   // ---- v0.0.7: animated sea-current particles (CMEMS grid via ARGOS API, canvas overlay) ----
   var CUR = { on: false, grids: {}, raw: {}, hours: 48, parts: [], raf: null, canvas: null, ctx: null, loading: false, last: 0, speed: 2400 };
   function curInit() {
@@ -1728,7 +1813,7 @@ map.on('load', function () {
   });
 
   // ---- T106: risk legend panel follows the risk toggles ----
-  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'], ['tgl-wxfield', 'rleg-wxfield'], ['tgl-fwifield', 'rleg-fwifield'], ['tgl-quakes', 'rleg-quakes'] ];
+  var RLEGS = [ ['tgl-wildfire', 'rleg-wildfire'], ['tgl-flood', 'rleg-flood'], ['tgl-firecov', 'rleg-firecov'], ['tgl-marine', 'rleg-marine'], ['tgl-currents', 'rleg-currents'], ['tgl-weather', 'rleg-weather'], ['tgl-fwi', 'rleg-fwi'], ['tgl-wxfield', 'rleg-wxfield'], ['tgl-fwifield', 'rleg-fwifield'], ['tgl-quakes', 'rleg-quakes'], ['tgl-ems', 'rleg-ems'] ];
   function riskLegSync() {
     var any = false;
     RLEGS.forEach(function (p) {
@@ -1816,6 +1901,10 @@ map.on('load', function () {
       en: '<b>How do we know</b><br>Earthquakes of magnitude 2.5 and above in the wider Ionian area over the last 30 days, from the EMSC-CSEM SeismicPortal real-time feed, refreshed every 10 minutes. Circle size scales with magnitude; popups show origin time, depth, region and the reporting seismological agency (NOA, THE, EMSC and others). Automatic locations can be revised by the agencies after review. This layer is informational, not an official warning: for critical decisions refer to the National Observatory of Athens / Institute of Geodynamics.<span class="vsrc">Source: EMSC-CSEM SeismicPortal, seismicportal.eu (CC BY 4.0) &middot; Category: observed events (agency reports), refreshed every 10 min</span>',
       el: '<b>Πώς το γνωρίζουμε</b><br>Σεισμοί μεγέθους 2,5 και άνω στην ευρύτερη περιοχή του Ιονίου τις τελευταίες 30 ημέρες, από τη ροή πραγματικού χρόνου EMSC-CSEM SeismicPortal, με ανανέωση κάθε 10 λεπτά. Το μέγεθος του κύκλου ακολουθεί το μέγεθος του σεισμού· τα αναδυόμενα δείχνουν χρόνο, βάθος, περιοχή και τον φορέα αναφοράς (ΕΑΑ, ΑΠΘ, EMSC και άλλοι). Οι αυτόματες επίλυσεις μπορεί να αναθεωρηθούν από τους φορείς. Το στρώμα είναι πληροφοριακού χαρακτήρα, όχι επίσημη προειδοποίηση: για κρίσιμες αποφάσεις απευθυνθείτε στο Εθνικό Αστεροσκοπείο Αθηνών / Ινστιτούτο Γεωδυναμικής.<span class="vsrc">Πηγή: EMSC-CSEM SeismicPortal, seismicportal.eu (CC BY 4.0) &middot; Κατηγορία: παρατηρημένα γεγονότα (αναφορές φορέων), ανανέωση κάθε 10 λεπτά</span>'
     }
+  };
+  VNOTES['v-ems'] = {
+    en: '<b>How do we know</b><br>When a major flood, wildfire or other disaster hits, civil protection authorities can ask the Copernicus Emergency Management Service to produce satellite maps of the affected area. Each dot is one such Rapid Mapping activation in Greece (newest 25), placed at its catalogue centroid, which is not the exact damage footprint. Colour follows the event category; activations still open carry a brighter ring. This is an awareness feed of where official satellite mapping was requested: it is not a complete incident history and not an emergency alert service.<span class="vsrc">Source: Copernicus EMS Rapid Mapping activations API &middot; Category: official activations registry, refreshed twice daily</span>',
+    el: '<b>Πώς το γνωρίζουμε</b><br>Όταν σημειωθεί μεγάλη πλημμύρα, πυρκαγιά ή άλλη καταστροφή, οι αρχές πολιτικής προστασίας μπορούν να ζητήσουν από την Υπηρεσία Διαχείρισης Εκτάκτων Αναγκών Copernicus δορυφορικούς χάρτες της περιοχής. Κάθε κουκκίδα είναι μια τέτοια ενεργοποίηση Rapid Mapping στην Ελλάδα (οι 25 νεότερες), τοποθετημένη στο κεντροειδές του καταλόγου, που δεν είναι το ακριβές ίχνος των ζημιών. Το χρώμα ακολουθεί την κατηγορία συμβάντος· οι ενεργοποιήσεις που παραμένουν ανοιχτές φέρουν πιο φωτεινό δακτύλιο. Είναι ροή ενημέρωσης για το πού ζητήθηκε επίσημη δορυφορική χαρτογράφηση: δεν είναι πλήρες ιστορικό συμβάντων ούτε υπηρεσία έκτακτης ειδοποίησης.<span class="vsrc">Πηγή: Copernicus EMS Rapid Mapping activations API &middot; Κατηγορία: επίσημο μητρώο ενεργοποιήσεων, ανανέωση δύο φορές την ημέρα</span>'
   };
   function renderVnotes(lang) {
     Object.keys(VNOTES).forEach(function (id) {
@@ -2211,7 +2300,8 @@ setInterval(tickClock, 30000);
     'tgl-fwi': ['How fire-prone is today\'s weather?', '\u03a0\u03cc\u03c3\u03bf \u03b5\u03c5\u03bd\u03bf\u03b5\u03af \u03c6\u03c9\u03c4\u03b9\u03ac \u03bf \u03c3\u03b7\u03bc\u03b5\u03c1\u03b9\u03bd\u03cc\u03c2 \u03ba\u03b1\u03b9\u03c1\u03cc\u03c2;'],
     'tgl-wxfield': ['Temperature across the whole island, not just towns', '\u0398\u03b5\u03c1\u03bc\u03bf\u03ba\u03c1\u03b1\u03c3\u03af\u03b1 \u03c3\u03b5 \u03cc\u03bb\u03bf \u03c4\u03bf \u03bd\u03b7\u03c3\u03af, \u03cc\u03c7\u03b9 \u03bc\u03cc\u03bd\u03bf \u03c3\u03c4\u03b9\u03c2 \u03c0\u03cc\u03bb\u03b5\u03b9\u03c2'],
     'tgl-fwifield': ['The real EFFIS fire-weather grid, exactly as published', '\u03a4\u03bf \u03c0\u03c1\u03b1\u03b3\u03bc\u03b1\u03c4\u03b9\u03ba\u03cc \u03c0\u03bb\u03ad\u03b3\u03bc\u03b1 \u03ba\u03b1\u03b9\u03c1\u03bf\u03c0\u03c5\u03c1\u03b9\u03ba\u03ae\u03c2 \u03ba\u03b1\u03c4\u03ac\u03c3\u03c4\u03b1\u03c3\u03b7\u03c2 \u03c4\u03b7\u03c2 EFFIS, \u03cc\u03c0\u03c9\u03c2 \u03b4\u03b7\u03bc\u03bf\u03c3\u03b9\u03b5\u03cd\u03b5\u03c4\u03b1\u03b9'],
-    'tgl-quakes': ['Recent earthquakes near Kefalonia, informational only', '\u03a0\u03c1\u03cc\u03c3\u03c6\u03b1\u03c4\u03bf\u03b9 \u03c3\u03b5\u03b9\u03c3\u03bc\u03bf\u03af \u03ba\u03bf\u03bd\u03c4\u03ac \u03c3\u03c4\u03b7\u03bd \u039a\u03b5\u03c6\u03b1\u03bb\u03bf\u03bd\u03b9\u03ac, \u03bc\u03cc\u03bd\u03bf \u03c0\u03bb\u03b7\u03c1\u03bf\u03c6\u03bf\u03c1\u03b9\u03b1\u03ba\u03ac']
+    'tgl-quakes': ['Recent earthquakes near Kefalonia, informational only', '\u03a0\u03c1\u03cc\u03c3\u03c6\u03b1\u03c4\u03bf\u03b9 \u03c3\u03b5\u03b9\u03c3\u03bc\u03bf\u03af \u03ba\u03bf\u03bd\u03c4\u03ac \u03c3\u03c4\u03b7\u03bd \u039a\u03b5\u03c6\u03b1\u03bb\u03bf\u03bd\u03b9\u03ac, \u03bc\u03cc\u03bd\u03bf \u03c0\u03bb\u03b7\u03c1\u03bf\u03c6\u03bf\u03c1\u03b9\u03b1\u03ba\u03ac'],
+    'tgl-ems': ['Where was official satellite mapping activated in Greece?', '\u03a0\u03bf\u03cd \u03b6\u03b7\u03c4\u03ae\u03b8\u03b7\u03ba\u03b5 \u03b5\u03c0\u03af\u03c3\u03b7\u03bc\u03b7 \u03b4\u03bf\u03c1\u03c5\u03c6\u03bf\u03c1\u03b9\u03ba\u03ae \u03c7\u03b1\u03c1\u03c4\u03bf\u03b3\u03c1\u03ac\u03c6\u03b7\u03c3\u03b7 \u03c3\u03c4\u03b7\u03bd \u0395\u03bb\u03bb\u03ac\u03b4\u03b1;']
   };
   function applyTips() {
     var roads = document.getElementById('m-row-roads');
