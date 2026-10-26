@@ -597,7 +597,7 @@ map.on('load', function () {
   map.addLayer({ id: 'osm-layer', type: 'raster', source: 'osm-carto',
     layout: { visibility: 'none' } });
 
-  map.addSource('land', { type: 'geojson', data: './kefalonia_land.geojson' });
+  map.addSource('land', { type: 'geojson', data: 'https://argos-geo.github.io/kefalonia-digital-twin/kefalonia_land.geojson' });
   map.addLayer({ id: 'land-fill', type: 'fill', source: 'land',
     paint: { 'fill-color': '#0F1D33' } });
   map.addLayer({ id: 'land-line', type: 'line', source: 'land',
@@ -607,7 +607,7 @@ map.on('load', function () {
   map.addLayer({ id: 'hillshade', type: 'raster', source: 'hill',
     paint: { 'raster-opacity': 0.75, 'raster-contrast': 0.3, 'raster-brightness-max': 1 } });
 
-  map.addSource('bathy', { type: 'geojson', data: './bathymetry_contours.geojson' });
+  map.addSource('bathy', { type: 'geojson', data: 'https://argos-geo.github.io/kefalonia-digital-twin/bathymetry_contours.geojson' });
   map.addLayer({ id: 'bathy-line', type: 'line', source: 'bathy',
     paint: { 'line-color': '#4A7CA6',
       'line-width': ['interpolate', ['linear'], ['zoom'], 9, 0.5, 14, 1.3],
