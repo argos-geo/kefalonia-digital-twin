@@ -1,7 +1,7 @@
 # ARGOS : : Kefalonia Digital Twin
 
-**Watching over the places we call home.**
-*«Προστατεύοντας τους τόπους μας»*
+**The map that argues back.**
+*«Η Κεφαλονιά μέσα από τα δεδομένα της»*
 
 [![Live map](https://img.shields.io/badge/live%20map-argos--geo.org-C9A227)](https://argos-geo.org/map)
 [![Website](https://img.shields.io/badge/web-argos--geo.org-7FA89B)](https://argos-geo.org)
@@ -133,7 +133,7 @@ Attribution is architecture, not decoration.
 
 # ARGOS : : Ψηφιακός Δίδυμος Κεφαλονιάς
 
-**Προστατεύοντας τους τόπους μας.**
+**Η Κεφαλονιά μέσα από τα δεδομένα της.**
 
 Ο ARGOS είναι ένα ανοιχτού κώδικα ψηφιακό δίδυμο της **Κεφαλονιάς** - ολόκληρο το
 νησί, χαρτογραφημένο, ερωτήσιμο και παρατηρήσιμο. Χτίζεται δημόσια από έναν
@@ -197,4 +197,4 @@ Sentinel-2 / ESA, NASA FIRMS, EFFIS / Copernicus EMS, EMODnet, Copernicus Marine
 ---
 
 *Built in Kefalonia · argos-geo.org · hello@argos-geo.org*
-*"Watching over the places we call home."*
+*"The map that argues back."*
