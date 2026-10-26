@@ -463,9 +463,9 @@
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
 <script>
-var TILES = 'pmtiles://' + new URL('./tiles/kefalonia_vectors.pmtiles', window.location.href).href;
-var HILL = 'pmtiles://' + new URL('./tiles/kefalonia_hillshade.pmtiles', window.location.href).href;
-var RISK_TILES = 'pmtiles://' + new URL('./tiles/kefalonia_risk.pmtiles', window.location.href).href;
+var TILES = 'pmtiles://https://argos-geo.github.io/kefalonia-digital-twin/tiles/kefalonia_vectors.pmtiles';
+var HILL = 'pmtiles://https://argos-geo.github.io/kefalonia-digital-twin/tiles/kefalonia_hillshade.pmtiles';
+var RISK_TILES = 'pmtiles://https://argos-geo.github.io/kefalonia-digital-twin/tiles/kefalonia_risk.pmtiles';
 var protocol = new pmtiles.Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
 
