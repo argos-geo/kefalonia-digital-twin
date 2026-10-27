@@ -623,7 +623,7 @@ map.on('load', function () {
   // Coastline context: Zakynthos, Lefkada, western mainland + Peloponnese (EMODnet DTM 0 m contour, served via GitHub Pages). Eye candy, non-interactive.
   map.addSource('neighbors', { type: 'geojson', data: 'https://argos-geo.github.io/kefalonia-digital-twin/ionian_coastline.geojson' });
   map.addLayer({ id: 'neighbors-line', type: 'line', source: 'neighbors',
-    paint: { 'line-color': '#C9A227', 'line-opacity': 0.2,
+    paint: { 'line-color': '#C9A227', 'line-opacity': ['case', ['==', ['get', 'ctx'], 'north'], 0.12, 0.2],
       'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 1.4] } });
 
   map.addSource('vectors', { type: 'vector', url: TILES,
