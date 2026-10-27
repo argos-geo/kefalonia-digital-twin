@@ -86,6 +86,8 @@
   .maplibregl-popup-close-button { color:#8A9AB0; }
   .ptitle { font-family:'Space Grotesk','Inter',sans-serif; color:#C9A227; font-size:12px; margin-bottom:6px; letter-spacing:0.08em; }
   .ptable td { padding:1px 6px 1px 0; vertical-align:top; }
+  .pspark { margin-top:6px; }
+  .pspark-l { font-size:9px; color:#8A94A6; margin-top:2px; }
   .ptable td.k { color:#8A9AB0; }
   .psep { border-top:1px solid rgba(201,162,39,0.35); margin:8px 0 2px; }
   .pmore { margin-top:6px; font-size:10px; color:#8A9AB0; }
@@ -1073,6 +1075,28 @@ map.on('load', function () {
       peak_at: new Date(d.peak.valid_time).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
       vhm0_now: now.vhm0, run_ts: d.cmems_run, cls: marineClass(now.exposure || 0) };
   }
+  function marineSparkFor(osmId) {
+    if (typeof marineData === 'undefined' || !marineData.length) return '';
+    var d = null;
+    for (var i = 0; i < marineData.length; i++) { if (marineData[i].osm_id === osmId) d = marineData[i]; }
+    if (!d || !d.hrs || d.hrs.length < 2) return '';
+    var W = 268, H = 46, n = d.hrs.length;
+    var vals = d.hrs.map(function (h) { return Math.max(0, Math.min(100, h.exposure || 0)); });
+    var x = function (i) { return (i / (n - 1)) * (W - 8) + 4; };
+    var y = function (v) { return H - 4 - (v / 100) * (H - 8); };
+    var pts = vals.map(function (v, i) { return x(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' ');
+    var pk = d.peak ? d.peak.exposure : Math.max.apply(null, vals);
+    var pki = vals.indexOf(pk);
+    if (pki < 0) pki = vals.indexOf(Math.max.apply(null, vals));
+    var lab = CUR_LANG === 'el'
+      ? '\u0388\u03ba\u03b8\u03b5\u03c3\u03b7 \u03b5\u03c0\u03cc\u03bc\u03b5\u03bd\u03c9\u03bd ' + n + ' \u03c9\u03c1\u03ce\u03bd (\u03bc\u03bf\u03bd\u03c4\u03ad\u03bb\u03bf)'
+      : 'Modelled exposure, next ' + n + ' h';
+    return '<div class="pspark"><svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">'
+      + '<line x1="4" y1="' + y(50).toFixed(1) + '" x2="' + (W - 4) + '" y2="' + y(50).toFixed(1) + '" stroke="#5A6A85" stroke-width="1" stroke-dasharray="3,3"/>'
+      + '<polyline points="' + pts + '" fill="none" stroke="#C9A227" stroke-width="1.5"/>'
+      + '<circle cx="' + x(pki).toFixed(1) + '" cy="' + y(vals[pki]).toFixed(1) + '" r="2.5" fill="#F5F0E1"/>'
+      + '</svg><div class="pspark-l">' + lab + '</div></div>';
+  }
   map.on('click', function (e) {
     var present = CLICKABLE.filter(function (lid) { return map.getLayer(lid); });
     if (!present.length) return;
@@ -1084,7 +1108,9 @@ map.on('load', function () {
     var seen = {}, sections = [];
     feats.forEach(function (f) {
       var lid = f.layer.id, props = f.properties;
+      var spark = '';
       if (lid === 'marine-beach-fill') {
+        spark = marineSparkFor(props.osm_id);
         props = marinePropsFor(props.osm_id);
         if (!props) return;
         lid = 'marine-circle';
@@ -1092,7 +1118,7 @@ map.on('load', function () {
       var key = lid + '|' + (props[nameProp()] || props.name || '');
       if (seen[key]) return;
       seen[key] = 1;
-      sections.push(popupHTML(props, lid));
+      sections.push(popupHTML(props, lid) + spark);
     });
     if (!sections.length) return;
     var html = sections.slice(0, 3).join('<div class="psep"></div>');
