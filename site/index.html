@@ -292,15 +292,15 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
 .feed-meta{font-size:.7rem; color:var(--text-muted); letter-spacing:.04em}
 .feed-loading,.feed-error{font-size:.8rem; color:var(--text-muted); padding:.6rem 0}
 .feed-error a{color:var(--sea)}
-.latest-panel{position:fixed; left:1.4rem; bottom:5.9rem; z-index:9; width:min(320px, calc(100vw - 2.4rem));
+.latest-panel{position:fixed; left:1.4rem; top:50%; transform:translateY(-50%); z-index:9; width:min(320px, calc(100vw - 2.4rem));
   background:rgba(15,29,51,.92); border:1px solid rgba(201,162,39,.35); border-radius:12px;
   padding:.8rem 1rem; text-decoration:none; display:none; backdrop-filter:blur(6px);
   transition:border-color .25s, transform .25s}
-.latest-panel:hover{border-color:rgba(201,162,39,.6); transform:translateY(-1px)}
+.latest-panel:hover{border-color:rgba(201,162,39,.6); transform:translateY(calc(-50% - 1px))}
 .latest-panel .lp-h{font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-dim); font-weight:600; margin-bottom:.35rem}
 .latest-panel .lp-t{font-size:.82rem; color:var(--text-primary); line-height:1.45}
 .latest-panel .lp-a{font-size:.68rem; color:var(--text-muted); margin-top:.4rem}
-@media (max-width:480px){.latest-panel{display:none !important}}
+@media (max-width:480px){.latest-panel{position:static; transform:none; display:block; margin:1.5rem auto}}
 @media (max-width:480px){.social-fab{left:1rem; bottom:1rem}}
 </style>
 </head>
@@ -463,7 +463,7 @@ function renderFnote(){
   const doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
   const idx = doy % FNOTES.length;
   document.getElementById('fnote').href = FNOTES[idx][1];
-  document.getElementById('fnote-title').textContent = '№' + (idx + 1) + ' · ' + FNOTES[idx][0] + ' — ' + FNOTES[idx][2];
+  document.getElementById('fnote-title').textContent = '№' + (idx + 1) + ' · ' + FNOTES[idx][0] + ' · ' + FNOTES[idx][2];
   document.getElementById('i-fnlabel').textContent = FNLABEL[siteLang()];
 }
 function renderPulse(){
@@ -523,7 +523,7 @@ document.getElementById('sl-el').addEventListener('click', () => { renderFnote()
 <button class="bio-fab" id="bioFab" aria-label="About the builder"><img src="https://argos-geo.github.io/kefalonia-digital-twin/assets/bio_fab.png" alt="Panagis"></button>
 <div class="bio-modal" id="bioModal">
   <pre class="bio-card">┌──────────────────────────────────────────────────┐
-│  <strong>Panagis Tzivras</strong> — Human                         │
+│  <strong>Panagis Tzivras</strong> · Human                         │
 │  Version <strong>40.9</strong> (stable, occasional memory leaks)  │
 ├──────────────────────────────────────────────────┤
 │  <strong>Day Job</strong>    │ Keeps databases from burning down  │
@@ -590,7 +590,7 @@ document.addEventListener('click', e=>{ if(!modal.contains(e.target)) modal.clas
     '<div class="feed-error">Signal lost &mdash; <a href="' + url + '" target="_blank" rel="noopener">open ' + handle + ' directly &rarr;</a></div>';
 
   async function loadFeeds(){
-    // Bluesky — public API, no auth
+    // Bluesky : public API, no auth
     const bsky = document.getElementById('netBsky');
     try {
       const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=argos-geo.org&limit=3&filter=posts_no_replies');
@@ -609,7 +609,7 @@ document.addEventListener('click', e=>{ if(!modal.contains(e.target)) modal.clas
     } catch { bsky.querySelector('.feed-loading')?.remove();
       bsky.insertAdjacentHTML('beforeend', fail('bsky','https://bsky.app/profile/argos-geo.org','Bluesky')); }
 
-    // Mastodon — public API, no auth
+    // Mastodon : public API, no auth
     const masto = document.getElementById('netMasto');
     try {
       const lr = await fetch('https://mapstodon.space/api/v1/accounts/lookup?acct=argos_geo');
