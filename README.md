@@ -22,29 +22,32 @@ exposure for 14 pilot beaches. Click anything; it answers.
 **What is it?** A PostgreSQL/PostGIS database that holds the whole island -
 12,217 road segments (3,764 km), 46,934 buildings (OSM + Microsoft footprints,
 conflated), 1,831 POIs, 197 beaches, 29 trails, terrain (Copernicus DEM 30 m),
-vegetation (Sentinel-2), EMODnet bathymetry, and four validated screening layers -
+vegetation (Sentinel-2), EMODnet bathymetry, and four screening layers with directional validation where independent evidence exists -
 served through a FastAPI and a static vector-tile map.
 
-**What already works (v0.0.7):**
+## What already works (v0.2.0)
 
-- **Interactive map** - MapLibre GL + PMTiles, served from GitHub Pages
-- **Spatial API** - `/layers` `/buffer` `/intersect` `/aggregate`, demo queries < 500 ms
-- **ARGOS WATCH: Wildfire Risk v1.2** - CLC 2018 fuel model; validated against 24
-  EFFIS fire perimeters (21/24 above island mean) and 397 NASA FIRMS detections
-  (71.54% in class ≥3 vs 47.28% island baseline; class-4 enrichment ~4.8x).
-  Directional validation, not proof.
-- **ARGOS WATCH: Flash-Flood v1.1** - D8 fluvial + pluvial ponding term; validated
-  against the Feb 2025 storm (Τραπεζάκι 97.5, Πόρος 96.9, Περατάτα 94.6, Βλαχάτα
-  69.2 partial) and the ΓΓΠΠ Sep 2022 historical flood map. Karst blind spots
-  (Katavothres) documented.
-- **Fire-response coverage** - pgRouting network (21,811 segments); 42,340
-  buildings carry travel times. 76.6% beyond the 15-minute envelope. Median
-  response: OSM stock 43.4 min, Microsoft stock 33.3 min.
-- **ARGOS WATCH: Marine exposure** - 14 pilot beaches; Copernicus Marine (CMEMS)
-  hourly waves + 2D surface currents, refreshed twice daily; direction-gated wave
-  score (70%) + current score (30%); animated current particles. Modelled offshore
-  conditions translated into a beach exposure assessment - never a rip-current
-  warning or safety certification. Ships unvalidated; first in the validation queue.
+### Map (argos-geo.org/map)
+- Base: 12,217 road segments (3,764 km), 46,934 buildings (OSM + Microsoft conflated), 1,831 POIs, 197 beaches, 29 trails, municipalities, terrain hillshade, EMODnet bathymetry contours, northern context coastline (incl. Corfu group)
+- Risk layers: Wildfire Risk v1.2 (validated against 24 EFFIS perimeters, 21/24 above island mean, and 397 NASA FIRMS detections; directional validation, not proof), Flash-Flood Risk v1.1 (validated against the Feb 2025 storm and the ΓΓΠΠ Sep 2022 historical flood map; Katavothres karst blind spots documented), Fire-response coverage (pgRouting, 21,811 segments; 76.6% of buildings beyond the 15-minute envelope; median response OSM 43.4 min, Microsoft 33.3 min)
+- Marine: 14-beach exposure layer with per-beach 48 h exposure sparkline in popups; animated current streaks; animated wave-height streaks; current-speed field; SST. Unvalidated (no independent buoy on Kefalonia); first in the validation queue.
+- Live: weather now (13 points), FWI index, temperature field, EFFIS FWI grid, earthquake layer (EMSC, M≥2.5, Ionian box, 2 min refresh)
+- ASK THE TWIN: precomputed answers to curated questions, computed from the live database at analysis time (4 demo questions)
+- Bilingual EN/EL throughout; mobile-adapted
+
+### API (api.argos-geo.org)
+/layers, /buffer, /intersect, /aggregate, /marine/beaches, /marine/exposure, /weather/now, /fwi/latest and related live endpoints; demo queries < 500 ms
+
+### Automation
+- Daily Bluesky digest 07:05 EET with generated data card (wave, FWI, temperature, quakes)
+- Earthquake poster (M≥3.0, 10 min check)
+- Quake fetch every 2 min
+
+### ARGOS analyses vs. integrated external products
+
+**ARGOS analyses (our models, our validation):** Wildfire Risk v1.2 (CLC 2018 fuel, slope, aspect, roads, MODIS fire history); Flash-Flood Risk v1.1 (D8 fluvial + pluvial ponding on Copernicus DEM 30 m); Fire-response coverage (pgRouting, single station origin ΠΥ Αργοστολίου); Marine exposure score (0-100 index computed from CMEMS wave + current models).
+
+**Integrated external products (displayed, not modelled by us):** EFFIS / Copernicus EMS FWI (daily rasters, reference context only); CMEMS Mediterranean wave model (MEDWAM, 4 km, hourly); CMEMS Mediterranean physics model (surface currents, SST, 4 km); Open-Meteo (weather now, 13 model points); EMSC-CSEM (earthquakes, M≥2.5, Ionian box); EMODnet (bathymetry contours, display only).
 
 **What it costs to run:** €0/month, including always-on production (Oracle Always
 Free ARM VM + Cloudflare Pages + GitHub Pages).
@@ -148,26 +151,32 @@ Attribution is architecture, not decoration.
 **Τι είναι;** Μια βάση PostgreSQL/PostGIS που κρατά ολόκληρο το νησί - 12.217
 τμήματα δρόμων (3.764 χλμ.), 46.934 κτίρια (OSM + Microsoft), 1.831 σημεία
 ενδιαφέροντος, 197 παραλίες, 29 μονοπάτια, ανάγλυφο (Copernicus DEM 30 μ.),
-βλάστηση (Sentinel-2), βυθομετρία EMODnet και τέσσερα επικυρωμένα επίπεδα
-κινδύνου - που σερβίρονται μέσω FastAPI και στατικού χάρτη vector tiles.
+βλάστηση (Sentinel-2), βυθομετρία EMODnet και τέσσερα επίπεδα διαλογής
+με κατευθυντική επικύρωση όπου υπάρχει ανεξάρτητη απόδειξη - που σερβίρονται μέσω FastAPI και στατικού χάρτη vector tiles.
 
-**Τι δουλεύει ήδη (v0.0.7):**
+## Τι δουλεύει ήδη (v0.2.0)
 
-- **Διαδραστικός χάρτης** - MapLibre GL + PMTiles
-- **Χωρικό API** - `/layers` `/buffer` `/intersect` `/aggregate`
-- **ARGOS WATCH: Κίνδυνος Πυρκαγιάς v1.2** - μοντέλο καυσίμης ύλης CLC 2018·
-  επικυρωμένος με 24 περιμέτρους EFFIS (21/24 πάνω από τον μέσο όρο) και 397
-  ανιχνεύσεις NASA FIRMS (71,54% σε κλάση ≥3, έναντι 47,28% του νησιού).
-  Κατευθυντική επικύρωση, όχι απόδειξη.
-- **ARGOS WATCH: Πλημμύρα v1.1** - απορροή D8 + πλημμυρικός όρος· επικυρωμένο με
-  την καταιγίδα Φεβρουαρίου 2025 (Τραπεζάκι 97,5 · Πόρος 96,9 · Περατάτα 94,6 ·
-  Βλαχάτα 69,2 μερικό) και τον ιστορικό χάρτη πλημμυρών ΓΓΠΠ Σεπ. 2022.
-- **Πυροσβεστική κάλυψη** - δίκτυο pgRouting (21.811 τμήματα)· 42.340 κτίρια με
-  χρόνους πρόσβασης, 76,6% εκτός 15λεπτου.
-- **ARGOS WATCH: Θαλάσσια έκθεση** - 14 παραλίες· κύματα και επιφανειακά ρεύματα
-  Copernicus Marine, δύο φορές την ημέρα· κινούμενα σωματίδια ρευμάτων. Μοντελοποιημένες
-  θαλάσσιες συνθήκες μεταφρασμένες σε ένδειξη έκθεσης παραλίας - ποτέ προειδοποίηση
-  ρευμάτων ή πιστοποίηση ασφαλείας. Ανεπικύρωτο, πρώτο στην ουρά επικύρωσης.
+### Χάρτης (argos-geo.org/map)
+- Βάση: 12.217 τμήματα δρόμων (3.764 χλμ.), 46.934 κτίρια (OSM + Microsoft συγχωνευμένα), 1.831 σημεία ενδιαφέροντος, 197 παραλίες, 29 μονοπάτια, δήμοι, ανάγλυφο εδάφους, περιγράμματα βάθους EMODnet, βόρεια ακτογραμμή (συμπ. Κέρκυρα)
+- Επίπεδα κινδύνου: Κίνδυνος Πυρκαγιάς v1.2 (επικύρωση με 24 περιμέτρους EFFIS, 21/24 πάνω από τον μέσο όρο, και 397 ανιχνεύσεις NASA FIRMS· κατευθυντική επικύρωση, όχι απόδειξη), Κίνδυνος Πλημμύρας v1.1 (επικύρωση με την καταιγίδα Φεβρουαρίου 2025 και τον ιστορικό χάρτη ΓΓΠΠ Σεπ. 2022· τεκμηριωμένα τυφλά σημεία καρστ Καταβόθρες), Προσβασιμότητα Πυροσβεστικής (pgRouting, 21.811 τμήματα· 76,6% των κτιρίων εκτός 15λεπτου· διάμεσοι χρόνοι OSM 43,4 λ., Microsoft 33,3 λ.)
+- Θάλασσα: επίπεδο έκθεσης 14 παραλιών με sparkline 48 ωρών στα popups· κινούμενα ρεύματα· κινούμενα κύματα· πεδίο ταχύτητας ρεύματος· SST. Ανεπικύρωτο (δεν υπάρχει ανεξάρτητος πλωτός σταθμός στην Κεφαλονιά)· πρώτο στην ουρά επικύρωσης.
+- Ζωντανά: καιρός τώρα (13 σημεία), δείκτης FWI, πεδίο θερμοκρασίας, πλέγμα FWI EFFIS, επίπεδο σεισμών (EMSC, M≥2.5, Ιόνιο, ανά 2 λεπτά)
+- ΡΩΤΑ ΤΟΝ ΔΙΔΥΜΟ: προϋπολογισμένες απαντήσεις σε επιλεγμένα ερωτήματα, υπολογισμένες από τη ζωντανή βάση κατά τον χρόνο ανάλυσης (4 ερωτήματα επίδειξης)
+- Δίγλωσσο EN/EL· προσαρμοσμένο σε κινητό
+
+### API (api.argos-geo.org)
+/layers, /buffer, /intersect, /aggregate, /marine/beaches, /marine/exposure, /weather/now, /fwi/latest και σχετικά ζωντανά endpoints· demo queries < 500 ms
+
+### Αυτοματοποίηση
+- Ημερήσιο digest Bluesky 07:05 EET με παραγόμενη κάρτα δεδομένων (κύμα, FWI, θερμοκρασία, σεισμοί)
+- Ανάρτηση σεισμών (M≥3.0, έλεγχος ανά 10 λεπτά)
+- Ανάκτηση σεισμών ανά 2 λεπτά
+
+### Αναλύσεις ARGOS vs. ενσωματωμένα εξωτερικά προϊόντα
+
+**Αναλύσεις ARGOS (τα μοντέλα μας, η επικύρωσή μας):** Κίνδυνος Πυρκαγιάς v1.2· Κίνδυνος Πλημμύρας v1.1· Προσβασιμότητα Πυροσβεστικής· Δείκτης έκθεσης παραλίας (0-100, από μοντέλα CMEMS).
+
+**Ενσωματωμένα εξωτερικά προϊόντα (εμφανίζονται, όχι μοντελοποιημένα από εμάς):** EFFIS / Copernicus EMS FWI· CMEMS Μεσόγειος (κύματα, ρεύματα, SST)· Open-Meteo (καιρός)· EMSC-CSEM (σεισμοί)· EMODnet (βυθομετρία, οπτικοποίηση μόνο).
 
 **Κόστος λειτουργίας:** 0 €/μήνα, συμπεριλαμβανομένης της παραγωγής 24/7
 (Oracle Always Free + Cloudflare Pages + GitHub Pages).
