@@ -81,6 +81,10 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
 .note .meta a:hover{color:var(--gold)}
 .note h2 a{color:inherit; text-decoration:none}
 .note h2 a:hover{color:var(--gold)}
+.note .desc{font-size:.82rem; line-height:1.55; color:var(--text-secondary); margin:.35rem 0 .45rem}
+.picon{width:11px; height:11px; fill:currentColor; vertical-align:-1px; margin-right:4px}
+.trilogy{border-left:2px solid var(--gold); padding-left:.9rem; display:flex; flex-direction:column; gap:.8rem; margin-top:.2rem}
+.trilabel{font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold)}
 .soon{color:var(--gold-dim)}
 .method{padding:1.2rem 1.3rem; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
   border-left:3px solid var(--gold-dim); border-radius:10px}
@@ -114,40 +118,86 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
   <div class="notes">
     <div class="note"><div class="num">1</div><div class="body">
       <h2><a id="n1" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener">Processing my first Sentinel-2 pass in 48 hours</a></h2>
-      <div class="meta"><span class="mdate" id="m1">Aug 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+      <p class="desc" id="d1">How a single Sentinel-2 tile became the project's first processed dataset, and what the 48-hour learning curve looked like.</p>
+      <div class="meta"><span class="mdate" id="m1">Aug 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/1" target="_blank" rel="noopener" class="mplat"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Discussion</a></span></div>
     </div></div>
     <div class="note"><div class="num">2</div><div class="body">
       <h2><a id="n2" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener">Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha</a></h2>
-      <div class="meta"><span class="mdate" id="m2">Aug 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+      <p class="desc" id="d2">The reasoning behind choosing PostGIS, FastAPI, and MapLibre, plus the Debian Trixie docker-in-docker failure that almost killed the dev environment.</p>
+      <div class="meta"><span class="mdate" id="m2">Aug 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/2" target="_blank" rel="noopener" class="mplat"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Discussion</a></span></div>
     </div></div>
     <div class="note"><div class="num">3</div><div class="body">
       <h2><a id="n3" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener">Greek fir (Abies cephalonica) and the problem with NDVI on karst</a></h2>
-      <div class="meta"><span class="mdate" id="m3">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+      <p class="desc" id="d3">Why NDVI fails on Kefalonia's karst limestone and what that means for vegetation-based risk models.</p>
+      <div class="meta"><span class="mdate" id="m3">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/3" target="_blank" rel="noopener" class="mplat"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Discussion</a></span></div>
     </div></div>
     <div class="note"><div class="num">4</div><div class="body">
       <h2><a id="n4" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener">Where the water goes: drainage, slope, and the February 2025 storm</a></h2>
-      <div class="meta"><span class="mdate" id="m4">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+      <p class="desc" id="d4">Building the D8 drainage model and validating it against the February 2025 storm that flooded Τραπεζάκι, Πόρος, and Περατάτα.</p>
+      <div class="meta"><span class="mdate" id="m4">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/4" target="_blank" rel="noopener" class="mplat"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Discussion</a></span></div>
     </div></div>
     <div class="note"><div class="num">5</div><div class="body">
       <h2><a id="n5" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener">Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)</a></h2>
-      <div class="meta"><span class="mdate" id="m5">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+      <p class="desc" id="d5">The technical story behind the Fiskardo evacuation routing analysis: why the answer was 44 minutes, not 15.</p>
+      <div class="meta"><span class="mdate" id="m5">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/6" target="_blank" rel="noopener" class="mplat"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Discussion</a></span></div>
     </div></div>
     <div class="note"><div class="num">6</div><div class="body">
-      <h2><a id="n6" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener">Build Log #6: The Buildings the Map Did Not See</a></h2>
-      <div class="meta"><span class="mdate" id="m6">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+      <h2><a id="n6" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener">Build Log #6: The Buildings the Map Missed</a></h2>
+      <p class="desc" id="d6">Conflating OpenStreetMap and Microsoft Building Footprints to find the buildings that either dataset missed on its own.</p>
+      <div class="meta"><span class="mdate" id="m6">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/7" target="_blank" rel="noopener" class="mplat"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Discussion</a></span></div>
     </div></div>
     <div class="note"><div class="num">7</div><div class="body">
-      <h2><a id="n7" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener">The actual SQL behind "The Answer You Didn't Want"</a></h2>
-      <div class="meta"><span class="mdate" id="m7">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener" class="mplat">GitHub Discussion</a></span></div>
+      <h2><a id="n7" href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener">The actual SQL behind &quot;The Answer You Didn't Want&quot;</a></h2>
+      <p class="desc" id="d7">The SQL supplement to Build Log #5: exact queries, edge cases, and the 116-segment Fiskardo corridor dissected.</p>
+      <div class="meta"><span class="mdate" id="m7">Sep 2026</span> &middot; <span class="plat"><a href="https://github.com/argos-geo/kefalonia-digital-twin/discussions/5" target="_blank" rel="noopener" class="mplat"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Discussion</a></span></div>
     </div></div>
     <div class="note"><div class="num">8</div><div class="body">
-      <h2><a id="n8" href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">The Answer You Didn't Want: Fiskardo Evacuation Routing</a></h2>
-      <div class="meta"><span class="mdate" id="m8">Sep 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">DEV</a></span></div>
+      <h2><a id="n8" href="https://dev.to/ptzivras/i-built-a-digital-twin-of-a-greek-island-and-it-found-a-lighthouse-no-one-asked-about-38n3" target="_blank" rel="noopener">I built a digital twin of a Greek island and it found a lighthouse no one asked about</a></h2>
+      <p class="desc" id="d8">How an early geospatial query surfaced an unexpected lighthouse on Kefalonia's coast, and what it taught about the difference between data and questions.</p>
+      <div class="meta"><span class="mdate" id="m8">Aug 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/i-built-a-digital-twin-of-a-greek-island-and-it-found-a-lighthouse-no-one-asked-about-38n3" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
     </div></div>
     <div class="note"><div class="num">9</div><div class="body">
-      <h2><a id="n9" href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener">The sea looks calm when it is not: Myrtos Beach marine safety</a></h2>
-      <div class="meta"><span class="mdate" id="m9">Oct 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener">DEV</a></span></div>
+      <h2><a id="n9" href="https://dev.to/ptzivras/-build-log-1-processing-my-first-sentinel-2-pass-in-48-hours-8p9" target="_blank" rel="noopener">Build Log #1: Processing my first Sentinel-2 pass in 48 hours</a></h2>
+      <p class="desc" id="d9">Narrative companion to GitHub Discussion #1: the human story behind processing the first satellite pass.</p>
+      <div class="meta"><span class="mdate" id="m9">Aug 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/-build-log-1-processing-my-first-sentinel-2-pass-in-48-hours-8p9" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
     </div></div>
+    <div class="note"><div class="num">10</div><div class="body">
+      <h2><a id="n10" href="https://dev.to/ptzivras/argos-v001-is-live-a-digital-twin-of-kefalonia-3i38" target="_blank" rel="noopener">ARGOS v0.0.1 is live: a digital twin of Kefalonia</a></h2>
+      <p class="desc" id="d10">The launch story: why ARGOS was built, what v0.0.1 contained, and what it meant to ship.</p>
+      <div class="meta"><span class="mdate" id="m10">Aug 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/argos-v001-is-live-a-digital-twin-of-kefalonia-3i38" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">11</div><div class="body">
+      <h2><a id="n11" href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener">The Answer You Didn't Want: Fiskardo Evacuation Routing</a></h2>
+      <p class="desc" id="d11">Narrative forensics: why Fiskardo's evacuation routing produces an uncomfortable answer, and why honest data is more valuable than comforting data.</p>
+      <div class="meta"><span class="mdate" id="m11">Sep 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-answer-you-didnt-want-fiskardo-evacuation-routing-4hok" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">12</div><div class="body">
+      <h2><a id="n12" href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener">The sea looks calm when it is not: Myrtos Beach marine safety</a></h2>
+      <p class="desc" id="d12">How modelled offshore conditions become a beach exposure assessment, and why the gap between model and shore matters.</p>
+      <div class="meta"><span class="mdate" id="m12">Oct 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-sea-looks-calm-when-it-isnt-3e6m" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">13</div><div class="body">
+      <h2><a id="n13" href="https://dev.to/ptzivras/argos-the-map-works-on-phones-now-3mop" target="_blank" rel="noopener">ARGOS : : The map works on phones now</a></h2>
+      <p class="desc" id="d13">Building the mobile map experience: touch targets, drawer behaviour, and why 44px matters.</p>
+      <div class="meta"><span class="mdate" id="m13">Oct 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/argos-the-map-works-on-phones-now-3mop" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
+    </div></div>
+    <div class="trilogy"><div class="trilabel" id="i-trilabel">Frankie Trilogy</div>
+    <div class="note"><div class="num">14</div><div class="body">
+      <h2><a id="n14" href="https://dev.to/ptzivras/meet-frankie-the-17-year-old-laptop-that-was-supposed-to-build-argos-o2f" target="_blank" rel="noopener">Meet Frankie, the 17-year-old laptop that was supposed to build ARGOS : :</a></h2>
+      <p class="desc" id="d14">The Frankie trilogy #1: introducing the 2008 MacBook Air that became ARGOS infrastructure.</p>
+      <div class="meta"><span class="mdate" id="m14">Oct 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/meet-frankie-the-17-year-old-laptop-that-was-supposed-to-build-argos-o2f" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">15</div><div class="body">
+      <h2><a id="n15" href="https://dev.to/ptzivras/the-wall-how-a-wi-fi-driver-killed-the-server-dream-4e2f" target="_blank" rel="noopener">The Wall: How a Wi-Fi driver killed the server dream</a></h2>
+      <p class="desc" id="d15">The Frankie trilogy #2: the wall of heat, noise, and perseverance.</p>
+      <div class="meta"><span class="mdate" id="m15">Oct 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-wall-how-a-wi-fi-driver-killed-the-server-dream-4e2f" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
+    </div></div>
+    <div class="note"><div class="num">16</div><div class="body">
+      <h2><a id="n16" href="https://dev.to/ptzivras/the-cable-how-a-eu12-adapter-turned-a-laptop-into-infrastructure-7h4" target="_blank" rel="noopener">The Cable: How a €12 adapter turned a laptop into infrastructure</a></h2>
+      <p class="desc" id="d16">The Frankie trilogy #3: how a €12 adapter turned a laptop into infrastructure.</p>
+      <div class="meta"><span class="mdate" id="m16">Oct 2026</span> &middot; <span class="plat"><a href="https://dev.to/ptzivras/the-cable-how-a-eu12-adapter-turned-a-laptop-into-infrastructure-7h4" target="_blank" rel="noopener"><svg class="picon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></svg>DEV</a></span></div>
+    </div></div>
+    </div>
   </div>
   <div class="method">
     <p id="i-mp">Build logs and SQL supplements are canonical on GitHub Discussions. Narrative forensics are canonical on DEV. Each one links from here the day it publishes.</p>
@@ -170,16 +220,54 @@ const I18N = {
     'i-h1': 'Field Notes',
     'i-lead': 'Build logs document the technical work on GitHub. Narrative investigations live on DEV. Field Notes brings both together, with the honest limitations intact.',
     'n1': 'Processing my first Sentinel-2 pass in 48 hours',
+    'd1': 'How a single Sentinel-2 tile became the project\'s first processed dataset, and what the 48-hour learning curve looked like.',
+    'm1': 'Aug 2026',
     'n2': 'Stack Decisions: Why PostGIS + FastAPI, and the Debian Gotcha',
+    'd2': 'The reasoning behind choosing PostGIS, FastAPI, and MapLibre, plus the Debian Trixie docker-in-docker failure that almost killed the dev environment.',
+    'm2': 'Aug 2026',
     'n3': 'Greek fir (Abies cephalonica) and the problem with NDVI on karst',
+    'd3': 'Why NDVI fails on Kefalonia\'s karst limestone and what that means for vegetation-based risk models.',
+    'm3': 'Sep 2026',
     'n4': 'Where the water goes: drainage, slope, and the February 2025 storm',
-    'n5': "Build Log #5: The Answer You Didn't Want (Fiskardo Evacuation Routing)",
-    'n6': 'Build Log #6: The Buildings the Map Did Not See',
+    'd4': 'Building the D8 drainage model and validating it against the February 2025 storm that flooded Τραπεζάκι, Πόρος, and Περατάτα.',
+    'm4': 'Sep 2026',
+    'n5': 'Build Log #5: The Answer You Didn\'t Want (Fiskardo Evacuation Routing)',
+    'd5': 'The technical story behind the Fiskardo evacuation routing analysis: why the answer was 44 minutes, not 15.',
+    'm5': 'Sep 2026',
+    'n6': 'Build Log #6: The Buildings the Map Missed',
+    'd6': 'Conflating OpenStreetMap and Microsoft Building Footprints to find the buildings that either dataset missed on its own.',
+    'm6': 'Sep 2026',
     'n7': 'The actual SQL behind "The Answer You Didn\'t Want"',
-    'n8': "The Answer You Didn't Want: Fiskardo Evacuation Routing",
-    'n9': 'The sea looks calm when it is not: Myrtos Beach marine safety',
-    'm1': 'Aug 2026', 'm2': 'Aug 2026', 'm3': 'Sep 2026', 'm4': 'Sep 2026',
-    'm5': 'Sep 2026', 'm6': 'Sep 2026', 'm7': 'Sep 2026', 'm8': 'Sep 2026', 'm9': 'Oct 2026',
+    'd7': 'The SQL supplement to Build Log #5: exact queries, edge cases, and the 116-segment Fiskardo corridor dissected.',
+    'm7': 'Sep 2026',
+    'n8': 'I built a digital twin of a Greek island and it found a lighthouse no one asked about',
+    'd8': 'How an early geospatial query surfaced an unexpected lighthouse on Kefalonia\'s coast, and what it taught about the difference between data and questions.',
+    'm8': 'Aug 2026',
+    'n9': 'Build Log #1: Processing my first Sentinel-2 pass in 48 hours',
+    'd9': 'Narrative companion to GitHub Discussion #1: the human story behind processing the first satellite pass.',
+    'm9': 'Aug 2026',
+    'n10': 'ARGOS v0.0.1 is live: a digital twin of Kefalonia',
+    'd10': 'The launch story: why ARGOS was built, what v0.0.1 contained, and what it meant to ship.',
+    'm10': 'Aug 2026',
+    'n11': 'The Answer You Didn\'t Want: Fiskardo Evacuation Routing',
+    'd11': 'Narrative forensics: why Fiskardo\'s evacuation routing produces an uncomfortable answer, and why honest data is more valuable than comforting data.',
+    'm11': 'Sep 2026',
+    'n12': 'The sea looks calm when it is not: Myrtos Beach marine safety',
+    'd12': 'How modelled offshore conditions become a beach exposure assessment, and why the gap between model and shore matters.',
+    'm12': 'Oct 2026',
+    'n13': 'ARGOS : : The map works on phones now',
+    'd13': 'Building the mobile map experience: touch targets, drawer behaviour, and why 44px matters.',
+    'm13': 'Oct 2026',
+    'n14': 'Meet Frankie, the 17-year-old laptop that was supposed to build ARGOS : :',
+    'd14': 'The Frankie trilogy #1: introducing the 2008 MacBook Air that became ARGOS infrastructure.',
+    'm14': 'Oct 2026',
+    'n15': 'The Wall: How a Wi-Fi driver killed the server dream',
+    'd15': 'The Frankie trilogy #2: the wall of heat, noise, and perseverance.',
+    'm15': 'Oct 2026',
+    'n16': 'The Cable: How a €12 adapter turned a laptop into infrastructure',
+    'd16': 'The Frankie trilogy #3: how a €12 adapter turned a laptop into infrastructure.',
+    'm16': 'Oct 2026',
+    'i-trilabel': 'Frankie Trilogy',
     'i-mp': 'Build logs and SQL supplements are canonical on GitHub Discussions. Narrative forensics are canonical on DEV. Each one links from here the day it publishes.',
     'i-home': '&larr; Home',
     'i-nav-map': 'Map', 'i-nav-about': 'About', 'i-nav-data': 'Open Data', 'i-nav-notes': 'Field Notes',
@@ -190,16 +278,54 @@ const I18N = {
     'i-h1': 'Ημερολόγιο',
     'i-lead': 'Τα build logs τεκμηριώνουν την τεχνική δουλειά στο GitHub. Οι αφηγηματικές έρευνες ζουν στο DEV. Το Ημερολόγιο τα φέρνει και τα δύο μαζί, με τους ειλικρινείς περιορισμούς ανέπαφους.',
     'n1': 'Η πρώτη μου επεξεργασία Sentinel-2 σε 48 ώρες',
+    'd1': 'Πώς ένα μόνο tile Sentinel-2 έγινε το πρώτο επεξεργασμένο dataset του έργου, και πώς ήταν η καμπή μάθησης των 48 ωρών.',
+    'm1': 'Αύγ 2026',
     'n2': 'Αποφάσεις υποδομής: γιατί PostGIS + FastAPI, και η παγίδα του Debian',
+    'd2': 'Η λογική πίσω από την επιλογή PostGIS, FastAPI και MapLibre, συν το ατύχημα Debian Trixie docker-in-docker που σχεδόν κατέστρεψε το περιβάλλον ανάπτυξης.',
+    'm2': 'Αύγ 2026',
     'n3': 'Το κεφαλονίτικο έλατο (Abies cephalonica) και το πρόβλημα του NDVI στο καρστ',
+    'd3': 'Γιατί το NDVI αποτυγχάνει στον ασβεστόλιθο της Κεφαλονιάς και τι σημαίνει αυτό για τα μοντέλα κινδύνου βασισμένα στη βλάστηση.',
+    'm3': 'Σεπ 2026',
     'n4': 'Πού πάει το νερό: απορροή, κλίση και η κακοκαιρία του Φεβρουαρίου 2025',
+    'd4': 'Χτίζοντας το μοντέλο απορροής D8 και επικυρώνοντάς το με την καταιγίδα του Φεβρουαρίου 2025 που πλημμύρισε Τραπεζάκι, Πόρο και Περατάτα.',
+    'm4': 'Σεπ 2026',
     'n5': 'Build Log #5: Η απάντηση που δεν ήθελες (δρομολόγηση εκκένωσης Φισκάρδου)',
+    'd5': 'Η τεχνική ιστορία πίσω από την ανάλυση διαδρομών εκκένωσης Φισκάρδου: γιατί η απάντηση ήταν 44 λεπτά, όχι 15.',
+    'm5': 'Σεπ 2026',
     'n6': 'Build Log #6: Τα κτίρια που δεν είδε ο χάρτης',
+    'd6': 'Συγχωνεύοντας OpenStreetMap και Microsoft Building Footprints για να βρούμε τα κτίρια που κάθε dataset χάλαγε μόνο του.',
+    'm6': 'Σεπ 2026',
     'n7': 'Το πραγματικό SQL πίσω από την "Απάντηση που δεν ήθελες"',
-    'n8': 'Η απάντηση που δεν ήθελες: δρομολόγηση εκκένωσης Φισκάρδου',
-    'n9': 'Η θάλασσα δείχνει ήρεμη όταν δεν είναι: θαλάσσια ασφάλεια στον Μύρτο',
-    'm1': 'Αύγ 2026', 'm2': 'Αύγ 2026', 'm3': 'Σεπ 2026', 'm4': 'Σεπ 2026',
-    'm5': 'Σεπ 2026', 'm6': 'Σεπ 2026', 'm7': 'Σεπ 2026', 'm8': 'Σεπ 2026', 'm9': 'Οκτ 2026',
+    'd7': 'Το SQL συμπλήρωμα του Build Log #5: ακριβή ερωτήματα, ακραίες περιπτώσεις, και ο διάδρομος Φισκάρδου των 116 τμημάτων αναλυμένος.',
+    'm7': 'Σεπ 2026',
+    'n8': 'I built a digital twin of a Greek island and it found a lighthouse no one asked about',
+    'd8': 'Πώς ένα πρώιμο γεωχωρικό ερώτημα ανέδειξε έναν απρόσμενο φάρο στην ακτή της Κεφαλονιάς, και τι έμαθε για τη διαφορά ανάμεσα στα δεδομένα και στα ερωτήματα.',
+    'm8': 'Αύγ 2026',
+    'n9': 'Build Log #1: Processing my first Sentinel-2 pass in 48 hours',
+    'd9': 'Αφηγηματικός σύντροφος του GitHub Discussion #1: η ανθρώπινη ιστορία πίσω από την επεξεργασία του πρώτου δορυφορικού περάσματος.',
+    'm9': 'Αύγ 2026',
+    'n10': 'ARGOS v0.0.1 is live: a digital twin of Kefalonia',
+    'd10': 'Η ιστορία του λανσαρίσματος: γιατί χτίστηκε ο ARGOS, τι περιείχε το v0.0.1, και τι σήμαινε να το στείλεις.',
+    'm10': 'Αύγ 2026',
+    'n11': 'Η απάντηση που δεν ήθελες: δρομολόγηση εκκένωσης Φισκάρδου',
+    'd11': 'Αφηγηματική ανάλυση: γιατί οι διαδρομές εκκένωσης Φισκάρδου δίνουν μια δυσάρεστη απάντηση, και γιατί τα ειλικρινή δεδομένα αξίζουν περισσότερο από τα παρηγορητικά.',
+    'm11': 'Σεπ 2026',
+    'n12': 'Η θάλασσα δείχνει ήρεμη όταν δεν είναι: θαλάσσια ασφάλεια στον Μύρτο',
+    'd12': 'Πώς οι μοντελοποιημένες θαλάσσιες συνθήκες γίνονται ένδειξη έκθεσης παραλίας, και γιατί μετράει το κενό ανάμεσα στο μοντέλο και την ακτή.',
+    'm12': 'Οκτ 2026',
+    'n13': 'ARGOS : : The map works on phones now',
+    'd13': 'Χτίζοντας την εμπειρία του χάρτη σε κινητό: στόχοι αφής, συμπεριφορά συρταριού, και γιατί τα 44px μετράνε.',
+    'm13': 'Οκτ 2026',
+    'n14': 'Meet Frankie, the 17-year-old laptop that was supposed to build ARGOS : :',
+    'd14': 'Τριλογία Frankie #1: παρουσιάζοντας το MacBook Air του 2008 που έγινε υποδομή ARGOS.',
+    'm14': 'Οκτ 2026',
+    'n15': 'The Wall: How a Wi-Fi driver killed the server dream',
+    'd15': 'Τριλογία Frankie #2: ο τοίχος της θερμότητας, του θορύβου και της επιμονής.',
+    'm15': 'Οκτ 2026',
+    'n16': 'The Cable: How a €12 adapter turned a laptop into infrastructure',
+    'd16': 'Τριλογία Frankie #3: πώς ένας προσαρμογέας €12 μετέτρεψε ένα laptop σε υποδομή.',
+    'm16': 'Οκτ 2026',
+    'i-trilabel': 'Τριλογία Frankie',
     'i-mp': 'Τα build logs και τα συμπληρώματα SQL είναι κανονικά στις Συζητήσεις του GitHub. Οι αφηγηματικές ανασκοπήσεις είναι κανονικές στο DEV. Καθεμία συνδέεται από εδώ την ημέρα που δημοσιεύεται.',
     'i-home': '&larr; Αρχική',
     'i-nav-map': 'Χάρτης', 'i-nav-about': 'Σχετικά', 'i-nav-data': 'Ανοιχτά Δεδομένα', 'i-nav-notes': 'Ημερολόγιο',
@@ -229,5 +355,5 @@ document.getElementById('sl-el').addEventListener('click', () => setSiteLang('el
   }).catch(() => {});
 })();
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a518fbfafe7d7d38',t:'MTc5MzE4MDQ4MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
