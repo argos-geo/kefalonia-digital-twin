@@ -148,7 +148,7 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
       <div class="lbl" id="c5l1">What it contains</div>
       <p id="c5p1">Bathymetry, seabed habitats, human activities</p>
       <div class="lbl" id="c5l2">How ARGOS uses it</div>
-      <p id="c5p2">Marine safety layers, subsurface current risk at beaches</p>
+      <p id="c5p2">EMODnet bathymetry provides contextual seafloor depth contours for the map display.</p>
     </div>
     <div class="card">
       <h2>Microsoft Building Footprints</h2>
@@ -194,7 +194,7 @@ const I18N = {
     'c4p2': 'Model validation, fuel type comparison, burn scar overlay',
     'c5m': 'EU / EMODnet &middot; Free and open',
     'c5p1': 'Bathymetry, seabed habitats, human activities',
-    'c5p2': 'Marine safety layers, subsurface current risk at beaches',
+    'c5p2': 'EMODnet bathymetry provides contextual seafloor depth contours for the map display.',
     'c6p1': 'Machine-detected building polygons from satellite imagery, with confidence scores and height estimates where available',
     'c6p2': 'Adds 24,921 footprints with no OpenStreetMap partner, lifting the merged building layer from 22,013 to 46,934 after PostGIS conflation',
     'i-mh2': 'Note on methodology',
@@ -220,7 +220,7 @@ const I18N = {
     'c4p2': 'Επικύρωση μοντέλου, σύγκριση τύπων καυσίμου, επικάλυψη καμένων εκτάσεων',
     'c5m': 'ΕΕ / EMODnet &middot; Ελεύθερο και ανοιχτό',
     'c5p1': 'Βαθυμετρία, οικότοποι βυθού, ανθρώπινες δραστηριότητες',
-    'c5p2': 'Επίπεδα θαλάσσιας ασφάλειας, εκτίμηση υποεπιφανειακού κινδύνου ρευμάτων στις παραλίες',
+    'c5p2': 'Η βυθομετρία EMODnet παρέχει περιγράμματα βάθους βυθού για την οπτικοποίηση του χάρτη.',
     'c6p1': 'Μηχανικά εντοπισμένα πολύγωνα κτιρίων από δορυφορικές εικόνες, με δείκτες εμπιστοσύνης και εκτιμήσεις ύψους όπου υπάρχουν',
     'c6p2': 'Προσθέτει 24.921 περίγραμμα χωρίς αντίστοιχο στο OpenStreetMap, ανεβάζοντας το συνδυασμένο επίπεδο κτιρίων από 22.013 σε 46.934 μετά τη συγχώνευση στο PostGIS',
     'i-mh2': 'Σημείωση μεθοδολογίας',
@@ -258,5 +258,5 @@ document.getElementById('sl-el').addEventListener('click', () => setSiteLang('el
   }).catch(() => {});
 })();
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a518fbe4582406e0',t:'MTc5MzE4MDQ3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
