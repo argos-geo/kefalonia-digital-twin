@@ -334,9 +334,9 @@ h1{font-family:'Space Grotesk','Inter',sans-serif; font-size:2rem; font-weight:7
     <div class="live-pill" id="i-live"><span class="pulse"></span><span id="i-live-txt">Live &middot; v0.2.0 live data</span></div>
   </div>
   <div class="roadmap">
-    <div class="rm-card"><div class="rm-label" id="i-rm1l">NOW</div><div class="rm-text" id="i-rm1t">Static island twin.</div></div>
-    <div class="rm-card"><div class="rm-label" id="i-rm2l">NEXT</div><div class="rm-text" id="i-rm2t">Live environmental feeds.</div></div>
-    <div class="rm-card"><div class="rm-label" id="i-rm3l">THEN</div><div class="rm-text" id="i-rm3t">Hazard outlook + history.</div></div>
+    <div class="rm-card"><div class="rm-label" id="i-rm1l">NOW</div><div class="rm-text" id="i-rm1t">Live data + static twin.</div></div>
+    <div class="rm-card"><div class="rm-label" id="i-rm2l">NEXT</div><div class="rm-text" id="i-rm2t">Complete live-feed UI + hazard outlook.</div></div>
+    <div class="rm-card"><div class="rm-label" id="i-rm3l">THEN</div><div class="rm-text" id="i-rm3t">Multi-island expansion.</div></div>
   </div>
   <div class="links">
     <a href="https://github.com/argos-geo/kefalonia-digital-twin" class="link-btn" target="_blank" rel="noopener">
@@ -394,9 +394,9 @@ const I18N = {
     'i-fl1': 'Data', 'i-fl2': 'Stack', 'i-fl3': 'License', 'i-fl4': 'Focus',
     'i-fv3': 'MIT - public methodology, open data',
     'i-fv4': 'Wildfire &middot; Flood &middot; Accessibility &middot; Marine',
-    'i-rm1l': 'NOW', 'i-rm1t': 'Static island twin.',
-    'i-rm2l': 'NEXT', 'i-rm2t': 'Live environmental feeds.',
-    'i-rm3l': 'THEN', 'i-rm3t': 'Hazard outlook + history.'
+    'i-rm1l': 'NOW', 'i-rm1t': 'Live data + static twin.',
+    'i-rm2l': 'NEXT', 'i-rm2t': 'Complete live-feed UI + hazard outlook.',
+    'i-rm3l': 'THEN', 'i-rm3t': 'Multi-island expansion.'
   },
   el: {
     'i-h1': 'ARGOS : : Ψηφιακός Δίδυμος Κεφαλονιάς',
@@ -408,9 +408,9 @@ const I18N = {
     'i-fl1': 'Δεδομένα', 'i-fl2': 'Τεχνολογίες', 'i-fl3': 'Άδεια', 'i-fl4': 'Εστίαση',
     'i-fv3': 'MIT - δημόσια μεθοδολογία, ανοιχτά δεδομένα',
     'i-fv4': 'Πυρκαγιά &middot; Πλημμύρα &middot; Προσβασιμότητα &middot; Θάλασσα',
-    'i-rm1l': 'ΤΩΡΑ', 'i-rm1t': 'Στατικός ψηφιακός δίδυμος.',
-    'i-rm2l': 'ΕΠΟΜΕΝΟ', 'i-rm2t': 'Ζωντανά περιβαλλοντικά δεδομένα.',
-    'i-rm3l': 'ΜΕΤΑ', 'i-rm3t': 'Πρόβλεψη + ιστορικό κινδύνων.'
+    'i-rm1l': 'ΤΩΡΑ', 'i-rm1t': 'Ζωντανά δεδομένα + στατικό δίδυμο.',
+    'i-rm2l': 'ΕΠΟΜΕΝΟ', 'i-rm2t': 'Πλήρες UI ζωντανών δεδομένων + πρόγνωση κινδύνου.',
+    'i-rm3l': 'ΜΕΤΑ', 'i-rm3t': 'Επέκταση σε περισσότερα νησιά.'
   }
 };
 const LAUNCH = { en: 'Explore the map', el: 'Εξερεύνησε τον χάρτη' };
@@ -649,5 +649,5 @@ document.addEventListener('click', e=>{ if(!modal.contains(e.target)) modal.clas
   setInterval(loadLatest, 600000);
 })();
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a518fb9dbb900b77',t:'MTc5MzE4MDQ2Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
